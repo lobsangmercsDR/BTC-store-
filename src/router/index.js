@@ -2,14 +2,16 @@ import { createRouter, createWebHistory } from "vue-router";
  
 import dashboard from '../pages/master/dashboard'
 
-import home from '../pages/home'
-import profile from '../pages/profile'
-import products_fis from '../pages/products_fis.vue'
-import cases from '../pages/cases.vue'
-import inventario from '../pages/inventario.vue'
-import CriptoView from '../pages/CriptoView.vue'
-import users from '../pages/users.vue'
-import header from '../pages/header.vue'
+import home from '../pages/Dashboard/home'
+import profile from '../pages/Dashboard/profile'
+import products_fis from '../pages/Dashboard/products_fis.vue'
+import cases from '../pages/Dashboard/cases.vue'
+import inventario from '../pages/Dashboard/inventario.vue'
+import CriptoView from '../pages/Dashboard/CriptoView.vue'
+import users from '../pages/Dashboard/users.vue'
+import login from '../pages/Login/login.vue'
+import signup from '../pages/Login/signup.vue'
+import resetpass from '../pages/Login/resetpass.vue'
 
 
   const routes = [
@@ -58,11 +60,22 @@ import header from '../pages/header.vue'
       
     },
     {
-      name: 'header',
-      path: '/header',
-      component: header
+      path: '/login',
+      name: 'login',
+      component: login
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: signup
+    },
+    {
+      path: '/resetpass',
+      name: 'resetpass',
+      component: resetpass
     }
-       
+   
+   
   ];
 const router = Router();
 export default router;
