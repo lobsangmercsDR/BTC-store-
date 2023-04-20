@@ -12,6 +12,7 @@ import users from '../pages/Dashboard/users.vue'
 import login from '../pages/Login/login.vue'
 import signup from '../pages/Login/signup.vue'
 import resetpass from '../pages/Login/resetpass.vue'
+import homePageEcommerce from '../pages/Store/homePageEcommerce.vue'
 
 
   const routes = [
@@ -73,7 +74,13 @@ import resetpass from '../pages/Login/resetpass.vue'
       path: '/resetpass',
       name: 'resetpass',
       component: resetpass
+    },
+    {
+      path: '/homePageEcommerce',
+      name: 'homePageEcommerce',
+      component: homePageEcommerce
     }
+
    
    
   ];
