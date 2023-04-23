@@ -8,7 +8,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                     </svg>
-                    <span class="ml-2 font-semibold text-[#252C32]">What a Market</span>
+                    <span class="ml-2 font-semibold text-[#252C32]">Iker Variedades</span>
                 </div>
 
                 <div class="ml-6 flex flex-1 gap-x-3">
@@ -44,7 +44,6 @@
                                 d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
                                 clip-rule="evenodd" />
                         </svg>
-                        <span class="text-sm font-medium">Favorites</span>
                     </div>
                     <div class="flex cursor-pointer items-center gap-x-1 rounded-md py-2 px-4 hover:bg-gray-100">
                         <div class="relative">
@@ -67,29 +66,8 @@
             </div>
 
             <div class="mt-4 flex items-center justify-between">
-                <div class="flex gap-x-2 py-1 px-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" viewBox="0 0 20 20"
-                        fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    <span class="text-sm font-medium">{{ location }}</span>
-                </div>
+               
 
-                <div class="flex gap-x-8">
-                    <span class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">Best
-                        seller</span>
-                    <span class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">New
-                        Releases</span>
-                    <span class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">Books</span>
-                    <span class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">Computers</span>
-                    <span class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">Fashion</span>
-                    <span class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">Health</span>
-                    <span class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">Pharmacy</span>
-                    <span class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">Toys &
-                        Games</span>
-                </div>
             <span class="cursor-pointer rounded-sm py-1 px-2 text-sm font-medium hover:bg-gray-100">Become a
                 seller</span>
         </div>
@@ -106,4 +84,14 @@ export default {
     },
 };
 </script> 
-<style></style>
+<style scoped>
+
+.products-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.product {
+  margin: 10px;}
+</style>

@@ -1,19 +1,93 @@
 <template>
-    <div>
+    <div class="bg-light-gray">
       <TopBar />
-      <h1>Welcome to my eCommerce store</h1>
-      <p>This is the home page of my store</p>
+      <div class="d-flex flex-row justify-content-between margin-top">
+        <div class="flex-1 mr-4">
+          <realtimelastbuy class="flex-1 realtimelastbuy" />
+        </div>
+        <div class="flex-1">
+          <realtimenewproduct class="flex-1 realtimenewproduct" />
+        </div>
+        <div class="flex-1">
+          <realtimenewproduct class="flex-1 realtimenewproduct" />
+        </div>
+        
+      </div>
     </div>
   </template>
   
   <script>
   import TopBar from '@/components/headerNav.vue';
+  import realtimelastbuy from '@/components/realtimelastbuy.vue';
+  import realtimenewproduct from '@/components/realtimenewproduct.vue';
   
   export default {
     name: 'HomePageEcommerce',
     components: {
       TopBar,
+      realtimelastbuy,
+      realtimenewproduct,
+    },
+    data() {
+      return {
+        product1: {
+          title: 'Backpack',
+          description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit In odit exercitationem fuga id nam quia',
+          image: 'https://images.unsplash.com/photo-1494726161322-5360d4d0eeae?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80',
+          rating: 3,
+          price: 220,
+        },
+        product2: {
+          title: 'Sneakers',
+          description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit In odit exercitationem fuga id nam quia',
+          image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80',
+          rating: 4,
+          price: 120,
+        },
+        product3: {
+          title: 'Watch',
+          description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit In odit exercitationem fuga id nam quia',
+          image: 'https://images.unsplash.com/photo-1521737711862-5a810fda9665?ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80',
+          rating: 5,
+          price: 300,
+        },
+      };
+    },
+    methods: {
+      addToCart(product) {
+        console.log('Product added to cart:', product);
+        // Implementar la lógica para agregar el producto al carrito aquí
+      },
     },
   };
   </script>
   
+  <style>
+  .bg-light-gray {
+    background-color: #f2f2f2;
+  }
+  
+  .d-flex {
+    display: flex;
+  }
+  
+  .flex-row {
+    flex-direction: row;
+  }
+  
+  .justify-content-between {
+    justify-content: space-between;
+  }
+  
+  .realtimelastbuy {
+    margin-right: 50px;
+  }
+  
+  .realtimenewproduct {
+    margin-left: 100px;
+  }
+  
+  .margin-top {
+    margin-top: 16px;
+  }
+  </style>
