@@ -4,9 +4,9 @@ https://documenter.getpostman.com/view/25804987/2s93eSaG8m
 
 # vue-tailwind-dashboard
 
-## Project setup
+## Project setup  Importante
 ```
-npm install
+npm install   
 ```
 
 ### Compiles and hot-reloads for development
