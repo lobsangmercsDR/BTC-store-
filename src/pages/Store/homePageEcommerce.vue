@@ -17,6 +17,7 @@
       </div>
     </div>
     <productCard/>
+    <SingleProduct/>
     
   </div>
 </template>
@@ -28,6 +29,7 @@ import realtimelastbuy from '@/components/realtimelastbuy.vue';
 import realtimenewproduct from '@/components/realtimenewproduct.vue';
 import newsbox from '@/components/newsbox.vue';
 import productCard from '@/components/productCard.vue';
+import SingleProduct from '@/components/SingleProduct.vue';
 
 
 export default {
@@ -38,6 +40,7 @@ export default {
     realtimenewproduct,
     newsbox,
     productCard,
+    SingleProduct,
   },
   data() {
     return {
