@@ -16,12 +16,22 @@
         </table>
       </div>
     </div>
-    <productCard/>
-    <SingleProduct/>
-    
+    <div class="d-flex justify-content-center">
+      <div class="flex-1">
+        <SingleDigitalProduct />
+      </div>
+      <div class="flex-1">
+        <SingleProduct />
+      </div>
+      
+    </div>
+     <productCard />
+     <SingleProduct />
+     <SingleDigitalProduct />
+
+
   </div>
 </template>
-
   
 <script>
 import TopBar from '@/components/headerNav.vue';
@@ -30,6 +40,7 @@ import realtimenewproduct from '@/components/realtimenewproduct.vue';
 import newsbox from '@/components/newsbox.vue';
 import productCard from '@/components/productCard.vue';
 import SingleProduct from '@/components/SingleProduct.vue';
+import SingleDigitalProduct from '@/components/SingleDigitalProduct.vue';
 
 
 export default {
@@ -41,6 +52,7 @@ export default {
     newsbox,
     productCard,
     SingleProduct,
+    SingleDigitalProduct,
   },
   data() {
     return {
