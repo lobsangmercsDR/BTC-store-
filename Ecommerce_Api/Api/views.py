@@ -6,7 +6,6 @@ from rest_framework.decorators import permission_classes
 from django.http.response import JsonResponse 
 from .authentications import IsAdmin, IsSeller, IsChecker, IsBuyer, IsGroupAccepted, AllowAny
 from rest_framework.decorators import api_view
-from drf_yasg import openapi
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.views import  ObtainAuthToken
 from rest_framework.authtoken.models import  Token

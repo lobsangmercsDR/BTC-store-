@@ -58,8 +58,7 @@
                                         <div class="text-center">
                                             <button
                                                 class="bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
-                                                type="button" style="transition: all 0.15s ease 0s;">
-
+                                                type="button"  @click="login" style="transition: all 0.15s ease 0s;">
                                                 Sign In
                                             </button>
                                             <router-link to="/signup"
@@ -89,4 +88,29 @@
     </div>
 </template>
 
+
+<script>
+import axios from 'axios';
+
+export default {
+    data(){
+        return {
+            email: '',
+            password: ''
+        };
+    },
+
+    methods: {
+        async login() {
+            try  {
+                const response =  await axios.post("http://127.0.0.1:8000/api/users/authenticate")
+                console.log(response.data)
+            }
+            catch(error) {
+                console.log(error.response.data.message)
+            }
+        }
+    }
+};
+</script>
   
