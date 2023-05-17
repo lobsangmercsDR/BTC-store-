@@ -33,15 +33,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# JWT_EXPIRATION_DELTA = datetime.timedelta(minutes=1)
-
-# JWT_AUTH = {
-#     'JWT_DECODE_HANDLER': 'myproject.utils.jwt_decode_handler',
-#     'JWT_PAYLOAD_HANDLER': 'myproject.utils.jwt_payload_handler',
-# }
-
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -57,6 +48,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -65,6 +58,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8080/',
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'Ecommerce_Api.urls'
 

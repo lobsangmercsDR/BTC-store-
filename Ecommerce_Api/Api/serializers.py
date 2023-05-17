@@ -129,15 +129,11 @@ class UserCreatorSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(message, code=400)
             instance.groups.add(group)
 
-        
-        print(delete_group)
         if delete_group:
                 try:
                     groupIns = Group.objects.get(name=delete_group)
                 except:
                     raise serializers.ValidationError(f"Grupo {delete_group} no existe")
-                print(groupIns)
-                print(groupIns)
                 instance.groups.remove(groupIns)
         return super().update(instance, validated_data)
             
@@ -171,25 +167,6 @@ class RoleRequestsSerializer(serializers.ModelSerializer):
         user=User.objects.get(id=self.context.get('request').user.id)
         roleRequest = RoleRequests.objects.create(user=user, **validated_data)
         return roleRequest
-
-        # not_found_groups = []
-        # groups = []
-        # if group_name: 
-        #     for group_n in group_name:
-        #         try:
-        #             group = Group.objects.get(name=group_n)
-        #             groups.append(group)
-        #         except Group.DoesNotExist:
-        #             not_found_groups.append(group_n)
-
-        #     if not_found_groups:
-        #         message = f"Groups {', '.join(not_found_groups)} not found"
-        #         raise serializers.ValidationError(message, code=400)
-        #     validated_data['password'] = make_password(validated_data['password'])
-        #     user = User.objects.create_user(**validated_data)
-        #     for group in groups:
-        #         user.groups.add(group)
-        # return user
 
 class UserNestedSerializer(serializers.ModelSerializer):
     group= serializers.SerializerMethodField()
