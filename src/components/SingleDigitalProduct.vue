@@ -185,7 +185,7 @@
   
   .bg-white {
     margin: 0 auto;
-    margin-left: 300px;
+    
   }
   
   .scrollbar-hide::-webkit-scrollbar {

@@ -25,9 +25,10 @@
       </div>
       
     </div>
-     <productCard />
+   
      <SingleProduct />
      <SingleDigitalProduct />
+     <productCard />
 
 
   </div>
