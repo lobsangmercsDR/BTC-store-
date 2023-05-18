@@ -71,8 +71,8 @@ class InvitationCodesSerializer(serializers.ModelSerializer):
         fields=['invitationCodes','description','is_used','is_expired','created_at','expire_date']
 
 class UserCreatorSerializer(serializers.ModelSerializer):
-    add_group = serializers.CharField()
-    delete_group= serializers.CharField()
+    add_group = serializers.CharField(read_only=True)
+    delete_group= serializers.CharField(read_only=True)
     invitation_code = serializers.CharField()
 
     class Meta:

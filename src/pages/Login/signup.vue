@@ -25,24 +25,24 @@
                                     <form>
                                         <div class="relative w-full mb-3">
                                             <label class="block uppercase text-gray-700 text-xs font-bold mb-2"
-                                                for="grid-name">Username</label>
+                                                for="grid-name">Email</label>
                                             <input type="text"
                                                 class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                                                placeholder="Your name" style="transition: all 0.15s ease 0s;" />
+                                                placeholder="Your name" v-model="email" style="transition: all 0.15s ease 0s;" />
                                         </div>
                                         <div class="relative w-full mb-3">
                                             <label class="block uppercase text-gray-700 text-xs font-bold mb-2"
                                                 for="grid-email">Invitation Code</label>
                                             <input type="email"
                                                 class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                                                placeholder="Your email address" style="transition: all 0.15s ease 0s;" />
+                                                placeholder="Your email address" v-model="invitation_code" style="transition: all 0.15s ease 0s;" />
                                         </div>
                                         <div class="relative w-full mb-3">
                                             <label class="block uppercase text-gray-700 text-xs font-bold mb-2"
                                                 for="grid-password">Password</label>
                                             <input type="password"
                                                 class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                                                placeholder="Password" style="transition: all 0.15s ease 0s;" />
+                                                placeholder="Password"  v-model="password" style="transition: all 0.15s ease 0s;" />
                                         </div>
                                         <div class="relative w-full mb-3">
                                             <label class="block uppercase text-gray-700 text-xs font-bold mb-2"
@@ -73,7 +73,7 @@
                                         <div class="text-center">
                                             <button
                                                 class="bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
-                                                type="button" style="transition: all 0.15s ease 0s;">
+                                                type="button" @click="register"  style="transition: all 0.15s ease 0s;">
                                                 Register
                                             </button>
                                         </div>
@@ -88,5 +88,42 @@
         </main>
     </div>
 </template>
+
+<script>
+import axios from 'axios';
+
+export default {
+    data(){
+        return {
+            name:'sdf',
+            email: '',
+            password: '',
+            invitation_code: '',
+        };
+    },
+
+    methods: {
+        async register() {
+            try  {
+                const response =  await axios.post("http://127.0.0.1:8000/api/users", {
+                    name: this.name,
+                    email: this.email,
+                    password: this.password,
+                    invitation_code: this.invitation_code
+                })
+
+                console.log(this.name)
+                console.log("Usuario registrado")
+                console.log(response.data)
+            }
+            catch(error) {
+                console.log(this.name)
+                console.log(error.response.data)
+            }
+        }
+    }
+};
+
+</script>
 
   
