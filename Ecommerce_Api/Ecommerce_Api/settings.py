@@ -83,7 +83,6 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Ecommerce_Api.wsgi.application'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -101,7 +100,7 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT' : '3306',
         'USER' : 'root',
-        'PASSWORD': 'djangolapara',
+        'PASSWORD': 'bb7PRb_hcH78ft_9',
         'NAME':'ecommerce_system',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"

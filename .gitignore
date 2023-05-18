@@ -3,9 +3,12 @@ node_modules
 /dist
 
 
+
 # local env files
 .env.local
 .env.*.local
+settings.py
+
 
 # Log files
 npm-debug.log*
