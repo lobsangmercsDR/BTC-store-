@@ -1,24 +1,15 @@
 <template>
     <div class="container">
       <div class="bg-white rounded-lg shadow-md p-8" style="max-width: 1100px; max-height: 900px;">
-        <h2 class="text-3xl font-semibold mb-4">Agregar Nuevo Producto Digital</h2>
+        <h2 class="text-3xl font-semibold mb-4">Agregar Nuevo Producto</h2>
         <form @submit.prevent="addProduct" class="grid grid-cols-2 gap-4">
           <div>
             <label for="productName" class="text-lg font-semibold">Nombre del Producto:</label>
             <input v-model="newProduct.name" id="productName" type="text" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" required>
           </div>
-
           <div>
-            <label for="productImage" class="text-lg font-semibold">Imagen del Producto:</label>
-            <input type="file" accept="image/*" @change="handleImageUpload" required>
-          </div>
-
-          <div>
-            <label for="productPriceUSD" class="text-lg font-semibold">Precio del Producto (USD):</label>
-            <div class="flex items-center">
-              <input v-model="newProduct.priceUSD" id="productPriceUSD" type="number" step="0.01" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20" min="0" required @input="updatePriceBTC">
-              <p class="text-gray-500 text-sm ml-2">Precio actual del BTC: {{ btcPrice.toFixed(8) }} BTC</p>
-            </div>
+            <label for="productDescription" class="text-lg font-semibold">Descripción del Producto:</label>
+            <textarea v-model="newProduct.description" id="productDescription" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
           </div>
           <div>
             <label for="productPriceBTC" class="text-lg font-semibold">Precio del Producto (BTC):</label>
@@ -27,10 +18,28 @@
               <p class="text-gray-500 text-sm ml-2">Precio actual del BTC: {{ btcPrice.toFixed(2) }} USD</p>
             </div>
           </div>
-        
+          <div>
+            <label for="productPriceUSD" class="text-lg font-semibold">Precio del Producto (USD):</label>
+            <div class="flex items-center">
+              <input v-model="newProduct.priceUSD" id="productPriceUSD" type="number" step="0.01" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20" min="0" required @input="updatePriceBTC">
+              <p class="text-gray-500 text-sm ml-2">Precio actual del BTC: {{ btcPrice.toFixed(8) }} BTC</p>
+            </div>
+          </div>
+          <div>
+            <label for="productImage" class="text-lg font-semibold">Imagen del Producto:</label>
+            <input type="file" accept="image/*" @change="handleImageUpload" required>
+          </div>
           <div v-if="newProduct.image">
             <label class="text-lg font-semibold">Vista Previa de la Imagen:</label>
             <img :src="newProduct.image" class="w-40 h-auto mt-2 rounded-lg">
+          </div>
+          <div>
+            <label for="productBrand" class="text-lg font-semibold">Marca del Producto:</label>
+            <input v-model="newProduct.brand" id="productBrand" type="text" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" required>
+          </div>
+          <div>
+            <label for="productVariants" class="text-lg font-semibold">Variantes del Producto:</label>
+            <textarea v-model="newProduct.variants" id="productVariants" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="2" required></textarea>
           </div>
           <div>
             <label for="productCategories" class="text-lg font-semibold">Categorías del Producto:</label>
@@ -71,11 +80,11 @@
         },
         btcPrice: 0,
         categories: [
-          { id: 1, name: 'Credit/Debit Cards' },
-          { id: 2, name: 'SSN' },
-          { id: 3, name: 'Cuentas' },
-          { id: 4, name: 'VPN' },
-          { id: 5, name: 'Crackers' },
+          { id: 1, name: 'Electrónica' },
+          { id: 2, name: 'Ropa' },
+          { id: 3, name: 'Hogar' },
+          { id: 4, name: 'Deportes' },
+          { id: 5, name: 'Alimentación' },
         ],
       };
     },

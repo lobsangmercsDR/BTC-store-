@@ -1,57 +1,42 @@
 <template>
-    <div class="container">
-      <div class="bg-white rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto">
-        <div v-if="product" class="flex flex-col md:flex-row">
-          <div class="w-full md:w-1/2">
-            <div v-if="product.image" class="max-w-[200px] mx-auto md:max-w-none">
+  <div class="container">
+    <div class="bg-white rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto">
+      <div v-if="product" class="flex flex-col md:flex-row">
+        <div class="w-full md:w-1/2">
+          <div v-if="product.image" class="max-w-[200px] mx-auto md:max-w-none">
+            <img
+              class="w-2/3 h-2/3 object-contain rounded-lg transform hover:scale-105 transition-transform duration-300"
+              :src="product.image"
+              :alt="product.name"
+            />
+          </div>
+          <div v-else class="bg-gray-200 rounded-lg h-[250px] md:h-[500px]"></div>
+          <div class="flex justify-center mt-4 space-x-2 overflow-x-auto scrollbar-hide">
+            <div v-for="placeholderImage in placeholderImages" :key="placeholderImage.id">
               <img
-                class="w-full h-auto object-contain rounded-lg transform hover:scale-105 transition-transform duration-300"
-                :src="product.image"
-                :alt="product.name"
+                class="w-10 h-10 object-contain rounded-lg mx-1"
+                :src="placeholderImage.image"
+                :alt="placeholderImage.name"
               />
-            </div>
-            <div v-else class="bg-gray-200 rounded-lg h-[250px] md:h-[500px]"></div>
-            <div class="flex justify-center mt-4 space-x-2 overflow-x-auto scrollbar-hide">
-              <div v-for="placeholderImage in placeholderImages" :key="placeholderImage.id">
-                <img
-                  class="w-10 h-10 object-contain rounded-lg mx-1"
-                  :src="placeholderImage.image"
-                  :alt="placeholderImage.name"
-                />
-              </div>
             </div>
           </div>
-          <div class="w-full md:w-1/2 md:pl-8">
-            <h2 class="text-3xl font-semibold mb-4 text-orange-600 hover:text-purple-800 transition-colors duration-300 ">
-              {{ product.name }}
-            </h2>
-            <p class="text-gray-600 text-lg mb-4">{{ product.description }}</p>
-            <div class="mt-8 flex items-center">
-              <h3 class="text-xl font-semibold mb-2 text-left mr-4">Variante:</h3>
-              <select class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg">
-                <option v-for="option in product.variants" :key="option">{{ option }}</option>
-              </select>
+        </div>
+        <div class="w-full md:w-1/2 md:pl-8 text-left">
+          <h2 class="text-3xl font-semibold mb-4 text-orange-600 hover:text-purple-800 transition-colors duration-300">
+            {{ product.name }}
+          </h2>
+          <div class="mt-8 flex items-center space-x-4">
+          </div>
+          <div class="mt-4">
+              <h3 class="text-xl font-semibold mb-2 text-left">Detalles adicionales:</h3>
+              <p class="text-gray-600 text-lg text-left">{{ product.additionalDetails }}</p>
             </div>
-            <span class="text-gray-600 text-lg mr-2 font-semibold"></span>
-  
-            <div class="flex items-center mb-4">
-              <span class="text-gray-600 text-lg mr-2 font-semibold">Cantidad:</span>
-              <input
-                v-model="quantity"
-                type="number"
-                class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20"
-                min="1"
-              />
-            </div>
-            <div class="flex items-center mb-4">
-              <span class="text-gray-600 text-lg mr-2 font-semibold">Marca:</span>
-              <span class="text-lg">{{ product.brand }}</span>
-            </div>
-            <div class="flex items-center mb-4">
+          <div class="mt-4">
+            <div class="flex items-center mb-2">
               <span class="text-gray-600 text-lg mr-2 font-semibold">Vendedor:</span>
               <span class="text-lg">{{ product.brand }}</span>
             </div>
-            <div class="flex items-center mb-4">
+            <div class="flex items-center mb-2">
               <span class="text-gray-600 text-lg mr-2 font-semibold">Likes:</span>
               <span class="text-lg">{{ product.likes }}</span>
               <button
@@ -72,7 +57,7 @@
                 </svg>
               </button>
             </div>
-            <div class="flex items-center mb-4">
+            <div class="flex items-center mb-2">
               <span class="text-gray-600 text-lg mr-2 font-semibold">Dislikes:</span>
               <span class="text-lg">{{ product.dislikes }}</span>
               <button
@@ -91,24 +76,18 @@
                 </svg>
               </button>
             </div>
-            <div class="flex mb-2">
+            <div class="flex items-center mb-2">
               <p class="text-2xl font-semibold mr-2">{{ productPriceBTC.toFixed(8) }} BTC</p>
               <p class="text-green-500 text-lg font-extrabold">
                 ${{ convertToDollars(productPriceBTC).toFixed(2) }} USD
               </p>
             </div>
-            <div class="mt-8">
-              <h3 class="text-xl font-semibold mb-2 text-left">Detalles adicionales:</h3>
-              <p class="text-gray-600 text-lg text-left">{{ product.additionalDetails }}</p>
-            </div>
-            <span class="text-gray-600 text-lg mr-2 font-semibold"></span>
-            <span class="text-gray-600 text-lg mr-2 font-semibold"></span>
-            <div class="flex mb-4 space-x-4 justify-end">
+
+            <div class="flex mt-4 justify-end">
               <!-- Aquí se aplica justify-end para alinear los botones a la derecha -->
-              
               <button
                 @click="addToCart"
-                class="bg-[#f76108] hover:bg-[#fa7328] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#f76108]"
+                class="bg-[#f76108] hover:bg-[#fa7328] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#f76108] mr-2"
               >
                 Agregar al carrito
               </button>
@@ -121,13 +100,14 @@
             </div>
           </div>
         </div>
-        <div v-else class="text-center py-8">
-          <p class="text-lg text-gray-600">Cargando datos del producto...</p>
-        </div>
+      </div>
+      <div v-else class="text-center py-8">
+        <p class="text-lg text-gray-600">Cargando datos del producto...</p>
       </div>
     </div>
-  </template>
-  
+  </div>
+</template>
+
   <script>
   export default {
     data() {

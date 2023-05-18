@@ -21,6 +21,7 @@
      <SingleDigitalProduct />
      <productCard />
      <AddDigitalProduct/>
+     <AddProduct/>
 
 
   </div>
@@ -35,6 +36,8 @@ import productCard from '@/components/productCard.vue';
 import SingleProduct from '@/components/SingleProduct.vue';
 import SingleDigitalProduct from '@/components/SingleDigitalProduct.vue';
 import AddDigitalProduct from '@/components/creators/AddDigitalProduct.vue';
+import AddProduct from '@/components/creators/AddProduct.vue';
+
 
 
 export default {
@@ -48,6 +51,7 @@ export default {
     SingleProduct,
     SingleDigitalProduct,
     AddDigitalProduct,
+    AddProduct
   },
   data() {
     return {
