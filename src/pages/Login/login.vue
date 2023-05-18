@@ -111,7 +111,7 @@ export default {
                 console.log(response.data)
             }
             catch(error) {
-                console.log(error.data)
+                console.log(error)
             }
         }
     }
