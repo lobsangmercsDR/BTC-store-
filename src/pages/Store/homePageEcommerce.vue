@@ -16,19 +16,11 @@
         </table>
       </div>
     </div>
-    <div class="d-flex justify-content-center">
-      <div class="flex-1">
-        <SingleDigitalProduct />
-      </div>
-      <div class="flex-1">
-        <SingleProduct />
-      </div>
-      
-    </div>
    
      <SingleProduct />
      <SingleDigitalProduct />
      <productCard />
+     <AddDigitalProduct/>
 
 
   </div>
@@ -42,6 +34,7 @@ import newsbox from '@/components/newsbox.vue';
 import productCard from '@/components/productCard.vue';
 import SingleProduct from '@/components/SingleProduct.vue';
 import SingleDigitalProduct from '@/components/SingleDigitalProduct.vue';
+import AddDigitalProduct from '@/components/creators/AddDigitalProduct.vue';
 
 
 export default {
@@ -54,6 +47,7 @@ export default {
     productCard,
     SingleProduct,
     SingleDigitalProduct,
+    AddDigitalProduct,
   },
   data() {
     return {

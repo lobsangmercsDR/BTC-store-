@@ -48,6 +48,10 @@
               <span class="text-lg">{{ product.brand }}</span>
             </div>
             <div class="flex items-center mb-4">
+              <span class="text-gray-600 text-lg mr-2 font-semibold">Vendedor:</span>
+              <span class="text-lg">{{ product.brand }}</span>
+            </div>
+            <div class="flex items-center mb-4">
               <span class="text-gray-600 text-lg mr-2 font-semibold">Likes:</span>
               <span class="text-lg">{{ product.likes }}</span>
               <button
