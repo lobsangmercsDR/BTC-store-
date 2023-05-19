@@ -352,7 +352,11 @@ class AuthenticationSerializer(serializers.Serializer):
             raise serializers.ValidationError('Sus credenciales han sido incorrectas', code=401)
 
         data['user'] = user 
+        print(data)
         return data
+
+        def to_representation(self, instance):
+            print(instance)
 
 
 

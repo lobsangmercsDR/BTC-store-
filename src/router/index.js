@@ -13,6 +13,8 @@ import login from '../pages/Login/login.vue'
 import signup from '../pages/Login/signup.vue'
 import resetpass from '../pages/Login/resetpass.vue'
 import homePageEcommerce from '../pages/Store/homePageEcommerce.vue'
+import { isAuthenticated, getAuthToken } from "../../utils/auth.js"; 
+import Cookies from "js-cookie";
 
 
   const routes = [
@@ -20,6 +22,7 @@ import homePageEcommerce from '../pages/Store/homePageEcommerce.vue'
       name: 'Dashboard',
       path: '/',
       component: dashboard,
+      meta : {requiresAuth: true},
       children: [
          {
           name: 'home',
@@ -84,8 +87,8 @@ import homePageEcommerce from '../pages/Store/homePageEcommerce.vue'
    
    
   ];
-const router = Router();
-export default router;
+
+
 function Router() {
     const router = new createRouter({
         history: createWebHistory(),
@@ -93,4 +96,24 @@ function Router() {
     });
     return router;
 }
+
+const router = Router();
+
+router.beforeEach((to, from, next) => {
+  if(to.matched.some(route => route.meta.requiresAuth)) {
+
+    console.log("asda");
+    console.log(Cookies.get('token'))
+    console.log(getAuthToken())
+    console.log(isAuthenticated())
+    if(isAuthenticated()) {
+      next();
+    } else {
+      next('/login')
+    } 
+  }else {
+    next();
+  }
+});
   
+export default router;
