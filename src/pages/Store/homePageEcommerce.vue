@@ -24,6 +24,7 @@
      <AddProduct/>
      <DigitalCategoriesCreator/>
      <invitationcodetool/>
+     <usermanages/>
 
 
   </div>
@@ -41,6 +42,7 @@ import AddDigitalProduct from '@/components/creators/AddDigitalProduct.vue';
 import AddProduct from '@/components/creators/AddProduct.vue';
 import DigitalCategoriesCreator from '@/components/admintoolscomponentes/DigitalCategoriesCreator.vue';
 import invitationcodetool from '@/components/admintoolscomponentes/invitationcodetool.vue';
+import usermanages from '@/components/admintoolscomponentes/usermanages.vue';
 
 
 
@@ -58,6 +60,7 @@ export default {
     AddProduct,
     DigitalCategoriesCreator,
     invitationcodetool,
+    usermanages,
 
   },
   data() {

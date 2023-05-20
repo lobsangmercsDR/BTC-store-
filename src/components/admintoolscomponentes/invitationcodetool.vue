@@ -21,6 +21,7 @@
             <th class="px-4 py-2 border-b">Código</th>
             <th class="px-4 py-2 border-b">Fecha de Generación</th>
             <th class="px-4 py-2 border-b">Usuarios Registrados</th>
+            <th class="px-4 py-2 border-b">Creado por</th>
             <th class="px-4 py-2 border-b"></th>
           </tr>
         </thead>
@@ -30,6 +31,7 @@
             <td class="px-4 py-2 border-b">{{ item.codigo }}</td>
             <td class="px-4 py-2 border-b">{{ item.fechaGeneracion }}</td>
             <td class="px-4 py-2 border-b">{{ item.usuariosRegistrados }}</td>
+            <td class="px-4 py-2 border-b">{{ item.creadoPor }}</td>
             <td class="px-4 py-2 border-b">
               <button @click="eliminarCodigo(index)" class="text-red-600 font-semibold hover:text-red-800">Eliminar</button>
             </td>
@@ -57,6 +59,7 @@ export default {
       descripcion: '',
       codigo: '',
       codigosGenerados: [],
+      creadoPor: 'Nombre del creador', // Agrega el nombre del creador predeterminado aquí
     };
   },
   methods: {
@@ -68,12 +71,13 @@ export default {
       }
       this.codigo = codigoGenerado;
       
-      // Agregar el código, la descripción, la fecha de generación y la cantidad de usuarios registrados a la lista de códigos generados
+      // Agregar el código, la descripción, la fecha de generación, la cantidad de usuarios registrados y el nombre del creador a la lista de códigos generados
       this.codigosGenerados.push({
         descripcion: this.descripcion,
         codigo: this.codigo,
         fechaGeneracion: new Date().toLocaleString(), // Obtener la fecha actual
         usuariosRegistrados: 0, // Inicialmente, no hay usuarios registrados
+        creadoPor: this.creadoPor,
       });
       
       // Limpiar el campo de descripción y reiniciar el campo de código
