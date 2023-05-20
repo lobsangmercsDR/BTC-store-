@@ -1,25 +1,27 @@
 <template>
   <div class="container">
     <div class="bg-white rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto">
-      <div v-if="product" class="flex flex-col md:flex-row">
+      <div v-if="product" class="flex flex-col md:flex-row " >
         <div class="w-full md:w-1/2">
-          <div v-if="product.image" class="max-w-[200px] mx-auto md:max-w-none">
+          <div v-if="product.image" class="max-w-[100px] mx-auto md:max-w-none">
             <img
-              class="w-2/3 h-2/3 object-contain rounded-lg transform hover:scale-105 transition-transform duration-300"
+              class="w-[300px] h-[400px] object-contain rounded-lg transform hover:scale-105 transition-transform duration-300"
               :src="product.image"
               :alt="product.name"
             />
           </div>
           <div v-else class="bg-gray-200 rounded-lg h-[250px] md:h-[500px]"></div>
-          <div class="flex justify-center mt-4 space-x-2 overflow-x-auto scrollbar-hide">
-            <div v-for="placeholderImage in placeholderImages" :key="placeholderImage.id">
-              <img
-                class="w-10 h-10 object-contain rounded-lg mx-1"
-                :src="placeholderImage.image"
-                :alt="placeholderImage.name"
-              />
+          <div class="flex items-center mb-2">
+              <p class="text-2xl font-semibold mr-2">Categorias:</p>
+              <p class="text-green-500 text-lg font-extrabold">
+                Subcate
+              </p>
             </div>
-          </div>
+            <div class="mt-4">
+              <h3 class="text-xl font-semibold mb-2 text-left">Preview:</h3>
+              <p class="text-gray-600 text-lg text-left">{{ product.additionalDetails }}</p>
+              <p v-if="!hasPurchased" class="text-red-500 text-sm mt-2">For complete view buy the product</p>
+            </div>
         </div>
         <div class="w-full md:w-1/2 md:pl-8 text-left">
           <h2 class="text-3xl font-semibold mb-4 text-orange-600 hover:text-purple-800 transition-colors duration-300">
@@ -27,13 +29,18 @@
           </h2>
           <div class="mt-8 flex items-center space-x-4">
           </div>
-          <div class="mt-4">
-              <h3 class="text-xl font-semibold mb-2 text-left">Detalles adicionales:</h3>
-              <p class="text-gray-600 text-lg text-left">{{ product.additionalDetails }}</p>
-            </div>
+         
           <div class="mt-4">
             <div class="flex items-center mb-2">
               <span class="text-gray-600 text-lg mr-2 font-semibold">Vendedor:</span>
+              <span class="text-lg">{{ product.brand }}</span>
+            </div>
+            <div class="flex items-center mb-2">
+              <span class="text-gray-600 text-lg mr-2 font-semibold">Fecha de Publicacion:</span>
+              <span class="text-lg">{{ product.brand }}</span>
+            </div>
+            <div class="flex items-center mb-2">
+              <span class="text-gray-600 text-lg mr-2 font-semibold">Cantidad</span>
               <span class="text-lg">{{ product.brand }}</span>
             </div>
             <div class="flex items-center mb-2">
@@ -136,6 +143,12 @@
         variants: ['Chocolate Sativa', 'Berry Hibrida', 'Indica Girlscout Cookies'],
         additionalDetails:
           'Super Blends were carefully crafted to mimic the live resin experience. We drew our inspiration from the cannabis plant. Creating unique cannabinoid formulas with terpene profiles that mirror today’s most popular strains.',
+        release_data: "Aqui fecha",
+        checked_state: false,
+        quantity: 0,
+        category: [],
+        subcategory: [],
+        seller_username: "Djangolapara"
       };
       this.productPriceBTC = this.product.price * this.btcPrice;
     },
