@@ -23,7 +23,7 @@
           <p class="text-gray-600 text-lg mb-4">{{ product.description }}</p>
           <div class="mt-8 flex items-center">
             <h3 class="text-xl font-semibold mb-2 text-left mr-4">Variante:</h3>
-            <select v-model="selectedVariant" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg">
+            <select class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg">
               <option v-for="option in product.variants" :key="option">{{ option }}</option>
             </select>
           </div>
@@ -44,7 +44,7 @@
           </div>
           <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Vendedor:</span>
-            <span class="text-lg">{{ product.sellerUsername }}</span>
+            <span class="text-lg">{{ product.brand }}</span>
           </div>
           <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Likes:</span>
@@ -125,7 +125,7 @@
           <p>Producto: {{ product.name }}</p>
           <p>Variante: {{ selectedVariant }}</p>
           <p>Marca: {{ product.brand }}</p>
-          <p>Vendedor: {{ product.sellerUsername }}</p>
+          <p>Username del vendedor: {{ product.sellerUsername }}</p>
           <p>Cantidad: {{ quantity }}</p>
           <p>Precio total: {{ (product.price * quantity * btcPrice).toFixed(8) }} BTC / ${{ (product.price * quantity).toFixed(2) }} USD</p>
           <hr class="my-4">
@@ -166,6 +166,7 @@
         <div class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
           <h2 class="text-2xl font-semibold mb-4">Factura generada</h2>
           <p>Número de orden: {{ orderNumber }}</p>
+          <p>Fecha de compra: {{ formattedDate }}</p>
           <p>Estado: En espera</p>
           <p>Nombre del producto: {{ product.name }}</p>
           <p>Variante elegida: {{ selectedVariant }}</p>
@@ -206,6 +207,7 @@ export default {
       },
       shippingAddress: '',
       orderNumber: '',
+      formattedDate: '',
     };
   },
   mounted() {
@@ -214,15 +216,14 @@ export default {
       description: 'Super Blends were carefully crafted to mimic the live resin experience',
       price: 0.011, // Precio ficticio en BTC
       brand: 'Puffy',
-      sellerUsername: 'JohnSeller',
       likes: 0,
       dislikes: 0,
       variants: ['Chocolate Sativa', 'Berry Hibrida', 'Indica Girlscout Cookies'],
       additionalDetails:
         'Super Blends were carefully crafted to mimic the live resin experience. We drew our inspiration from the cannabis plant. Creating unique cannabinoid formulas with terpene profiles that mirror today’s most popular strains.',
+      sellerUsername: 'JohnSeller',
     };
     this.productPriceBTC = this.product.price * this.btcPrice;
-    this.selectedVariant = this.product.variants[0]; // Establece la primera variante como predeterminada
   },
   methods: {
     incrementLikes() {
@@ -257,36 +258,46 @@ export default {
         brand: this.product.brand,
         sellerUsername: this.product.sellerUsername,
         quantity: this.quantity,
-        totalBTC: (this.product.price * this.quantity * this.btcPrice).toFixed(8),
-        totalUSD: (this.product.price * this.quantity).toFixed(2),
+        totalPriceBTC: (this.product.price * this.quantity * this.btcPrice).toFixed(8),
+        totalPriceUSD: (this.product.price * this.quantity).toFixed(2),
         shippingAddress: this.shippingAddress,
+        date: this.formattedDate,
+        orderNumber: this.orderNumber,
       };
+
       const invoiceText = `
         Factura de compra
-
+        
+        Número de orden: ${invoiceData.orderNumber}
+        Fecha de compra: ${invoiceData.date}
+        
         Producto: ${invoiceData.product}
         Variante: ${invoiceData.variant}
         Marca: ${invoiceData.brand}
         Username del vendedor: ${invoiceData.sellerUsername}
         Cantidad: ${invoiceData.quantity}
-        Total a pagar: ${invoiceData.totalBTC} BTC / $${invoiceData.totalUSD} USD
-
+        Precio total: ${invoiceData.totalPriceBTC} BTC / $${invoiceData.totalPriceUSD} USD
+        
         Dirección de envío: ${invoiceData.shippingAddress}
-
+        
         Gracias por usar nuestra web.
       `;
+
       const element = document.createElement('a');
       const file = new Blob([invoiceText], { type: 'text/plain' });
       element.href = URL.createObjectURL(file);
       element.download = 'factura.txt';
       document.body.appendChild(element);
       element.click();
-      document.body.removeChild(element);
+    },
+  },
+  computed: {
+    formattedDate() {
+      return new Date().toLocaleDateString();
     },
   },
 };
 </script>
-
 
 <style>
 .container {
