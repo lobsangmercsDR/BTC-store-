@@ -14,6 +14,7 @@ from django.db.models import Q
 from datetime import datetime, timedelta
 from .utils import services as uti
 from django.core import serializers
+from django.http import HttpResponse
 from .models import Product,Category,Transacts,User,InvitationCodes,RoleRequests
 from .serializers import (TransactsSerializer, 
                           CategorySerializer,
@@ -297,6 +298,18 @@ class LogoutView(APIView):
     
 class AuthenticationView(ObtainAuthToken):
     serializer_class = AuthenticationSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        grop = list(user.groups.values_list('name'))
+        response = HttpResponse("Guardado")
+        data = {'token': token.key, 'user':grop}
+        print(response.set_cookie('token', token.key, httponly=False ))
+        return JsonResponse(data)
+
 
 class TransactsView(viewsets.ModelViewSet):
     queryset = Transacts.objects.all()

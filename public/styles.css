@@ -1,0 +1,22 @@
+.loginContainer {
+    max-width: 500px !important;
+    min-width: 500px !important; 
+    justify-content: initial !important;
+}
+
+.errorInput {
+    border: 0.5px solid red !important;
+}
+.errorText {
+    text-align: left !important;
+}
+
+.errorLoginBox {
+    border: 0.5px solid red;
+    border-radius: 6px;
+    padding: 13px;
+    max-width: 267px;
+    background-color: #ff9b9b75;
+    margin: auto;
+    font-size: 14px;
+}
