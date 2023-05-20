@@ -15,6 +15,7 @@ import resetpass from '../pages/Login/resetpass.vue'
 import homePageEcommerce from '../pages/Store/homePageEcommerce.vue'
 import { isAuthenticated, getAuthToken } from "../../utils/auth.js"; 
 import Cookies from "js-cookie";
+import logout from '../pages/Login/logout.vue'
 
 
   const routes = [
@@ -67,6 +68,11 @@ import Cookies from "js-cookie";
       path: '/login',
       name: 'login',
       component: login
+    },
+    {
+      path: '/logout',
+      name: 'logout',
+      component: logout
     },
     {
       path: '/signup',
