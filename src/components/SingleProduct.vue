@@ -3,14 +3,9 @@
     <div class="bg-white rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto">
       <div v-if="product" class="flex flex-col md:flex-row">
         <div class="w-full md:w-1/2">
-          <div v-if="product.image" class="max-w-[200px] mx-auto md:max-w-none">
-            <img
-              class="w-full h-auto object-contain rounded-lg transform hover:scale-105 transition-transform duration-300"
-              :src="product.image"
-              :alt="product.name"
-            />
+          <div class="max-w-[200px] mx-auto md:max-w-none">
+            <div class="bg-gray-200 rounded-lg h-[250px] md:h-[500px]"></div>
           </div>
-          <div v-else class="bg-gray-200 rounded-lg h-[250px] md:h-[500px]"></div>
           <div class="flex justify-center mt-4 space-x-2 overflow-x-auto scrollbar-hide">
             <div v-for="placeholderImage in placeholderImages" :key="placeholderImage.id">
               <img
@@ -28,7 +23,7 @@
           <p class="text-gray-600 text-lg mb-4">{{ product.description }}</p>
           <div class="mt-8 flex items-center">
             <h3 class="text-xl font-semibold mb-2 text-left mr-4">Variante:</h3>
-            <select class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg">
+            <select v-model="selectedVariant" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg">
               <option v-for="option in product.variants" :key="option">{{ option }}</option>
             </select>
           </div>
@@ -49,7 +44,7 @@
           </div>
           <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Vendedor:</span>
-            <span class="text-lg">{{ product.brand }}</span>
+            <span class="text-lg">{{ product.sellerUsername }}</span>
           </div>
           <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Likes:</span>
@@ -101,11 +96,7 @@
             <h3 class="text-xl font-semibold mb-2 text-left">Detalles adicionales:</h3>
             <p class="text-gray-600 text-lg text-left">{{ product.additionalDetails }}</p>
           </div>
-          <span class="text-gray-600 text-lg mr-2 font-semibold"></span>
-          <span class="text-gray-600 text-lg mr-2 font-semibold"></span>
           <div class="flex mb-4 space-x-4 justify-end">
-            <!-- Aquí se aplica justify-end para alinear los botones a la derecha -->
-            
             <button
               @click="addToCart"
               class="bg-[#f76108] hover:bg-[#fa7328] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#f76108]"
@@ -125,6 +116,70 @@
         <p class="text-lg text-gray-600">Cargando datos del producto...</p>
       </div>
     </div>
+
+    <!-- Ventana emergente de pago -->
+    <transition name="modal">
+      <div v-if="showPaymentModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
+          <h2 class="text-2xl font-semibold mb-4">Confirmar compra</h2>
+          <p>Producto: {{ product.name }}</p>
+          <p>Variante: {{ selectedVariant }}</p>
+          <p>Marca: {{ product.brand }}</p>
+          <p>Vendedor: {{ product.sellerUsername }}</p>
+          <p>Cantidad: {{ quantity }}</p>
+          <p>Precio total: {{ (product.price * quantity * btcPrice).toFixed(8) }} BTC / ${{ (product.price * quantity).toFixed(2) }} USD</p>
+          <hr class="my-4">
+          <p>Username: {{ user.username }}</p>
+          <p>Saldo disponible en BTC: <span class="text-green-500">{{ user.balanceBTC.toFixed(8) }} BTC</span></p>
+          <p>Equivalente en USD: ${{ (user.balanceBTC * btcPrice).toFixed(2) }} USD</p>
+          <input
+            v-model="shippingAddress"
+            type="text"
+            class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-full mt-4"
+            placeholder="Dirección de envío"
+            required
+          />
+          <div class="flex justify-end mt-4">
+            <button @click="showPaymentModal = false" class="text-gray-500 hover:text-gray-700 mr-2">Cancelar</button>
+            <button @click="confirmPayment" class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">Confirmar</button>
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <!-- Ventana emergente de transacción fallida -->
+    <transition name="modal">
+      <div v-if="showTransactionFailedModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
+          <h2 class="text-2xl font-semibold mb-4">Transacción fallida</h2>
+          <p>Tu transacción ha sido rechazada debido a fondos insuficientes.</p>
+          <div class="flex justify-end mt-4">
+            <button @click="showTransactionFailedModal = false" class="text-gray-500 hover:text-gray-700 mr-2">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <!-- Ventana emergente de factura generada -->
+    <transition name="modal">
+      <div v-if="showInvoiceModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
+          <h2 class="text-2xl font-semibold mb-4">Factura generada</h2>
+          <p>Número de orden: {{ orderNumber }}</p>
+          <p>Estado: En espera</p>
+          <p>Nombre del producto: {{ product.name }}</p>
+          <p>Variante elegida: {{ selectedVariant }}</p>
+          <p>Marca: {{ product.brand }}</p>
+          <p>Username del vendedor: {{ product.sellerUsername }}</p>
+          <p>Cantidad comprada: {{ quantity }}</p>
+          <p>Total a pagar: {{ (product.price * quantity * btcPrice).toFixed(8) }} BTC / ${{ (product.price * quantity).toFixed(2) }} USD</p>
+          <button class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded mt-4" @click="downloadInvoice">Descargar factura</button>
+          <div class="flex justify-end mt-4">
+            <button @click="showInvoiceModal = false" class="text-gray-500 hover:text-gray-700 mr-2">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -134,6 +189,7 @@ export default {
     return {
       product: null,
       quantity: 1,
+      selectedVariant: '',
       placeholderImages: [
         { id: 1, name: 'Placeholder 1', image: 'https://via.placeholder.com/50x50' },
         { id: 2, name: 'Placeholder 2', image: 'https://via.placeholder.com/50x50' },
@@ -141,6 +197,15 @@ export default {
       ],
       btcPrice: 27.419, // Precio ficticio del BTC en USD
       productPriceBTC: 0,
+      showPaymentModal: false,
+      showTransactionFailedModal: false,
+      showInvoiceModal: false,
+      user: {
+        username: 'JohnDoe',
+        balanceBTC: 1, // Saldo ficticio en BTC
+      },
+      shippingAddress: '',
+      orderNumber: '',
     };
   },
   mounted() {
@@ -148,9 +213,8 @@ export default {
       name: 'PUFFY 2G - Girls (Super Blends)',
       description: 'Super Blends were carefully crafted to mimic the live resin experience',
       price: 0.011, // Precio ficticio en BTC
-      image: 'https://via.placeholder.com/100x100',
       brand: 'Puffy',
-      shipping: 'Envío gratis',
+      sellerUsername: 'JohnSeller',
       likes: 0,
       dislikes: 0,
       variants: ['Chocolate Sativa', 'Berry Hibrida', 'Indica Girlscout Cookies'],
@@ -158,6 +222,7 @@ export default {
         'Super Blends were carefully crafted to mimic the live resin experience. We drew our inspiration from the cannabis plant. Creating unique cannabinoid formulas with terpene profiles that mirror today’s most popular strains.',
     };
     this.productPriceBTC = this.product.price * this.btcPrice;
+    this.selectedVariant = this.product.variants[0]; // Establece la primera variante como predeterminada
   },
   methods: {
     incrementLikes() {
@@ -170,14 +235,58 @@ export default {
       return price * this.btcPrice;
     },
     addToCart() {
-      console.log(`Agregando ${this.quantity} unidades del producto al carrito`);
+      this.showPaymentModal = true;
     },
     buyNow() {
-      console.log(`Comprando ${this.quantity} unidades del producto`);
+      this.showPaymentModal = true;
+    },
+    confirmPayment() {
+      if (this.user.balanceBTC >= this.product.price * this.quantity) {
+        this.showPaymentModal = false;
+        this.showInvoiceModal = true;
+        this.orderNumber = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+      } else {
+        this.showPaymentModal = false;
+        this.showTransactionFailedModal = true;
+      }
+    },
+    downloadInvoice() {
+      const invoiceData = {
+        product: this.product.name,
+        variant: this.selectedVariant,
+        brand: this.product.brand,
+        sellerUsername: this.product.sellerUsername,
+        quantity: this.quantity,
+        totalBTC: (this.product.price * this.quantity * this.btcPrice).toFixed(8),
+        totalUSD: (this.product.price * this.quantity).toFixed(2),
+        shippingAddress: this.shippingAddress,
+      };
+      const invoiceText = `
+        Factura de compra
+
+        Producto: ${invoiceData.product}
+        Variante: ${invoiceData.variant}
+        Marca: ${invoiceData.brand}
+        Username del vendedor: ${invoiceData.sellerUsername}
+        Cantidad: ${invoiceData.quantity}
+        Total a pagar: ${invoiceData.totalBTC} BTC / $${invoiceData.totalUSD} USD
+
+        Dirección de envío: ${invoiceData.shippingAddress}
+
+        Gracias por usar nuestra web.
+      `;
+      const element = document.createElement('a');
+      const file = new Blob([invoiceText], { type: 'text/plain' });
+      element.href = URL.createObjectURL(file);
+      element.download = 'factura.txt';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
     },
   },
 };
 </script>
+
 
 <style>
 .container {
@@ -189,7 +298,6 @@ export default {
 
 .bg-white {
   margin: 0 auto;
-  
 }
 
 .scrollbar-hide::-webkit-scrollbar {
@@ -199,5 +307,15 @@ export default {
 .select-variant {
   text-align: left;
   width: 100%;
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
 }
 </style>
