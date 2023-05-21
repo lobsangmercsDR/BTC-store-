@@ -55,7 +55,7 @@
               <router-link to="/products_fis" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
                 Cripto Concuurrencia
               </router-link>
-              <router-link to="/product_dig" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
+              <router-link to="/Wallet" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
                 Carteras
               </router-link>
               <router-link to="/categories_manage" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
@@ -83,7 +83,7 @@
             </div>
             <button
               class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-300  hover:text-gray-800 transition duration-400 ease-in-out"
-              @click="toggleSubMenu3">
+              @click="toggleSubMenu4">
               <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-three-dots"
                 viewBox="0 0 20 20">
                 <path fill-rule="evenodd"
@@ -91,7 +91,7 @@
               </svg>
               Productos y categorias
             </button>
-            <div class="mt-2 bg-gray-300 rounded-md overflow-hidden" v-show="showSubMenu3">
+            <div class="mt-2 bg-gray-300 rounded-md overflow-hidden" v-show="showSubMenu4">
               <router-link to="/products_fis" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
                 Agregar Producto Fisico
               </router-link>
@@ -373,6 +373,38 @@ export default {
 .submenu3 li:last-child {
   margin-bottom: 0;
 }
+
+
+
+.submenu4 {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  z-index: 10;
+}
+
+.submenu4.show {
+  display: block;
+}
+
+.submenu4 ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.submenu4 li {
+  margin-bottom: 5px;
+}
+
+.submenu4 li:last-child {
+  margin-bottom: 0;
+}
+
 
 
 

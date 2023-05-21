@@ -20,6 +20,7 @@ import categories_manage from '../pages/Dashboard/Products and categories/catego
 import inventory_general from '../pages/Dashboard/Products and categories/inventory_general.vue'
 import user_control from '../pages/Dashboard/users_control/user_control.vue'
 import invitation_code_manager from '../pages/Dashboard/users_control/invitation_code_manager.vue'
+import Wallet from '../pages/Dashboard/wallet_cripto/Wallet.vue'
 
 
   const routes = [
@@ -69,6 +70,14 @@ import invitation_code_manager from '../pages/Dashboard/users_control/invitation
           path: '/invitation_code_manager',
           component:invitation_code_manager
         },
+        {
+          name: 'Wallet',
+          path: '/Wallet',
+          component:Wallet
+        },
+
+
+
         {
           name: 'cases',
           path: '/cases',

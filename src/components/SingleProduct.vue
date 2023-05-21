@@ -141,8 +141,18 @@
           />
           <div class="flex justify-end mt-4">
             <button @click="showPaymentModal = false" class="text-gray-500 hover:text-gray-700 mr-2">Cancelar</button>
-            <button @click="confirmPayment" class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">Confirmar</button>
+            <button @click="processPayment" class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">Confirmar</button>
           </div>
+        </div>
+      </div>
+    </transition>
+
+    <!-- Ventana emergente de transacción en proceso -->
+    <transition name="modal">
+      <div v-if="processingTransaction" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
+          <h2 class="text-2xl font-semibold mb-4">Procesando transacción</h2>
+          <p>Por favor, espera mientras se procesa tu transacción...</p>
         </div>
       </div>
     </transition>
@@ -199,6 +209,7 @@ export default {
       btcPrice: 27.419, // Precio ficticio del BTC en USD
       productPriceBTC: 0,
       showPaymentModal: false,
+      processingTransaction: false,
       showTransactionFailedModal: false,
       showInvoiceModal: false,
       user: {
@@ -241,15 +252,20 @@ export default {
     buyNow() {
       this.showPaymentModal = true;
     },
-    confirmPayment() {
-      if (this.user.balanceBTC >= this.product.price * this.quantity) {
-        this.showPaymentModal = false;
-        this.showInvoiceModal = true;
-        this.orderNumber = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
-      } else {
-        this.showPaymentModal = false;
-        this.showTransactionFailedModal = true;
-      }
+    processPayment() {
+      this.processingTransaction = true;
+      setTimeout(() => {
+        if (this.user.balanceBTC >= this.product.price * this.quantity) {
+          this.showPaymentModal = false;
+          this.processingTransaction = false;
+          this.showInvoiceModal = true;
+          this.orderNumber = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+        } else {
+          this.showPaymentModal = false;
+          this.processingTransaction = false;
+          this.showTransactionFailedModal = true;
+        }
+      }, 2000);
     },
     downloadInvoice() {
       const invoiceData = {
@@ -299,7 +315,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .container {
   display: flex;
   justify-content: center;
@@ -322,10 +338,10 @@ export default {
 
 .modal-enter-active,
 .modal-leave-active {
-  transition: opacity 0.3s;
+  transition: opacity 0.2s;
 }
 
-.modal-enter-from,
+.modal-enter,
 .modal-leave-to {
   opacity: 0;
 }
