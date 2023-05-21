@@ -4,7 +4,7 @@
       <main>
         <section class="container mx-auto px-4">
           <div class="flex justify-center mt-10">
-            <div class="w-full lg:w-4/12 px-4">
+            <div class="w-full lg:w-4/12 px-4 logoutContainer">
               <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-300 border-0">
                 <div class="rounded-t mb-0 px-6 py-6">
                   <div class="text-center mb-3">
@@ -44,7 +44,7 @@
     methods: {
       async logout() {
         try {
-          // Enviar una solicitud POST al servidor para cerrar sesión
+          // Enviar una solicitud POST al servidor para cerrar sesiónx`x`x`
           await axios.get("http://127.0.0.1:8000/api/users/logout", {
             headers: {
               Authorization: `Token ${Cookies.get('token')}`, // Incluir el token de autenticación en el encabezado

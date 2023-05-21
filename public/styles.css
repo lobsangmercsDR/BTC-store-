@@ -4,6 +4,12 @@
     justify-content: initial !important;
 }
 
+.logoutContainer {
+    max-width: 350px !important;
+    min-width: 350px !important; 
+    justify-content: initial !important;
+}
+
 .errorInput {
     border: 0.5px solid red !important;
 }
