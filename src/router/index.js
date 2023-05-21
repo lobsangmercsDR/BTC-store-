@@ -19,6 +19,8 @@ import logout from '../pages/Login/logout.vue'
 import product_dig from '../pages/Dashboard/Products and categories/product_dig.vue'
 import categories_manage from '../pages/Dashboard/Products and categories/categories_manage.vue'
 import inventory_general from '../pages/Dashboard/Products and categories/inventory_general.vue'
+import user_control from '../pages/Dashboard/users_control/user_control.vue'
+import invitation_code_manager from '../pages/Dashboard/users_control/invitation_code_manager.vue'
 
 
   const routes = [
@@ -57,6 +59,16 @@ import inventory_general from '../pages/Dashboard/Products and categories/invent
           path: '/inventory_general',
           name: 'inventory_general',
           component: inventory_general
+        },
+        {
+          name: 'user_control',
+          path: 'user_control',
+          component:user_control
+        },
+        {
+          name: 'invitation_code_manager',
+          path: '/invitation_code_manager',
+          component:invitation_code_manager
         },
         {
           name: 'cases',

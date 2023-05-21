@@ -74,10 +74,10 @@
               Usuarios
             </button>
             <div class="mt-2 bg-gray-300 rounded-md overflow-hidden" v-show="showSubMenu3">
-              <router-link to="/products_fis" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
+              <router-link to="/user_control" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
                 Usuarios Registrados
               </router-link>
-              <router-link to="/product_dig" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
+              <router-link to="/invitation_code_manager" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
                 Administrador de codigos de invitacion
               </router-link>
             </div>
