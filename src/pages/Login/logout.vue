@@ -45,9 +45,9 @@
       async logout() {
         try {
           // Enviar una solicitud POST al servidor para cerrar sesión
-          await axios.post("http://127.0.0.1:8000/api/users/logout", {}, {
+          await axios.get("http://127.0.0.1:8000/api/users/logout", {}, {
             headers: {
-              Authorization: `Bearer ${Cookies.get('token')}`, // Incluir el token de autenticación en el encabezado
+              Authorization: `Token ${Cookies.get('token')}`, // Incluir el token de autenticación en el encabezado
             },
           });
   
