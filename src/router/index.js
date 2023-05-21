@@ -14,7 +14,6 @@ import signup from '../pages/Login/signup.vue'
 import resetpass from '../pages/Login/resetpass.vue'
 import homePageEcommerce from '../pages/Store/homePageEcommerce.vue'
 import { isAuthenticated, getAuthToken } from "../../utils/auth.js"; 
-import Cookies from "js-cookie";
 import logout from '../pages/Login/logout.vue'
 import product_dig from '../pages/Dashboard/Products and categories/product_dig.vue'
 import categories_manage from '../pages/Dashboard/Products and categories/categories_manage.vue'
@@ -90,7 +89,8 @@ import inventory_general from '../pages/Dashboard/Products and categories/invent
     {
       path: '/logout',
       name: 'logout',
-      component: logout
+      component: logout,
+      meta: {requiresAuth: true}
     },
     {
       path: '/signup',
