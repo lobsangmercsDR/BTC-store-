@@ -36,6 +36,13 @@
                                     <form>
                                         <div class="relative w-full mb-3">
                                             <label class="block uppercase text-gray-700 text-xs font-bold mb-2"
+                                                for="grid-name">UserName</label>
+                                            <input type="text"
+                                                class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
+                                                placeholder="Your name" v-model="name" style="transition: all 0.15s ease 0s;" />
+                                        </div>
+                                        <div class="relative w-full mb-3">
+                                            <label class="block uppercase text-gray-700 text-xs font-bold mb-2"
                                                 for="grid-name">Email</label>
                                             <input type="text"
                                                 class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
