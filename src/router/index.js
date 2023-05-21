@@ -16,6 +16,9 @@ import homePageEcommerce from '../pages/Store/homePageEcommerce.vue'
 import { isAuthenticated, getAuthToken } from "../../utils/auth.js"; 
 import Cookies from "js-cookie";
 import logout from '../pages/Login/logout.vue'
+import product_dig from '../pages/Dashboard/Products and categories/product_dig.vue'
+import categories_manage from '../pages/Dashboard/Products and categories/categories_manage.vue'
+import inventory_general from '../pages/Dashboard/Products and categories/inventory_general.vue'
 
 
   const routes = [
@@ -39,6 +42,21 @@ import logout from '../pages/Login/logout.vue'
           name: 'products_fis',
           path: '/products_fis',
           component:products_fis
+        },
+        {
+          path: '/product_dig',
+          name: 'product_dig',
+          component: product_dig
+        },
+        {
+          path: '/categories_manage',
+          name: 'categories_manage',
+          component: categories_manage
+        },
+        {
+          path: '/inventory_general',
+          name: 'inventory_general',
+          component: inventory_general
         },
         {
           name: 'cases',

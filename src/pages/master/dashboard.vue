@@ -55,7 +55,7 @@
 
             <button
               class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-300  hover:text-gray-800 transition duration-400 ease-in-out"
-              @click="toggleSubMenu">
+              @click="toggleSubMenu1">
               <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-three-dots"
                 viewBox="0 0 20 20">
                 <path fill-rule="evenodd"
@@ -63,18 +63,18 @@
               </svg>
               Productos
             </button>
-            <div class="mt-2 bg-gray-300 rounded-md overflow-hidden" v-show="showSubMenu">
+            <div class="mt-2 bg-gray-300 rounded-md overflow-hidden" v-show="showSubMenu1">
               <router-link to="/products_fis" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
                 Agregar Productos Fisicos
               </router-link>
-              <router-link to="/logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
+              <router-link to="/product_dig" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
                 Agregar Productos Digitales
               </router-link>
-              <router-link to="/logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
-                Inventario
+              <router-link to="/categories_manage" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
+                Creador de Categorias
               </router-link>
-              <router-link to="/logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
-                Editar productos
+              <router-link to="/inventory_general" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
+                Inventario
               </router-link>
             </div>
 
@@ -140,11 +140,15 @@ export default {
     return {
       showSide: true,
       showSubMenu: false,
+      showSubMenu1:false,
     };
   },
   methods: {
     toggleSubMenu() {
       this.showSubMenu = !this.showSubMenu;
+    },
+    toggleSubMenu1() {
+      this.showSubMenu1 = !this.showSubMenu1;
     },
   },
 };
@@ -238,4 +242,36 @@ export default {
 .submenu li:last-child {
   margin-bottom: 0;
 }
+
+
+.submenu1 {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  z-index: 10;
+}
+
+.submenu1.show {
+  display: block;
+}
+
+.submenu1 ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.submenu1 li {
+  margin-bottom: 5px;
+}
+
+.submenu1 li:last-child {
+  margin-bottom: 0;
+}
+
+
 </style>

@@ -26,6 +26,7 @@
      <invitationcodetool/>
      <usermanages/>
      <rechar/>
+     <inventory/>
 
 
   </div>
@@ -45,6 +46,8 @@ import DigitalCategoriesCreator from '@/components/admintoolscomponentes/Digital
 import invitationcodetool from '@/components/admintoolscomponentes/invitationcodetool.vue';
 import usermanages from '@/components/admintoolscomponentes/usermanages.vue';
 import rechar from '@/components/payments/rechar.vue';
+import inventory from '@/components/payments/inventory.vue'
+
 
 
 
@@ -64,6 +67,7 @@ export default {
     invitationcodetool,
     usermanages,
     rechar,
+    inventory,
 
   },
   data() {

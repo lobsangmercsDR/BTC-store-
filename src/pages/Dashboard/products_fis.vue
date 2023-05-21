@@ -1,15 +1,15 @@
 <template>
   <div>
-    <AddDigitalProduct/>
+    <AddProduct/>
   </div>
 </template>
 
 <script>
-import AddDigitalProduct from '@/components/creators/AddDigitalProduct.vue';
+import AddProduct from '@/components/creators/AddProduct.vue';
 
 export default {
   components: {
-    AddDigitalProduct,
+    AddProduct,
   },
 };
 </script>
