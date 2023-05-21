@@ -126,10 +126,6 @@ const router = Router();
 router.beforeEach((to, from, next) => {
   if(to.matched.some(route => route.meta.requiresAuth)) {
 
-    console.log("asda");
-    console.log(Cookies.get('token'))
-    console.log(getAuthToken())
-    console.log(isAuthenticated())
     if(isAuthenticated()) {
       next();
     } else {

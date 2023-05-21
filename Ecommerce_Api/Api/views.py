@@ -290,6 +290,7 @@ class LogoutView(APIView):
 
     def get(self, request, *args, **kwargs):
         dataAuth = request.headers.get('Authorization')
+        print(dataAuth)
         token = dataAuth.split(' ')[1]
         token1 = Token.objects.filter(key=token).first()
         print(type(token1))
