@@ -231,6 +231,7 @@ class UserView(viewsets.ModelViewSet):
         
     def post_user(self, request, *args, **kwargs):
         serializer = UserCreatorSerializer(data=request.data)
+        print(serializer)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         serializerRep = UserSerializer(user)   
@@ -306,9 +307,7 @@ class AuthenticationView(ObtainAuthToken):
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
         grop = list(user.groups.values_list('name'))
-        response = HttpResponse("Guardado")
-        data = {'token': token.key, 'user':grop}
-        print(response.set_cookie('token', token.key, httponly=False ))
+        data = {'token': token.key, 'user':grop, 'D_A':user.is_superuser}
         return JsonResponse(data)
 
 

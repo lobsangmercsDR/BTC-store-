@@ -6,7 +6,7 @@
         <main>
             <section class="absolute w-full h-full">
                 <div class="absolute top-0 w-full h-full bg-gray-900"
-                    style="background-size: 100%; background-repeat: no-repeat;"></div>
+                    style="background-size: 100%; background-repeat: no-repeat;">
                 <div class="container mx-auto px-4 h-full">
                     <div class="flex content-center items-center justify-center h-full loginContainer">
                         <div class="w-full lg:w-4/12 px-4">
@@ -37,37 +37,52 @@
                                         <div class="relative w-full mb-3">
                                             <label class="block uppercase text-gray-700 text-xs font-bold mb-2"
                                                 for="grid-name">UserName</label>
+                                            <div v-if="error && error.hasOwnProperty('name')" class="text-red-500 errorText"> 
+                                                <small>{{ error.name[0] }}</small>
+                                            </div>
                                             <input type="text"
                                                 class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                                                placeholder="Your name" v-model="name" style="transition: all 0.15s ease 0s;" />
+                                                placeholder="Your name" v-model="name" style="transition: all 0.15s ease 0s;" :class="{'errorInput' : error && error.hasOwnProperty('name')}"/>
                                         </div>
                                         <div class="relative w-full mb-3">
                                             <label class="block uppercase text-gray-700 text-xs font-bold mb-2"
                                                 for="grid-name">Email</label>
+                                            <div v-if="error && error.hasOwnProperty('email')" class="text-red-500 errorText"> 
+                                                <small>{{ error.email[0] }}</small>
+                                            </div>
                                             <input type="text"
                                                 class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                                                placeholder="Your name" v-model="email" style="transition: all 0.15s ease 0s;" />
+                                                placeholder="Your email" v-model="email" style="transition: all 0.15s ease 0s;" :class="{'errorInput' : error && error.hasOwnProperty('email')}"/>
                                         </div>
                                         <div class="relative w-full mb-3">
                                             <label class="block uppercase text-gray-700 text-xs font-bold mb-2"
                                                 for="grid-email">Invitation Code</label>
+                                            <div v-if="error && error.hasOwnProperty('invitation_code')" class="text-red-500 errorText"> 
+                                                <small>{{ error.invitation_code[0] }}</small>
+                                            </div>
                                             <input type="email"
                                                 class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                                                placeholder="Your email address" v-model="invitation_code" style="transition: all 0.15s ease 0s;" />
+                                                placeholder="Your invitation codes" v-model="invitation_code" style="transition: all 0.15s ease 0s;" :class="{'errorInput' : error && error.hasOwnProperty('invitation_code')}"/>
                                         </div>
                                         <div class="relative w-full mb-3">
                                             <label class="block uppercase text-gray-700 text-xs font-bold mb-2"
                                                 for="grid-password">Password</label>
+                                            <div v-if="error && error.hasOwnProperty('password')" class="text-red-500 errorText"> 
+                                                <small>{{ error.password[0] }}</small>
+                                            </div>
                                             <input type="password"
                                                 class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                                                placeholder="Password"  v-model="password" style="transition: all 0.15s ease 0s;" />
+                                                placeholder="Password"  v-model="password" style="transition: all 0.15s ease 0s;" :class="{'errorInput' : error && error.hasOwnProperty('password')}"/>
                                         </div>
                                         <div class="relative w-full mb-3">
                                             <label class="block uppercase text-gray-700 text-xs font-bold mb-2"
-                                                for="grid-password-confirm">Confirm Password</label>
-                                            <input type="password"
+                                                for="grid-password-confirm" >Confirm Password</label>
+                                            <div v-if="error && error.hasOwnProperty('confirm_pass')" class="text-red-500 errorText"> 
+                                                <small>{{ error.confirm_pass[0] }}</small>
+                                            </div>
+                                            <input type="password" v-model="confirm_pass"
                                                 class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                                                placeholder="Confirm Password" style="transition: all 0.15s ease 0s;" />
+                                                placeholder="Confirm Password" style="transition: all 0.15s ease 0s;" :class="{'errorInput' : error && error.hasOwnProperty('confirm_pass')}"/>
                                         </div>
                                         <div class="flex justify-between items-center mb-3">
                                             <div>
@@ -102,6 +117,7 @@
                     </div>
                 </div>
                 <footer-component></footer-component>
+            </div>
             </section>
         </main>
     </div>
@@ -113,29 +129,29 @@ import axios from 'axios';
 export default {
     data(){
         return {
-            name:'sdf',
+            name:'',
             email: '',
             password: '',
+            confirm_pass:'',
             invitation_code: '',
+            error: null
         };
     },
 
     methods: {
         async register() {
-            try  {
-                const response =  await axios.post("http://127.0.0.1:8000/api/users", {
-                    name: this.name,
-                    email: this.email,
-                    password: this.password,
-                    invitation_code: this.invitation_code
-                })
-
-                console.log(this.name)
-                console.log("Usuario registrado")
-                console.log(response.data)
+        try  {
+            const response =  await axios.post("http://127.0.0.1:8000/api/users", {
+                name: this.name,
+                email: this.email,
+                password: this.password,
+                confirm_pass: this.confirm_pass,
+                invitation_code: this.invitation_code
+            })
+            console.log(response.data)
             }
             catch(error) {
-                console.log(this.name)
+                this.error = error.response.data
                 console.log(error.response.data)
             }
         }

@@ -1,4 +1,5 @@
 from django.forms import ValidationError
+
 from rest_framework import serializers,exceptions
 from .models import Category, Product,Transacts,User,InvitationCodes,RoleRequests
 from django.contrib.auth import get_user_model, authenticate
@@ -74,33 +75,38 @@ class UserCreatorSerializer(serializers.ModelSerializer):
     add_group = serializers.CharField(read_only=True)
     delete_group= serializers.CharField(read_only=True)
     invitation_code = serializers.CharField()
+    name = serializers.CharField(required=True)
+    confirm_pass = serializers.CharField(write_only=True)
+
+    def validate_invitation_code(self, value):
+        invitationObj = InvitationCodes.objects.filter(invitationCodes=value).first()
+        if invitationObj ==None:
+            raise serializers.ValidationError("No encontrado")
+        elif invitationObj.is_expired == True:
+            raise serializers.ValidationError("Codigo de invitacion expirado")
+
+    def validate(self, data):
+        if data['password'] != data['confirm_pass']:
+            raise serializers.ValidationError({'confirm_pass':'Sus contraseñas no coinciden'})
+        return data        
 
     class Meta:
         model = get_user_model() 
-        fields = ['id','email','password','name','is_active','add_group', 'invitation_code', 'delete_group']
+        fields = ['id','email','password','confirm_pass','name','is_active','add_group', 'invitation_code', 'delete_group']
         extra_kwargs = {'password': {'write_only': True}}
         ref_name = 'UserCreatorSerializer'
 
     def create(self, validated_data):
         group_name = ["buyers"]
         invitation_code = validated_data.pop('invitation_code',None)
-        message = ""
-        try:
-            if invitation_code:
-                invitationObj = InvitationCodes.objects.get(invitationCodes=invitation_code)
-        except:
-            message = "No se ha encontrado su codigo de invitacion"
-            raise serializers.ValidationError({"message":message})    
-        if invitationObj.is_used == False and invitationObj.is_expired == False:
+        validated_data.pop('confirm_pass')
+        if invitation_code:
+            invitationObj = InvitationCodes.objects.get(invitationCodes=invitation_code) 
             serializer = InvitationCodesSerializer(instance=invitationObj, data={'is_used':True})
             if serializer.is_valid():
                 serializer.save()
-        else:
-            message = "Code de invitacion previamente usado o expirado"
-            raise serializers.ValidationError({"message":message})
+
         group = Group.objects.get(name=group_name[0]) 
-        print(validated_data)
-        print(validated_data)
         user = User.objects.create_user(**validated_data)
         user.groups.add(group)
         return user
@@ -283,25 +289,6 @@ class ProductSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({"Parametros Invalidos":INVList})
             return super().to_internal_value(data)
 
-
-
-# class SellerSerializer(serializers.ModelSerializer):
-#     products = serializers.SerializerMethodField()
-
-#     class Meta: 
-#         model = Sellers
-#         fields = ['id','nameSeller','lastNameSeller','registerDate', 'products']
-
-#     def get_products(self, obj):
-#         products = Product.objects.filter(seller_id=obj.id)
-#         return ProductSerializer(products, many=True).data
-
-
-# class SellerNestedSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Sellers
-#         fields = '__all__'
-
 class TransactProductNestedSerializer(serializers.ModelSerializer):
     seller = UserNestedSerializer(source='seller_id')
 
@@ -352,28 +339,9 @@ class AuthenticationSerializer(serializers.Serializer):
             raise serializers.ValidationError('Sus credenciales han sido incorrectas', code=401)
 
         data['user'] = user 
-        print(data)
         return data
 
-        def to_representation(self, instance):
-            print(instance)
-
 
 
     
 
-
-
-# class ProductSerializer(serializers.ModelSerializer):
-#     category_name = serializers.CharField(source='category_id.nameCategory')
-    
-#     class Meta:
-#         model = Product
-#         fields = ['id','nameProduct','priceProduct','active']
-
-# class CategorySerializer(serializers.ModelSerializer):
-#     products = ProductSerializer(many=True, read_only=True)
-    
-#     class Meta:
-#         model = Category
-#         fields = ['id', 'nameCategory', 'products']
