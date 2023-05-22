@@ -214,7 +214,7 @@ export default {
       showInvoiceModal: false,
       user: {
         username: 'JohnDoe',
-        balanceBTC: 1, // Saldo ficticio en BTC
+        balanceBTC: 0, // Saldo ficticio en BTC
       },
       shippingAddress: '',
       orderNumber: '',
