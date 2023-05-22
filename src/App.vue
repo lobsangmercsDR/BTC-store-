@@ -1,17 +1,20 @@
 <template>
   <div id="app">
     <router-view />
-    <ProductCard  v-if="ShowCard"/>
+    <ProductCard  v-if="ShowCard"/> 
+    <homeview v-if="NewProductSlider"/>
   </div>
 </template>
 
 <script>
 import ProductCard from './components/productCard.vue';
+import homeview from './components/homeview.vue';
 
 export default {
   name: 'App',
   components: {
     ProductCard,
+    homeview,
   },
 };
 </script>

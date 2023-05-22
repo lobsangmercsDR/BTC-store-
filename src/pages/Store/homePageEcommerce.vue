@@ -1,37 +1,42 @@
 <template>
-  <div class="bg-light-gray">
+  <div class="bg-light-gray homepage-container">
     <TopBar />
-    <div class="d-flex flex-row justify-content-between margin-top">
-      <div class="flex-1 mr-4">
+    <div class="grid-container">
+      <div class="table-container">
         <table class="table-fixed w-2/5">
           <realtimelastbuy />
         </table>
       </div>
-      <div class="flex-1">
-        <newsbox />
-      </div>
-      <div class="flex-1">
+      <div class="table-container">
         <table class="table-fixed w-2/5">
           <realtimenewproduct />
         </table>
       </div>
+      <div class="table-container">
+        <table class="table-fixed w-2/5">
+        
+        </table>
+      </div>
+      <div class="newsbox-container">
+        <newsbox />
+      </div>
     </div>
-   
-     <SingleProduct />
-     <SingleDigitalProduct />
-     <productCard />
-     <AddDigitalProduct/>
-     <AddProduct/>
-     <DigitalCategoriesCreator/>
-     <invitationcodetool/>
-     <usermanages/>
-     <rechar/>
-     <inventory/>
 
-
+    <!-- Resto de los componentes -->
+    <SingleProduct />
+    <SingleDigitalProduct />
+    <productCard />
+    <AddDigitalProduct/>
+    <AddProduct/>
+    <DigitalCategoriesCreator/>
+    <invitationcodetool/>
+    <usermanages/>
+    <rechar/>
+    <inventory/>
+    <homeview/>
   </div>
 </template>
-  
+
 <script>
 import TopBar from '@/components/headerNav.vue';
 import realtimelastbuy from '@/components/realtimelastbuy.vue';
@@ -47,6 +52,7 @@ import usermanages from '@/components/admintoolscomponentes/usermanages.vue';
 import rechar from '@/components/payments/rechar.vue';
 import inventory from '@/components/payments/inventory.vue'
 import productCard from '@/components/productCard.vue';
+import homeview from '@/components/homeview.vue';
 
 
 
@@ -68,6 +74,7 @@ export default {
     rechar,
     inventory,
     productCard,
+    homeview
     
 
   },
@@ -104,33 +111,38 @@ export default {
   },
 };
 </script>
-  
+
+
 <style>
 .bg-light-gray {
   background-color: #f2f2f2;
 }
 
-.d-flex {
-  display: flex;
+.homepage-container {
+  max-width: 1000%; /* Ajusta el ancho máximo del contenedor según tus necesidades */
+  margin: 0 auto; /* Centra el contenedor horizontalmente */
+  padding: 20px; /* Agrega un espacio de relleno alrededor del contenedor */
 }
 
-.flex-row {
-  flex-direction: row;
+.grid-container {
+  display: grid;
+  grid-template-columns: minmax(0,2fr);/* Crea 3 columnas de tamaño igual */
+  grid-gap: 20px; /* Espacio entre las celdas */
+  max-width: 5000px;
+  margin: auto;
 }
 
-.justify-content-between {
-  justify-content: space-between;
+.table-container {
+  grid-column: span 2; /* Ocupa 2 columnas */
 }
 
-.realtimelastbuy {
-  margin-right: 50px;
+.newsbox-container {
+  grid-column: span 1; /* Ocupa 1 columna */
 }
 
-.realtimenewproduct {
-  margin-left: 100px;
+.table-fixed {
+  width: 100%;
 }
 
-.margin-top {
-  margin-top: 16px;
-}
+/* Estilos adicionales según sea necesario para los componentes */
 </style>
