@@ -69,7 +69,7 @@ class InvitationCodesSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(format="%d/%m/%Y %I:%M:%S %p",required=False)
     class Meta:
         model = InvitationCodes
-        fields=['invitationCodes','description','is_used','is_expired','created_at','expire_date']
+        fields=['invitationCodes','description','is_expired','countUsers','created_at','expire_date']
 
 class UserCreatorSerializer(serializers.ModelSerializer):
     add_group = serializers.CharField(read_only=True)
@@ -84,10 +84,12 @@ class UserCreatorSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("No encontrado")
         elif invitationObj.is_expired == True:
             raise serializers.ValidationError("Codigo de invitacion expirado")
+        return value
 
     def validate(self, data):
         if data['password'] != data['confirm_pass']:
             raise serializers.ValidationError({'confirm_pass':'Sus contraseñas no coinciden'})
+        print(data)
         return data        
 
     class Meta:
@@ -100,9 +102,11 @@ class UserCreatorSerializer(serializers.ModelSerializer):
         group_name = ["buyers"]
         invitation_code = validated_data.pop('invitation_code',None)
         validated_data.pop('confirm_pass')
+        print(validated_data)
         if invitation_code:
-            invitationObj = InvitationCodes.objects.get(invitationCodes=invitation_code) 
-            serializer = InvitationCodesSerializer(instance=invitationObj, data={'is_used':True})
+            invitationObj = InvitationCodes.objects.get(invitationCodes=invitation_code)
+            countUsed = invitationObj.countUsers  
+            serializer = InvitationCodesSerializer(instance=invitationObj, data={'countUsers':countUsed+1})
             if serializer.is_valid():
                 serializer.save()
 

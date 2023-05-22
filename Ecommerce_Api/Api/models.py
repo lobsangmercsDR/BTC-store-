@@ -69,7 +69,7 @@ class Transacts(models.Model):
 class InvitationCodes(models.Model):
     invitationCodes = models.CharField(max_length=15,default=uti.generate_invitation_code(), unique=True)
     description = models.CharField(max_length=50, blank=True)
-    is_used = models.BooleanField(default=False)
+    countUsers = models.IntegerField()
     is_expired = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     expire_date = models.DateTimeField(default=now() + timedelta(days=7))

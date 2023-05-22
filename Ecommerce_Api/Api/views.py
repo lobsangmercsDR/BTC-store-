@@ -240,9 +240,7 @@ class UserView(viewsets.ModelViewSet):
     def put_user_data(self, request, *args, **kwargs):
         roles=request.GET.get('roles','false')
         userObj = self.get_object()
-        print(userObj)
         userPermision = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin, IsSeller,IsChecker, IsBuyer], oneObj=True, obj=userObj)
-        print(userPermision)
         if not any(val is True for val in userPermision.values()):
             return JsonResponse({"message":"No tiene acceso a este objeto",'ID':request.user.id})
         if not userPermision['IsAdmin'] and roles=='true':
@@ -251,7 +249,6 @@ class UserView(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         serializer= UserSerializer(userObj)
-        print(serializer.data)
         return JsonResponse(serializer.data, status=200)
     
     def post_groups_request(self, request):
@@ -360,7 +357,6 @@ class InvitationCodeView(viewsets.ModelViewSet):
     def get_invitation_codes(self, request):
         invCodes = InvitationCodes.objects.all()
         result = InvitationCodesSerializer(invCodes, many=True).data
-        print(result)
         return JsonResponse(result, status = 200, safe=False)
 
     def post_invitation_code(self, request):
