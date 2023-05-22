@@ -37,7 +37,6 @@ import TopBar from '@/components/headerNav.vue';
 import realtimelastbuy from '@/components/realtimelastbuy.vue';
 import realtimenewproduct from '@/components/realtimenewproduct.vue';
 import newsbox from '@/components/newsbox.vue';
-import productCard from '@/components/productCard.vue';
 import SingleProduct from '@/components/SingleProduct.vue';
 import SingleDigitalProduct from '@/components/SingleDigitalProduct.vue';
 import AddDigitalProduct from '@/components/creators/AddDigitalProduct.vue';
@@ -47,6 +46,7 @@ import invitationcodetool from '@/components/admintoolscomponentes/invitationcod
 import usermanages from '@/components/admintoolscomponentes/usermanages.vue';
 import rechar from '@/components/payments/rechar.vue';
 import inventory from '@/components/payments/inventory.vue'
+import productCard from '@/components/productCard.vue';
 
 
 
@@ -58,7 +58,6 @@ export default {
     realtimelastbuy,
     realtimenewproduct,
     newsbox,
-    productCard,
     SingleProduct,
     SingleDigitalProduct,
     AddDigitalProduct,
@@ -68,6 +67,8 @@ export default {
     usermanages,
     rechar,
     inventory,
+    productCard,
+    
 
   },
   data() {

@@ -1,17 +1,19 @@
 <template>
-  <div>
+  <div id="app">
     <router-view />
+    <ProductCard  v-if="ShowCard"/>
   </div>
 </template>
 
 <script>
+import ProductCard from './components/productCard.vue';
+
 export default {
   name: 'App',
   components: {
-    
-
-  }
-}
+    ProductCard,
+  },
+};
 </script>
 
 <style>
@@ -21,6 +23,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-
 }
 </style>
