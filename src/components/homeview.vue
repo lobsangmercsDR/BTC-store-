@@ -11,22 +11,19 @@
                             <th class="p-2">Cantidad Comprada</th>
                             <th class="p-2">Fecha de Compra</th>
                             <th class="p-2">Precio</th>
-                            <th class="p-2">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(product, index) in productsTable1" :key="index" class="bg-gray-200 text-gray-700">
+                        <tr v-for="(product, index) in displayedProductsTable1" :key="index"
+                            class="bg-gray-200 text-gray-700">
                             <td class="p-2">{{ product.name }}</td>
                             <td class="p-2">{{ product.quantitySold }}</td>
                             <td class="p-2">{{ product.dateSold }}</td>
                             <td class="p-2">{{ product.price }}</td>
-                            <td class="p-2">
-                                
-                            </td>
                         </tr>
                     </tbody>
-                    <button class="table-button" @click="openModal1()">Ver Más</button>
                 </table>
+                <button class="table-button" @click="openModal1(product)">Ver Más</button>
             </div>
         </div>
         <div class="div2">
@@ -40,21 +37,52 @@
                             <th class="p-2">Cantidad Disponibles</th>
                             <th class="p-2">Fecha de Publicación</th>
                             <th class="p-2">Precio</th>
-                            <th class="p-2">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(product, index) in productsTable2" :key="index" class="bg-gray-200 text-gray-700">
+                        <tr v-for="(product, index) in displayedProductsTable2" :key="index"
+                            class="bg-gray-200 text-gray-700">
                             <td class="p-2">{{ product.name }}</td>
                             <td class="p-2">{{ product.quantityAvailable }}</td>
                             <td class="p-2">{{ product.datePublished }}</td>
                             <td class="p-2">{{ product.price }}</td>
-                            <td class="p-2">
-                                <button class="table-button" @click="openModal2(product)">Ver Más</button>
-                            </td>
+
                         </tr>
                     </tbody>
                 </table>
+                <button class="table-button" @click="openModal2(product)">Ver Más</button>
+            </div>
+        </div>
+
+
+
+
+
+        <div class="div2">
+            <!-- Table 2 -->
+            <h1>Últimos productos digitales Vendidos</h1>
+            <div class="component-container component-container-color2">
+                <table class="table text-gray-400 border-separate space-y-4 text-sm">
+                    <thead class="bg-gray-800 text-gray-500">
+                        <tr>
+                            <th class="p-2">Producto</th>
+                            <th class="p-2">Cantidad Disponibles</th>
+                            <th class="p-2">Fecha de Publicación</th>
+                            <th class="p-2">Precio</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(product, index) in displayedProductsTable2" :key="index"
+                            class="bg-gray-200 text-gray-700">
+                            <td class="p-2">{{ product.name }}</td>
+                            <td class="p-2">{{ product.quantityAvailable }}</td>
+                            <td class="p-2">{{ product.datePublished }}</td>
+                            <td class="p-2">{{ product.price }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="table-button" @click="openModal2(product)">Ver Más</button>
             </div>
         </div>
 
@@ -70,12 +98,12 @@
             <h1>Ultimos productos Fisicos agregados</h1>
 
             <!-- Slider -->
-            <div class="slider-container">
+            <div class="slider-container hidden md:block">
                 <agile :options="sliderOptions" @afterChange="handleAfterChange" ref="agile">
                     <div v-for="(product, index) in productsSlider" :key="index" class="slider-item">
                         <div class="product-info">
                             <div class="product-image">
-                                <img :src="product.image" alt="Product Image">
+                                <img :src="'https://picsum.photos/150/150?random=' + index" alt="Product Image">
                             </div>
                             <h4 class="product-name">{{ product.name }}</h4>
                             <p class="product-price">$ {{ product.price }}</p>
@@ -88,12 +116,12 @@
         <div class="div4">
             <h1>Productos Fisicos mas vendidos</h1>
 
-            <div class="slider-container">
+            <div class="slider-container hidden md:block">
                 <agile :options="sliderOptions1" @afterChange="handleAfterChange" ref="agile">
                     <div v-for="(product, index) in productsSlider" :key="index" class="slider-item">
                         <div class="product-info">
                             <div class="product-image">
-                                <img :src="product.image" alt="Product Image">
+                                <img :src="'https://picsum.photos/150/150?random=' + index" alt="Product Image">
                             </div>
                             <h4 class="product-name">{{ product.name }}</h4>
                             <p class="product-price">$ {{ product.price }}</p>
@@ -106,97 +134,99 @@
         <div class="div5">
             <div class="component-container component-container-color1">
                 <div class="news-section">
-                    <h2 class="news-section-title">Noticias y Actualizaciones</h2>
+                    <h2 class="news-section-title"><i class="fas fa-newspaper"></i> Noticias y Actualizaciones</h2>
                     <div class="news-item">
-                        <h3 class="news-title">Título de la Noticia 1</h3>
+                        <h3 class="news-title"><i class="fas fa-bullhorn"></i> Título de la Noticia 1</h3>
                         <p class="news-description">Descripción de la Noticia 1</p>
                     </div>
                     <div class="news-item">
-                        <h3 class="news-title">Título de la Noticia 2</h3>
+                        <h3 class="news-title"><i class="fas fa-bullhorn"></i> Título de la Noticia 2</h3>
                         <p class="news-description">Descripción de la Noticia 2</p>
                     </div>
                     <div class="news-item">
-                        <h3 class="news-title">Título de la Noticia 3</h3>
+                        <h3 class="news-title"><i class="fas fa-bullhorn"></i> Título de la Noticia 3</h3>
                         <p class="news-description">Descripción de la Noticia 3</p>
                     </div>
                     <div class="news-item">
-                        <h3 class="news-title">Título de la Noticia 4</h3>
+                        <h3 class="news-title"><i class="fas fa-bullhorn"></i> Título de la Noticia 4</h3>
                         <p class="news-description">Descripción de la Noticia 4</p>
                     </div>
                     <div class="news-item">
-                        <h3 class="news-title">Título de la Noticia 5</h3>
+                        <h3 class="news-title"><i class="fas fa-bullhorn"></i> Título de la Noticia 5</h3>
                         <p class="news-description">Descripción de la Noticia 5</p>
                     </div>
                 </div>
-
             </div>
         </div>
-
-
-
-
         <div class="div6">
         </div>
     </div>
 
-     <!-- Modal 1 -->
-  <div v-if="showModal1" class="modal">
-    <div class="modal-content">
-      <span class="close-button" @click="closeModal1">&times;</span>
-      <h2>Detalles del producto</h2>
-      <table class="table text-gray-400 border-separate space-y-4 text-sm">
-        <thead class="bg-gray-800 text-gray-500">
-          <tr>
-            <th class="p-2">Producto</th>
-            <th class="p-2">Cantidad Comprada</th>
-            <th class="p-2">Fecha de Compra</th>
-            <th class="p-2">Precio</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="bg-gray-200 text-gray-700">
-            <td class="p-2">{{ selectedProduct.name }}</td>
-            <td class="p-2">{{ selectedProduct.quantitySold }}</td>
-            <td class="p-2">{{ selectedProduct.dateSold }}</td>
-            <td class="p-2">{{ selectedProduct.price }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
 
-  <!-- Modal 2 -->
-  <div v-if="showModal2" class="modal">
-    <div class="modal-content">
-      <span class="close-button" @click="closeModal2">&times;</span>
-      <h2>Detalles del producto</h2>
-      <table class="table text-gray-400 border-separate space-y-4 text-sm">
-        <thead class="bg-gray-800 text-gray-500">
-          <tr>
-            <th class="p-2">Producto</th>
-            <th class="p-2">Cantidad Disponibles</th>
-            <th class="p-2">Fecha de Publicación</th>
-            <th class="p-2">Precio</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="bg-gray-200 text-gray-700">
-            <td class="p-2">{{ selectedProduct.name }}</td>
-            <td class="p-2">{{ selectedProduct.quantityAvailable }}</td>
-            <td class="p-2">{{ selectedProduct.datePublished }}</td>
-            <td class="p-2">{{ selectedProduct.price }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
 
-   
-   
+
+
+
+
+
+    <!-- Modal 1 -->
+    <div v-if="showModal1" class="modal">
+        <div class="modal-content">
+            <span class="close-button" @click="closeModal1">&times;</span>
+            <h2>Detalles del producto</h2>
+            <table class="table text-gray-400 border-separate space-y-4 text-sm">
+                <thead class="bg-gray-800 text-gray-500">
+                    <tr>
+                        <th class="p-2">Producto</th>
+                        <th class="p-2">Cantidad Comprada</th>
+                        <th class="p-2">Fecha de Compra</th>
+                        <th class="p-2">Precio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(product, index) in productsTable1" :key="index" class="bg-gray-200 text-gray-700">
+                        <td class="p-2">{{ product.name }}</td>
+                        <td class="p-2">{{ product.quantitySold }}</td>
+                        <td class="p-2">{{ product.dateSold }}</td>
+                        <td class="p-2">{{ product.price }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="modal-close" @click="closeModal1">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Modal 2 -->
+    <div v-if="showModal2" class="modal">
+        <div class="modal-content">
+            <span class="close-button" @click="closeModal2">&times;</span>
+            <h2>Detalles del producto</h2>
+            <table class="table text-gray-400 border-separate space-y-4 text-sm">
+                <thead class="bg-gray-800 text-gray-500">
+                    <tr>
+                        <th class="p-2">Producto</th>
+                        <th class="p-2">Cantidad Disponibles</th>
+                        <th class="p-2">Fecha de Publicación</th>
+                        <th class="p-2">Precio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(product, index) in productsTable2" :key="index" class="bg-gray-200 text-gray-700">
+                        <td class="p-2">{{ product.name }}</td>
+                        <td class="p-2">{{ product.quantityAvailable }}</td>
+                        <td class="p-2">{{ product.datePublished }}</td>
+                        <td class="p-2">{{ product.price }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="modal-close" @click="closeModal2">Cerrar</button>
+        </div>
+    </div>
 </template>
   
 <script>
 import { VueAgile } from 'vue-agile'
+
 
 export default {
     components: {
@@ -205,10 +235,8 @@ export default {
     data() {
         return {
             showModal1: false,
-            showProductTable: false,
-            
             showModal2: false,
-            selectedProduct: null,
+
 
 
             sliderOptions: {
@@ -232,12 +260,33 @@ export default {
             productsTable1: [
                 // Aquí van los datos de la tabla 1
                 { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
+                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
+                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
+                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
                 { name: "Producto 2", quantitySold: 5, dateSold: "2023-05-18", price: 50 },
+                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
+                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
+                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
+                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
+                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
+                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
+                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
+                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
+                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
+                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
+                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
+                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
+                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
+                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
+                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
                 // Agrega más productos según tus necesidades
             ],
             productsTable2: [
                 // Aquí van los datos de la tabla 2
                 { name: "Producto A", quantityAvailable: 20, datePublished: "2023-05-15", price: 200 },
+                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80 },
+                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80 },
+                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80 },
                 { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80 },
                 // Agrega más productos según tus necesidades
             ],
@@ -255,6 +304,18 @@ export default {
             ],
         }
     },
+    computed: {
+        displayedProductsTable1() {
+            return this.productsTable1.slice(0, 3);
+        },
+        displayedProductsTable2() {
+            return this.productsTable2.slice(0, 3);
+        },
+
+        totalPages() {
+            return Math.ceil(this.productsTable2.length / this.productsPerPage);
+        },
+    },
     methods: {
         goToProduct(productId) {
             this.$router.push({ name: 'Product', params: { id: productId } })
@@ -264,21 +325,22 @@ export default {
                 this.$refs.agile.goTo(0)
             }
         },
-        openModal1(product) {
+        openModal1() {
             this.showModal1 = true;
-            // Obtén los productos de la tabla correspondiente
-            this.productsTable1 = this.getProductsForTable1(product);
+        },
+        openModal2() {
+            this.showModal2 = true;
         },
         closeModal1() {
             this.showModal1 = false;
-            // Limpia los datos de la tabla en el modal al cerrarlo
-            this.productsTable1 = [];
         },
-        getProductsForTable1(product) {
-            // Lógica para obtener los productos de la tabla correspondiente
-            // Puedes realizar alguna filtración o consulta según tus necesidades
-            // En este ejemplo, simplemente retornamos todos los productos
-            return this.products;
+        closeModal2() {
+            this.showModal2 = false;
+        },
+        goToPage(page) {
+            if (page >= 1 && page <= this.totalPages) {
+                this.currentPage = page;
+            }
         },
 
     }
@@ -319,9 +381,68 @@ export default {
     grid-area: 1 / 5 / 4 / 6;
 }
 
+/* Estilos para dispositivos móviles */
+@media (max-width: 768px) {
+  .parent {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    grid-column-gap: 10px;
+    grid-row-gap: 20px;
+  }
+
+  .div1 {
+    grid-area: 1 / 1 / 3 / 3;
+  }
+
+  .div2 {
+    grid-area: 3 / 1 / 5 / 3;
+  }
+
+  .div3,
+  .div4 {
+    grid-area: auto;
+  }
+
+  .div5 {
+    grid-area: 5 / 1 / 9 / 3;
+  }
+}
+
+/* Estilos para tabletas */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .parent {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    grid-column-gap: 20px;
+    grid-row-gap: 20px;
+  }
+  @media (max-width: 767px) {
+  .hide-on-mobile {
+    display: none;
+  }
+}
+
+  .div1 {
+    grid-area: 1 / 1 / 3 / 2;
+  }
+
+  .div2 {
+    grid-area: 1 / 2 / 3 / 4;
+  }
+
+  .div3,
+  .div4 {
+    grid-area: auto;
+  }
+
+  .div5 {
+    grid-area: 3 / 1 / 7 / 4;
+  }
+}
+
 
 .component-container {
-    padding: 10px;
+    padding: 5px;
     border-radius: 8px;
     text-align: center;
 }
@@ -339,6 +460,7 @@ export default {
 
 .slider-container {
     height: 100%;
+    overflow: hidden;
 }
 
 .slider-items-wrapper {
@@ -346,6 +468,7 @@ export default {
     justify-content: flex-start;
     flex-wrap: wrap;
     margin: -10px;
+    overflow: auto;
 }
 
 .slider-item {
@@ -361,6 +484,9 @@ export default {
     padding: 20px;
     margin: 10px;
     transition: transform 0.3s ease;
+    overflow: hidden;
+    box-sizing: border-box;
+    flex-shrink: 0;
 }
 
 .slider-item:hover {
@@ -369,11 +495,12 @@ export default {
 
 .product-info {
     text-align: center;
+    position: relative;
 }
 
 .product-image img {
     width: 100%;
-    max-height: 120px;
+    height: 120px;
     object-fit: cover;
     border-radius: 8px;
     margin-bottom: 10px;
@@ -383,6 +510,7 @@ export default {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 .product-price {
@@ -399,6 +527,9 @@ export default {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
 }
 
 .product-button:hover {
@@ -427,24 +558,29 @@ export default {
 }
 
 .news-section-title {
-    color: #333;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
+    color: #ab16be;
+    font-size: 24px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
 }
 
 .news-item {
-    margin-bottom: 1rem;
+    margin-bottom: 20px;
 }
 
 .news-title {
-    color: #555;
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
+    color: #333;
+    font-size: 20px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
 }
 
 .news-description {
     color: #777;
-    font-size: 1rem;
+    font-size: 16px;
+    margin-bottom: 0;
 }
 
 
@@ -486,6 +622,26 @@ export default {
     font-size: 24px;
     color: #888;
     cursor: pointer;
+}
+
+.pagination {
+    margin-top: 10px;
+}
+
+.pagination-button {
+    background-color: #fff;
+    color: #333;
+    border: none;
+    padding: 5px 10px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 5px;
+}
+
+.pagination-button.active {
+    background-color: #ccc;
 }
 </style>
   
