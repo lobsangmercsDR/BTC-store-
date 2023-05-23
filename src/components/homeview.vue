@@ -2,10 +2,14 @@
     <div class="parent">
       <div class="div1">
         <!-- Table 1 -->
+        <h1>Ultimos productos digitales agregados</h1>
         <div class="component-container component-container-color1">
           <table class="table text-gray-400 border-separate space-y-4 text-sm">
             <thead class="bg-gray-800 text-gray-500">
               <tr>
+                <th class="p-2">Product</th>
+                <th class="p-2">Product</th>
+                <th class="p-2">Product</th>
                 <th class="p-2">Product</th>
                 <th class="p-2">Quantity Sold</th>
                 <th class="p-2">Date Sold</th>
@@ -25,12 +29,17 @@
       </div>
       <div class="div2">
         <!-- Table 2 -->
+        <h1>Ultimos productos digitales Vendidos</h1>
+
         <div class="component-container component-container-color2">
           <table class="table text-gray-400 border-separate space-y-4 text-sm">
             <thead class="bg-gray-800 text-gray-500">
               <tr>
                 <th class="p-2">Product</th>
                 <th class="p-2">Quantity Sold</th>
+                <th class="p-2">Product</th>
+                <th class="p-2">Product</th>
+                <th class="p-2">Product</th>
                 <th class="p-2">Date Sold</th>
                 <th class="p-2">Price</th>
               </tr>
@@ -47,6 +56,8 @@
         </div>
       </div>
       <div class="div3">
+        <h1>Ultimos productos Fisicos agregados</h1>
+
         <!-- Slider -->
         <div class="slider-container">
           <agile :options="sliderOptions" @afterChange="handleAfterChange" ref="agile">
@@ -64,6 +75,8 @@
         </div>
       </div>
       <div class="div4">
+        <h1>Productos Fisicos mas vendidos</h1>
+
         <div class="slider-container">
           <agile :options="sliderOptions1" @afterChange="handleAfterChange" ref="agile">
             <div v-for="(product, index) in productsSlider" :key="index" class="slider-item">
@@ -80,48 +93,36 @@
         </div>
       </div>
       <div class="div5">
-        <div class="component-container component-container-color2">
-          <table class="table text-gray-400 border-separate space-y-4 text-sm">
-            <thead class="bg-gray-800 text-gray-500">
-              <tr>
-                <th class="p-2">Product</th>
-                <th class="p-2">Quantity Sold</th>
-                <th class="p-2">Date Sold</th>
-                <th class="p-2">Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(product, index) in productsTable2" :key="index" class="bg-gray-200 text-gray-700">
-                <td class="p-2">{{ product.name }}</td>
-                <td class="p-2">{{ product.quantitySold }}</td>
-                <td class="p-2">{{ product.dateSold }}</td>
-                <td class="p-2">{{ product.price }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+  <div class="component-container component-container-color1">
+    <div class="news-section">
+      <h2 class="news-section-title">Noticias y Actualizaciones</h2>
+      <div class="news-item">
+        <h3 class="news-title">Título de la Noticia 1</h3>
+        <p class="news-description">Descripción de la Noticia 1</p>
       </div>
+      <div class="news-item">
+        <h3 class="news-title">Título de la Noticia 2</h3>
+        <p class="news-description">Descripción de la Noticia 2</p>
+      </div>
+      <div class="news-item">
+        <h3 class="news-title">Título de la Noticia 3</h3>
+        <p class="news-description">Descripción de la Noticia 3</p>
+      </div>
+      <div class="news-item">
+        <h3 class="news-title">Título de la Noticia 4</h3>
+        <p class="news-description">Descripción de la Noticia 4</p>
+      </div>
+      <div class="news-item">
+        <h3 class="news-title">Título de la Noticia 4</h3>
+        <p class="news-description">Descripción de la Noticia 4</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
       <div class="div6">
-        <div class="component-container component-container-color2">
-          <table class="table text-gray-400 border-separate space-y-4 text-sm">
-            <thead class="bg-gray-800 text-gray-500">
-              <tr>
-                <th class="p-2">Product</th>
-                <th class="p-2">Quantity Sold</th>
-                <th class="p-2">Date Sold</th>
-                <th class="p-2">Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(product, index) in productsTable2" :key="index" class="bg-gray-200 text-gray-700">
-                <td class="p-2">{{ product.name }}</td>
-                <td class="p-2">{{ product.quantitySold }}</td>
-                <td class="p-2">{{ product.dateSold }}</td>
-                <td class="p-2">{{ product.price }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
       </div>
     </div>
   </template>
@@ -201,7 +202,7 @@
   }
   
   .div1 {
-    grid-area: 1 / 1 / 2 / 2;
+    grid-area: 1 / 1 / 2 /1 ;
   }
   
   .div2 {
@@ -224,9 +225,6 @@
     grid-area: 1 / 5 / 4 / 6;
   }
   
-  .div6 {
-    grid-area: 2 / 6 / 3 / 5;
-  }
   
   .component-container {
     padding: 10px;
@@ -237,6 +235,7 @@
   .component-container-color1 {
     background-color: #f66305;
     color: white;
+    height: 100%;
   }
   
   .component-container-color2 {
@@ -314,6 +313,8 @@
   
   .table {
     border-spacing: 0 10px;
+    width: 100%;
+    height: 100%;
   }
   
   .table tr {
@@ -323,5 +324,31 @@
   .bg-gray-200 {
     background-color: rgba(255, 255, 255, 0.8);
   }
+
+  .news-section {
+  padding: 1rem;
+}
+
+.news-section-title {
+  color: white;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.news-item {
+  margin-bottom: 1rem;
+}
+
+.news-title {
+  color: white;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.news-description {
+  color: white;
+  font-size: 1rem;
+}
+
   </style>
   
