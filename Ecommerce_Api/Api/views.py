@@ -327,6 +327,7 @@ class TransactsView(viewsets.ModelViewSet):
         serializer = TransactsSerializer(data=request.data, context={'request':request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        print(serializer.data)
         return JsonResponse(serializer.data, status=201)
 
     def delete_transact(self, request, *args, **kwargs):
@@ -360,12 +361,24 @@ class InvitationCodeView(viewsets.ModelViewSet):
         return JsonResponse(result, status = 200, safe=False)
 
     def post_invitation_code(self, request):
-        invitation = InvitationCodesSerializer(data=request.data)
+        invitation = InvitationCodesSerializer(data=request.data, context={'request':request})
         if invitation.is_valid(raise_exception=True):
-            values = invitation.save()
-            result = InvitationCodesSerializer(values).data
+            try:
+                values = invitation.save()
+                result = InvitationCodesSerializer(values).data
+            except:
+                invitation = InvitationCodesSerializer(data=request.data, context={'request':request, 'error':True})
+                invitation.is_valid(raise_exception=True)
+                values = invitation.save()
+                result = InvitationCodesSerializer(values).data
+                return JsonResponse(result, status=201)
             return JsonResponse(result, status=201)
         return JsonResponse({"success":False},status=400)
+
+    def delete_invitation_code(self, request, *args, **kwargs):
+        InvitationCode = self.get_object()
+        self.perform_destroy(InvitationCode)
+        return JsonResponse({'detail':'Codigo de invitacion eliminado correctamente'}, status=200)
 
 class RoleRequestsView(viewsets.ModelViewSet):
     authentication_classes = [authentication.TokenAuthentication]
@@ -376,7 +389,6 @@ class RoleRequestsView(viewsets.ModelViewSet):
         still = False if request.GET.get('still','false') == 'true' else True
         is_pass = True if request.GET.get('isPass', 'false') == 'true' else False
         userPerm = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin])
-        print(userPerm)
         if not userPerm['IsAdmin']:
             return JsonResponse({'message':'No tiene permiso para realizar esta accion'})
         else:
@@ -396,8 +408,6 @@ class RoleRequestsView(viewsets.ModelViewSet):
     def post_role_request(self, request):
         print(request.data)
         userPerm = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin])
-
-
         if not userPerm['IsAdmin'] and 'approved' in request.data.keys(): 
             return JsonResponse({"message":"No tiene permiso para realizar esta accion"}, status=401)
 

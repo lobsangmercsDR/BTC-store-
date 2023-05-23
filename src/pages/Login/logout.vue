@@ -44,17 +44,12 @@
     methods: {
       async logout() {
         try {
-          // Enviar una solicitud POST al servidor para cerrar sesiónx`x`x`
           await axios.get("http://127.0.0.1:8000/api/users/logout", {
             headers: {
-              Authorization: `Token ${Cookies.get('token')}`, // Incluir el token de autenticación en el encabezado
+              Authorization: `Token ${Cookies.get('token')}`,
             },
           });
-  
-          // Eliminar la cookie del token
           Cookies.remove('token');
-  
-          // Redirigir al usuario a la página de inicio de sesión
           this.$router.push('/login');
         } catch (error) {
           console.log(error.response.data);
