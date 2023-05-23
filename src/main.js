@@ -2,11 +2,13 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import Swiper from 'swiper';
 
+
 // Importa los estilos de Swiper
 import 'swiper/swiper-bundle.css';
 
 // importa el archivo de estilos de tu aplicación
 import './assets/css/app.css';
+
 
 // importa el enrutador si lo estás utilizando
 import router from './router';
