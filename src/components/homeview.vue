@@ -1,6 +1,6 @@
 <template>
     <div class="parent">
-        <div class="div1">
+        <div class="div1 grid-limitada">
             <!-- Table 1 -->
             <h1>Últimos productos digitales agregados</h1>
             <div class="component-container component-container-color1">
@@ -26,7 +26,7 @@
                 <button class="table-button" @click="openModal1(product)">Ver Más</button>
             </div>
         </div>
-        <div class="div2">
+        <div class="div2 grid-limitada">
             <!-- Table 2 -->
             <h1>Últimos productos digitales Vendidos</h1>
             <div class="component-container component-container-color2">
@@ -158,8 +158,7 @@
                 </div>
             </div>
         </div>
-        <div class="div6">
-        </div>
+
     </div>
 
 
@@ -349,12 +348,16 @@ export default {
   
 <style>
 .parent {
+    margin: 0;
+    padding: 0;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(0, 1fr);
+    grid-auto-rows: minmax(1, 1fr);
     grid-column-gap: 30px;
     grid-row-gap: 0px;
     align-items: start;
+    
 }
 
 .div1 {
@@ -512,6 +515,9 @@ export default {
     margin-bottom: 10px;
     margin-bottom: 5px;
 }
+.div6 {
+  display: none;
+}
 
 .product-price {
     font-size: 14px;
@@ -586,7 +592,10 @@ export default {
 
 
 
-
+.grid-limitada {
+  max-height: 400px; /* Ajusta el valor según tus necesidades */
+  overflow: auto; /* Opcional: agrega scroll si el contenido desborda */
+}
 
 
 

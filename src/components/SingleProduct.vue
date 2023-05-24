@@ -8,11 +8,8 @@
           </div>
           <div class="flex justify-center mt-4 space-x-2 overflow-x-auto scrollbar-hide">
             <div v-for="placeholderImage in placeholderImages" :key="placeholderImage.id">
-              <img
-                class="w-10 h-10 object-contain rounded-lg mx-1"
-                :src="placeholderImage.image"
-                :alt="placeholderImage.name"
-              />
+              <img class="w-10 h-10 object-contain rounded-lg mx-1" :src="placeholderImage.image"
+                :alt="placeholderImage.name" />
             </div>
           </div>
         </div>
@@ -23,7 +20,7 @@
           <p class="text-gray-600 text-lg mb-4">{{ product.description }}</p>
           <div class="mt-8 flex items-center">
             <h3 class="text-xl font-semibold mb-2 text-left mr-4">Variante:</h3>
-            <select class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg">
+            <select class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" v-model="selectedVariant">
               <option v-for="option in product.variants" :key="option">{{ option }}</option>
             </select>
           </div>
@@ -31,12 +28,8 @@
 
           <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Cantidad:</span>
-            <input
-              v-model="quantity"
-              type="number"
-              class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20"
-              min="1"
-            />
+            <input v-model="quantity" type="number"
+              class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20" min="1" />
           </div>
           <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Marca:</span>
@@ -49,39 +42,22 @@
           <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Likes:</span>
             <span class="text-lg">{{ product.likes }}</span>
-            <button
-              @click="incrementLikes"
-              class="text-green-500 hover:text-green-600 focus:outline-none"
-            >
-              <svg
-                class="w-6 h-6 fill-current"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-              >
+            <button @click="incrementLikes" class="text-green-500 hover:text-green-600 focus:outline-none">
+              <svg class="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path
-                  d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"
-                />
+                  d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z" />
                 <path
-                  d="M15.707 9.293l-4 4a.997.997 0 0 1-1.414 0l-2-2a.999.999 0 1 1 1.414-1.414L11 10.586l3.293-3.293a.999.999 0 1 1 1.414 1.414z"
-                />
+                  d="M15.707 9.293l-4 4a.997.997 0 0 1-1.414 0l-2-2a.999.999 0 1 1 1.414-1.414L11 10.586l3.293-3.293a.999.999 0 1 1 1.414 1.414z" />
               </svg>
             </button>
           </div>
           <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Dislikes:</span>
             <span class="text-lg">{{ product.dislikes }}</span>
-            <button
-              @click="incrementDislikes"
-              class="text-red-500 hover:text-red-600 focus:outline-none"
-            >
-              <svg
-                class="w-6 h-6 fill-current"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-              >
+            <button @click="incrementDislikes" class="text-red-500 hover:text-red-600 focus:outline-none">
+              <svg class="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path
-                  d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"
-                />
+                  d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z" />
                 <path d="M8 8h8v8H8z" />
               </svg>
             </button>
@@ -97,16 +73,12 @@
             <p class="text-gray-600 text-lg text-left">{{ product.additionalDetails }}</p>
           </div>
           <div class="flex mb-4 space-x-4 justify-end">
-            <button
-              @click="addToCart"
-              class="bg-[#f76108] hover:bg-[#fa7328] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#f76108]"
-            >
+            <button @click="addToCartLocal(product)"
+              class="bg-[#f76108] hover:bg-[#fa7328] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#f76108]">
               Agregar al carrito
             </button>
-            <button
-              @click="buyNow"
-              class="bg-[#ac15c1] hover:bg-[#d836e8] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#ac15c1]"
-            >
+            <button @click="buyNow"
+              class="bg-[#ac15c1] hover:bg-[#d836e8] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#ac15c1]">
               Comprar ahora
             </button>
           </div>
@@ -127,21 +99,19 @@
           <p>Marca: {{ product.brand }}</p>
           <p>Username del vendedor: {{ product.sellerUsername }}</p>
           <p>Cantidad: {{ quantity }}</p>
-          <p>Precio total: {{ (product.price * quantity * btcPrice).toFixed(8) }} BTC / ${{ (product.price * quantity).toFixed(2) }} USD</p>
+          <p>Precio total: {{ (product.price * quantity * btcPrice).toFixed(8) }} BTC / ${{ (product.price *
+            quantity).toFixed(2) }} USD</p>
           <hr class="my-4">
           <p>Username: {{ user.username }}</p>
           <p>Saldo disponible en BTC: <span class="text-green-500">{{ user.balanceBTC.toFixed(8) }} BTC</span></p>
           <p>Equivalente en USD: ${{ (user.balanceBTC * btcPrice).toFixed(2) }} USD</p>
-          <input
-            v-model="shippingAddress"
-            type="text"
+          <input v-model="shippingAddress" type="text"
             class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-full mt-4"
-            placeholder="Dirección de envío"
-            required
-          />
+            placeholder="Dirección de envío" required />
           <div class="flex justify-end mt-4">
             <button @click="showPaymentModal = false" class="text-gray-500 hover:text-gray-700 mr-2">Cancelar</button>
-            <button @click="processPayment" class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">Confirmar</button>
+            <button @click="processPayment"
+              class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">Confirmar</button>
           </div>
         </div>
       </div>
@@ -159,12 +129,14 @@
 
     <!-- Ventana emergente de transacción fallida -->
     <transition name="modal">
-      <div v-if="showTransactionFailedModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div v-if="showTransactionFailedModal"
+        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
           <h2 class="text-2xl font-semibold mb-4">Transacción fallida</h2>
           <p>Tu transacción ha sido rechazada debido a fondos insuficientes.</p>
           <div class="flex justify-end mt-4">
-            <button @click="showTransactionFailedModal = false" class="text-gray-500 hover:text-gray-700 mr-2">Cerrar</button>
+            <button @click="showTransactionFailedModal = false"
+              class="text-gray-500 hover:text-gray-700 mr-2">Cerrar</button>
           </div>
         </div>
       </div>
@@ -183,8 +155,10 @@
           <p>Marca: {{ product.brand }}</p>
           <p>Username del vendedor: {{ product.sellerUsername }}</p>
           <p>Cantidad comprada: {{ quantity }}</p>
-          <p>Total a pagar: {{ (product.price * quantity * btcPrice).toFixed(8) }} BTC / ${{ (product.price * quantity).toFixed(2) }} USD</p>
-          <button class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded mt-4" @click="downloadInvoice">Descargar factura</button>
+          <p>Total a pagar: {{ (product.price * quantity * btcPrice).toFixed(8) }} BTC / ${{ (product.price *
+            quantity).toFixed(2) }} USD</p>
+          <button class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded mt-4"
+            @click="downloadInvoice">Descargar factura</button>
           <div class="flex justify-end mt-4">
             <button @click="showInvoiceModal = false" class="text-gray-500 hover:text-gray-700 mr-2">Cerrar</button>
           </div>
@@ -195,6 +169,10 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+import { addToCart } from '../cart';
+
+
 export default {
   data() {
     return {
@@ -223,6 +201,7 @@ export default {
   },
   mounted() {
     this.product = {
+      id: 1,
       name: 'PUFFY 2G - Girls (Super Blends)',
       description: 'Super Blends were carefully crafted to mimic the live resin experience',
       price: 0.011, // Precio ficticio en BTC
@@ -237,6 +216,10 @@ export default {
     this.productPriceBTC = this.product.price * this.btcPrice;
   },
   methods: {
+    ...mapActions('cart', ['addToCart', 'removeFromCartLocal']),
+    addToCartLocal(product) {
+      this.$store.dispatch('cart/addToCart', product); // Utiliza la acción addToCart del módulo cart
+    },
     incrementLikes() {
       this.product.likes++;
     },
@@ -247,7 +230,18 @@ export default {
       return price * this.btcPrice;
     },
     addToCart() {
+      const item = {
+        id: this.product.id,
+        name: this.product.name,
+        price: this.product.price,
+        quantity: this.quantity,
+        variant: this.selectedVariant,
+      };
+      this.addToCartLocal(item); // Modificamos la llamada a `addToCartLocal`
       this.showPaymentModal = true;
+    },
+    removeProduct(product) {
+      this.removeFromCart(product.id);
     },
     buyNow() {
       this.showPaymentModal = true;
@@ -308,12 +302,16 @@ export default {
     },
   },
   computed: {
+    cartTotal() {
+      return this.$store.getters['cart/cartTotal'];
+    },
     formattedDate() {
       return new Date().toLocaleDateString();
     },
   },
 };
 </script>
+
 
 <style scoped>
 .container {

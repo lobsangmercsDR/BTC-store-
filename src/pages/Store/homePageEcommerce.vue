@@ -1,31 +1,17 @@
 <template>
   <div class="bg-light-gray homepage-container">
     <TopBar />
-    <div class="grid-container">
-      <div class="table-container">
-        <table class="table-fixed w-2/5">
-          <realtimelastbuy />
-        </table>
-      </div>
-      <div class="table-container">
-        <table class="table-fixed w-2/5">
-          <realtimenewproduct />
-        </table>
-      </div>
-      <div class="table-container">
-        <table class="table-fixed w-2/5">
-        
-        </table>
-      </div>
-      <div class="newsbox-container">
-        <newsbox />
-      </div>
+    <div>
+      <homeview/>
+      <div class="espacio"></div>
+      <productCard/>
     </div>
+
 
     <!-- Resto de los componentes -->
     <SingleProduct />
     <SingleDigitalProduct />
-    <productCard />
+  
     <AddDigitalProduct/>
     <AddProduct/>
     <DigitalCategoriesCreator/>
@@ -114,6 +100,9 @@ export default {
 
 
 <style>
+.div6 {
+  display: none;
+}
 .bg-light-gray {
   background-color: #f2f2f2;
 }
@@ -142,6 +131,10 @@ export default {
 
 .table-fixed {
   width: 100%;
+}
+
+.espacio {
+  height: 20px; /* Ajusta la altura del espacio según tus necesidades */
 }
 
 /* Estilos adicionales según sea necesario para los componentes */
