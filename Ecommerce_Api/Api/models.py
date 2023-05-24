@@ -67,12 +67,14 @@ class Transacts(models.Model):
     buyers = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
 
 class InvitationCodes(models.Model):
-    invitationCodes = models.CharField(max_length=15,default=uti.generate_invitation_code(), unique=True)
+    invitationCodes = models.CharField(max_length=15,default=uti.generate_invitation_code())
     description = models.CharField(max_length=50, blank=True)
-    countUsers = models.IntegerField()
+    countUsers = models.IntegerField(default=0)
     is_expired = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     expire_date = models.DateTimeField(default=now() + timedelta(days=7))
+
     
     def save(self, *args, **kwargs):
         if self.expire_date < now():

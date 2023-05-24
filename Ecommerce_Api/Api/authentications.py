@@ -16,36 +16,42 @@ class IsAdmin(BaseAuthentication):
     def has_object_permission(self, request, view,obj):
         user =request.user
         print(user.groups.values_list('name',flat=True))
+        print(view.__class__.__name__)
         if user.groups.filter(name="administrator").exists() or user.is_superuser:
             print("233")
-            if view.__name__== 'ProductsView':
+            if view.__class__.__name__== 'ProductsView':
                 if 'administrator' in obj.seller.groups.values_list('name',flat=True) or obj.seller.is_superuser:
                     if request.user.id == obj.seller.id:
                         return True
                     else:
                         return False
-                        print("Hola Amnigo")
                 else:
                     return False
-            elif view.__name__== 'TransactsView':
+            elif view.__class__.__name__== 'TransactsView':
                 if 'administrator' in obj.buyers.groups.values_list('name',flat=True) or obj.buyers.is_superuser:
                     if request.user.id == obj.buyers.id:
                         return True
                     else:
                         return False
-                        print("Hola Amnigo")
                 else:
                     return True
-            elif view.__name__=='UserView':
-                    print("hello")
+            elif view.__class__.__name__=='UserView':
                     if 'administrator' in obj.groups.values_list('name',flat=True) or obj.is_superuser:
                         if request.user.id == obj.id:
                             return True
                         else:
                             return False
-                            print("Hola Amnigo")
                     else:
                         return True
+            elif view.__class__.__name__=='InvitationCodeView':
+                    if request.user.is_superuser == False:
+                        if request.user.id == obj.id:
+                            return True
+                        else:
+                            return False
+                    else:
+                        return True
+
         else:
             return False
 

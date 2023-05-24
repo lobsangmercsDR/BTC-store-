@@ -30,14 +30,10 @@ class GroupsSerializer(serializers.Serializer):
         return count
      
 class UserNestedSerializer(serializers.ModelSerializer):
-    group= serializers.SerializerMethodField()
 
     class Meta:
         model= get_user_model()
-        fields = ['id','name','is_active','group']
-
-    def get_group(self, obj):
-        return list(obj.groups.values_list('name',flat=True))
+        fields = ['id','name','is_superuser']
 
 class UserSerializer(serializers.ModelSerializer):
     group = serializers.SerializerMethodField()
@@ -67,9 +63,26 @@ class UserSerializer(serializers.ModelSerializer):
 class InvitationCodesSerializer(serializers.ModelSerializer):
     expire_date = dateFormat
     created_at = serializers.DateTimeField(format="%d/%m/%Y %I:%M:%S %p",required=False)
+    created_by = UserNestedSerializer(read_only=True)
+    countUsers = serializers.IntegerField(read_only=True)
     class Meta:
         model = InvitationCodes
-        fields=['invitationCodes','description','is_expired','countUsers','created_at','expire_date']
+        fields=['id','invitationCodes','description','is_expired','countUsers','created_at','created_by','expire_date']
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        newCode = uti.generate_invitation_code()
+        print(request)
+        ActualUserId = request.user.id
+        ActualUser = User.objects.get(id=ActualUserId)
+        print(ActualUser)
+        if self.context.get('error'):
+            InvitationCode = InvitationCodes.objects.create(invitationCodes=newCode, created_by=ActualUser, **validated_data)
+            print("asasa")
+            return InvitationCode
+        else:
+            InvitationCode = InvitationCodes.objects.create(created_by=ActualUser, **validated_data)
+            return InvitationCode
 
 class UserCreatorSerializer(serializers.ModelSerializer):
     add_group = serializers.CharField(read_only=True)
@@ -105,10 +118,12 @@ class UserCreatorSerializer(serializers.ModelSerializer):
         print(validated_data)
         if invitation_code:
             invitationObj = InvitationCodes.objects.get(invitationCodes=invitation_code)
+            invitationObj.countUsers += 1
+            print(invitationObj.countUsers)
+            invitationObj.save()
             countUsed = invitationObj.countUsers  
-            serializer = InvitationCodesSerializer(instance=invitationObj, data={'countUsers':countUsed+1})
-            if serializer.is_valid():
-                serializer.save()
+            countcreate= countUsed+1
+            print(countcreate)
 
         group = Group.objects.get(name=group_name[0]) 
         user = User.objects.create_user(**validated_data)
@@ -177,17 +192,6 @@ class RoleRequestsSerializer(serializers.ModelSerializer):
         user=User.objects.get(id=self.context.get('request').user.id)
         roleRequest = RoleRequests.objects.create(user=user, **validated_data)
         return roleRequest
-
-class UserNestedSerializer(serializers.ModelSerializer):
-    group= serializers.SerializerMethodField()
-
-    class Meta:
-        model= get_user_model()
-        fields = ['id','name','is_active','group']
-        ref_name="nesteduser"
-
-    def get_group(self, obj):
-        return list(obj.groups.values_list('name',flat=True))
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -320,11 +324,6 @@ class TransactsSerializer(serializers.ModelSerializer):
         products = Product.objects.get(id=product_id)
         transact = Transacts.objects.create(product=products,buyers=buyers, **validated_data)
         return transact
-
-
-
-
-
 
 class AuthenticationSerializer(serializers.Serializer):
     email= serializers.EmailField()
