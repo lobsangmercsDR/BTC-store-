@@ -229,17 +229,17 @@ export default {
     convertToDollars(price) {
       return price * this.btcPrice;
     },
-    addToCart() {
-      const item = {
-        id: this.product.id,
-        name: this.product.name,
-        price: this.product.price,
-        quantity: this.quantity,
-        variant: this.selectedVariant,
-      };
-      this.addToCartLocal(item); // Modificamos la llamada a `addToCartLocal`
-      this.showPaymentModal = true;
-    },
+    // addToCart() {
+    //   const item = {
+    //     id: this.product.id,
+    //     name: this.product.name,
+    //     price: this.product.price,
+    //     quantity: this.quantity,
+    //     variant: this.selectedVariant,
+    //   };
+    //   this.addToCartLocal(item); // Modificamos la llamada a `addToCartLocal`
+    //   this.showPaymentModal = true;
+    // },
     removeProduct(product) {
       this.removeFromCart(product.id);
     },

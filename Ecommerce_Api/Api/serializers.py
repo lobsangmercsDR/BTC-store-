@@ -38,13 +38,14 @@ class UserNestedSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     group = serializers.SerializerMethodField()
     last_login = serializers.DateTimeField(format="%d/%m/%Y %I:%M:%S %p")
+    createdAt = serializers.DateTimeField(format="%d/%m/%Y")
     shares_count = serializers.SerializerMethodField()
     purchases_count = serializers.SerializerMethodField()
     
     class Meta:
         model = get_user_model() 
         extra_kwargs = {'password':{'write_only':True}}
-        fields = ['id','email','password','name','is_active','group', 'last_login', 'shares_count', 'purchases_count']
+        fields = ['id','email','password','name','createdAt','is_active','group', 'last_login', 'shares_count', 'purchases_count']
         ref_name = 'UserSerializer'
 
     def get_shares_count(self, obj):
@@ -55,8 +56,12 @@ class UserSerializer(serializers.ModelSerializer):
 
  
     def get_group(self, obj):
-        print(obj)
-        return list(obj.groups.values_list('name',flat=True))
+        if obj.is_superuser:
+            return "SuperUser"
+        elif obj.is_active== False:
+            return False
+        else:  
+            return list(obj.groups.values_list('name',flat=True))[0]
 
 
     
@@ -100,9 +105,10 @@ class UserCreatorSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, data):
-        if data['password'] != data['confirm_pass']:
-            raise serializers.ValidationError({'confirm_pass':'Sus contraseñas no coinciden'})
-        print(data)
+        if not self.context.get('update'):
+            if data['password'] != data['confirm_pass']:
+                raise serializers.ValidationError({'confirm_pass':'Sus contraseñas no coinciden'})
+            print(data)
         return data        
 
     class Meta:
@@ -119,21 +125,21 @@ class UserCreatorSerializer(serializers.ModelSerializer):
         if invitation_code:
             invitationObj = InvitationCodes.objects.get(invitationCodes=invitation_code)
             invitationObj.countUsers += 1
-            print(invitationObj.countUsers)
             invitationObj.save()
             countUsed = invitationObj.countUsers  
             countcreate= countUsed+1
-            print(countcreate)
 
         group = Group.objects.get(name=group_name[0]) 
         user = User.objects.create_user(**validated_data)
         user.groups.add(group)
         return user
 
-    def update(self, instance, validated_data):
-        print(validated_data)
+    def update(self, instance,validated_data):
+        validated_data = self.context['request'].data   
         group_name = validated_data.pop('add_group', False)
         delete_group = validated_data.pop('delete_group', False)
+        
+        print(group_name)
         evidence= True if "is_active" in validated_data.keys() or "group" in validated_data.keys() or "group_name" in validated_data.keys()  or "password" in validated_data.keys() else False
         roles = True if self.context.get('roles') == 'true' else False
         if not roles and evidence:
