@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-4xl mx-auto grid flex-col items-center">
+  <div class="max-w-4xl mx-auto grid flex-col items-center containersDash">
     <!-- Campo de descripción y generación de código -->
     <div class="mb-4">
       <label class="block text-gray-700 text-sm font-bold mb-2">Descripción:</label>

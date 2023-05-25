@@ -239,13 +239,18 @@ class UserView(viewsets.ModelViewSet):
 
     def put_user_data(self, request, *args, **kwargs):
         roles=request.GET.get('roles','false')
+        
         userObj = self.get_object()
-        userPermision = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin, IsSeller,IsChecker, IsBuyer], oneObj=True, obj=userObj)
+        userPermision = uti.hasOrNotPermission(self, request, self, authClass=[IsAdmin, IsSeller,IsChecker, IsBuyer], oneObj=True, obj=userObj)
+        
         if not any(val is True for val in userPermision.values()):
             return JsonResponse({"message":"No tiene acceso a este objeto",'ID':request.user.id})
         if not userPermision['IsAdmin'] and roles=='true':
             return JsonResponse({'message':'No tiene permiso para esta funcion'}, status=403)
-        serializer = UserCreatorSerializer(userObj,data=request.data, partial=True, context={"roles":roles})
+        # print(roles)
+        print(request.data)
+        serializer = UserCreatorSerializer(userObj,data=request.data, partial=True, context={"roles":roles, 'update':True, 'request':request})
+        
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         serializer= UserSerializer(userObj)

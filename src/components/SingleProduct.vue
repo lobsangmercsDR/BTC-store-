@@ -230,11 +230,13 @@ export default {
     },
     addToCart() {
       const item = {
+        id: this.product.id,
         name: this.product.name,
         price: this.product.price,
         quantity: this.quantity,
+        variant: this.selectedVariant,
       };
-      this.addToCartLocal(item);
+      this.addToCartLocal(item); // Modificamos la llamada a `addToCartLocal`
       this.showPaymentModal = true;
     },
     removeProduct(product) {

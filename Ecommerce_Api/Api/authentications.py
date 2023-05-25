@@ -36,6 +36,10 @@ class IsAdmin(BaseAuthentication):
                 else:
                     return True
             elif view.__class__.__name__=='UserView':
+                    print("asasass")
+                    if obj.is_superuser:
+                        print("a")
+                        return True
                     if 'administrator' in obj.groups.values_list('name',flat=True) or obj.is_superuser:
                         if request.user.id == obj.id:
                             return True
@@ -64,13 +68,13 @@ class IsSeller(BaseAuthentication):
             return False
     
     def has_object_permission(self, request, view, obj):
-        if view.__name__ == "ProductsView":
+        if view.__class__.__name__ == "ProductsView":
             if request.user.id == obj.seller_id or request.user.is_superuser==True:
                 return True
             else:
                 return False
 
-        elif view.__name__ == "TransactsView":
+        elif view.__class__.__name__ == "TransactsView":
             if request.user.id == obj.buyers_id or request.user.is_superuser==True:
                 return True
             else:
@@ -86,14 +90,14 @@ class IsBuyer(BaseAuthentication):
             return False
 
     def has_object_permission(self, request, view, obj):
-        if view.__name__ =="TransactsView":
+        if view.__class__.__name__ =="TransactsView":
             if request.user.id == obj.buyers_id or request.user.is_superuser==True:
                 return True
             else:
                 return False
-        elif view.__name__ == "ProductView":
+        elif view.__class__.__name__ == "ProductView":
             return False
-        elif view.__name__=='UserView':
+        elif view.__class__.__name__=='UserView':
             print("Hola")
             if request.user.id == obj.id:
                 return True
@@ -109,7 +113,7 @@ class IsChecker(BaseAuthentication):
             return False
 
     def has_object_permission(self, request, view, obj):
-        if view.__name__ == "ProductView":
+        if view.__class__.__name__ == "ProductView":
             user =request.user
             if user.groups.filter(name="checkers").exists():
                 print("hola")
