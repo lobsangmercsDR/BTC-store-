@@ -21,7 +21,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(user, index) in users" :key="user.id">
+        <tr v-for="(user, index) in usersTable" :key="user.id">
           <td class="border px-4 py-2">{{ user.id }}</td>
           <td class="border px-4 py-2">{{ user.name }}</td>
           <td class="border px-4 py-2">{{ user.email }}</td>
@@ -73,7 +73,10 @@
       </div>
       <div class="mb-2">
         <label class="block text-gray-700">Correo Electrónico:</label>
-        <input v-model="editUserData.email" type="email" class="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <div v-if="error && error.hasOwnProperty('email')" class="text-red-500 errorText"> 
+            <small>{{ error.email[0] }}</small>
+        </div>
+        <input v-model="editUserData.email" type="email" class="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" :class="{'errorInput': error && error.hasOwnProperty('email')}"> 
       </div>
       <div class="mb-2">
         <label class="block text-gray-700">Rol:</label>
@@ -112,24 +115,8 @@ export default {
   data() {
     return {
       users: [],
-      formData: {
-
-      },
-      // users: [
-      //   { id: 1, name: "John Doe", email: "johndoe@example.com", role: "Usuario", registrationDate: "2023-05-01", bitcoinWallet: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa" },
-      //   { id: 2, name: "Jane Smith", email: "janesmith@example.com", role: "Administrador", registrationDate: "2023-05-02", bitcoinWallet: "3KmQjFFCrJHb1hPjH8m2N5jn5HLH8dFPfH" },
-      //   { id: 3, name: "Mike Johnson", email: "mikejohnson@example.com", role: "Baneado", registrationDate: "2023-05-03", bitcoinWallet: "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq" },
-      //   { id: 4, name: "Sarah Williams", email: "sarahwilliams@example.com", role: "Usuario", registrationDate: "2023-05-04", bitcoinWallet: "1FeexV6bAHb8ybZjqQMjJrcCrHGW9sb6uF" },
-      //   { id: 5, name: "David Brown", email: "davidbrown@example.com", role: "Administrador", registrationDate: "2023-05-05", bitcoinWallet: "bc1qes3g7yp7pkvt8v44hq0aamr23jkuec3q69kl5u" },
-      //   { id: 6, name: "Emily Davis", email: "emilydavis@example.com", role: "Usuario", registrationDate: "2023-05-06", bitcoinWallet: "3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC" },
-      //   { id: 7, name: "Michael Wilson", email: "michaelwilson@example.com", role: "Usuario", registrationDate: "2023-05-07", bitcoinWallet: "1AC4gh14wwZPULVPCdxUkgqbtPvC92PQPN" },
-      //   { id: 8, name: "Jessica Taylor", email: "jessicataylor@example.com", role: "Administrador", registrationDate: "2023-05-08", bitcoinWallet: "3AnNxabYGoTxYiTEZwFEnerUoeFXK2Zoks" },
-      //   { id: 9, name: "William Anderson", email: "williamanderson@example.com", role: "Baneado", registrationDate: "2023-05-09", bitcoinWallet: "1J6PYkjCj7mQv3avVaU5N7JtsyakGtjyKx" },
-      //   { id: 10, name: "Olivia Martinez", email: "oliviamartinez@example.com", role: "Usuario", registrationDate: "2023-05-10", bitcoinWallet: "bc1q8c6fshw2dlwun7ekn9qwf37cu2rn755upcp6el" },
-      // ],
-      // searchQuery: '',
-      // itemsPerPage: 3,
-      // currentPage: 1,
+      usersTable:[],
+      error: null,
       editUserData: null,
     };
   },
@@ -160,55 +147,80 @@ export default {
   },
 
   created() {
-    this.getUsers()
+    this.formatData();
   },
 
   methods: {
+     async formatData() {  
+      await this.getUsers()
+
+      let modifiedResponse = JSON.parse(JSON.stringify(this.users));
+
+        for (let i = 0; i < modifiedResponse.length; i++) {
+          switch (modifiedResponse[i].group) {
+            case "administrator":
+            modifiedResponse[i].group = "Admin";
+            break;
+            case "buyers":
+            modifiedResponse[i].group = "Comprador";
+            break;
+            case "sellers":
+              console.log("Si");
+              modifiedResponse[i].group = "Vendedor";
+            break;
+            case false:
+            modifiedResponse[i].group = "Baneado";
+            break;
+          }
+        }        
+        console.log(this.users)
+        this.usersTable = modifiedResponse
+    },
     async getUsers() {
       await axios.get("http://127.0.0.1:8000/api/users",{
         headers: {
           Authorization: `Token ${Cookies.get('token')}`
         }
       })
-      .then(response => {this.users = response.data; console.log(response.data)})
-      .catch(error =>  {console.log(error.response.data)})
+      .then(response => {
+      const originalResponse = response.data.slice()
+      this.users = originalResponse
+      return originalResponse
+    }).catch(error =>  {console.log(error)})
     },
 
     async updateUserInApi(Id) {
       let oldUser= this.users.filter(us => us.id == Id)
-      let oldUserGroup = oldUser[0].group
+      console.log(oldUser)
       let newUserGroup = this.editUserData.group
-      this.editUserData.add_group = newUserGroup
-      this.editUserData.delete_group = oldUserGroup
-      console.log(this.editUserData)
+      this.editUserData.change_group = newUserGroup
       delete this.editUserData.shares_count
       delete this.editUserData.purchases_count
       delete this.editUserData.last_login
       delete this.editUserData.createdAt
-      console.log(this.editUserData)
       await axios.put(`http://127.0.0.1:8000/api/users/${Id}?roles=true`,this.editUserData,{
         headers: {
           Authorization: `Token ${Cookies.get('token')}`
         }
       })
-      .then(response => {console.log(response.data); this.getUsers()})
-      .catch(error => {console.log(error.response.data)})
+      .then(response => {console.log(response.data); this.formatData()})
+      .catch(error => {console.log(error.response.data); this.error= error.response.data})
     },
   
-    editUser(user) {
-      this.editUserData = { ...user };
-      let x = document.getElementById('select')
-      
-      console.log(this.editUserData.id)
-      console.log(x)
+    async editUser(user) {
+      await this.getUsers()
+      let originalUserId  = this.users.findIndex(us => us.id === user.id)
+      this.editUserData = { ...this.users[originalUserId] };
+      console.log(this.editUserData)
     },
     updateUserInTable() {
       const userIndex = this.users.findIndex(user => user.id === this.editUserData.id);
+      
       console.log(this.editUserData.id)
       if (userIndex !== -1) {
         if (confirm("¿Estás seguro de que deseas actualizar los datos del usuario?")) {
           this.updateUserInApi(this.editUserData.id)
-          this.editUserData = null;
+          this.error = null
           console.log("Usuario actualizado correctamente");
         } else {
           console.log("Actualización de usuario cancelada");
@@ -223,15 +235,24 @@ export default {
     },
 
 
-    deleteUser(userId) {
+    async deleteUser(userId) {
+      console.log(userId)
       const userIndex = this.users.findIndex(user => user.id === userId);
-
-      if (userIndex !== -1) {
-        this.users.splice(userIndex, 1);
+      if(confirm("¿Esta seguro que quiere eliminar este usuario?")) {
+        if (userIndex !== -1) {
+        await axios.delete(`http://127.0.0.1:8000/api/users/${userId}`,{
+          headers: {
+            Authorization: `Token ${Cookies.get('token')}`
+          }
+        })
+        .catch(error => {console.log(error) }) 
+        this.usersTable.splice(userIndex, 1);
         console.log("Usuario eliminado correctamente");
-      } else {
-        console.error("Error: No se encontró el usuario en la lista");
+        } else {
+         console.error("Error: No se encontró el usuario en la lista");
       }
+      }
+
     },
     previousPage() {
       if (this.currentPage > 1) {
