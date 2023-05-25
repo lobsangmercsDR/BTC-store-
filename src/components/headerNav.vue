@@ -62,9 +62,10 @@
               <!-- User Dropdown -->
               <div class="absolute right-0 mt-12 bg-white w-64 rounded shadow-lg p-6 z-10 text-gray-800" v-if="userMenuOpen">
                 <h2 class="font-bold mb-4">User Menu</h2>
+                <h2 class="font-bold mb-4">Your Balance: 0 BTC</h2>
+
                 <ul class="space-y-2">
-                  <li><a href="#" class="hover:text-blue-500">Profile</a></li>
-                  <li><a href="#" class="hover:text-blue-500">Settings</a></li>
+                  <li><a href="" class="hover:text-blue-500" ><router-link to="/profile" >Perfil</router-link></a></li>
                   <li><a href="#" class="hover:text-blue-500">Logout</a></li>
                 </ul>
               </div>

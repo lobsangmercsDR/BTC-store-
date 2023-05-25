@@ -17,46 +17,41 @@
         <div v-if="category.subcategories.length === 0" class="message">
           No hay subcategorías disponibles.
         </div>
-        <ul>
-          <li v-for="subcategory in category.subcategories" :key="subcategory.id" class="subcategory">
-            <div class="subcategory-header">
-              <span>{{ subcategory.name }}</span>
-              <div class="subcategory-actions">
+        <table class="subcategory-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Precio Mínimo</th>
+              <th>Precio Máximo</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="subcategory in category.subcategories" :key="subcategory.id" class="subcategory">
+              <td>{{ subcategory.name }}</td>
+              <td>{{ subcategory.minPrice }}</td>
+              <td>{{ subcategory.maxPrice }}</td>
+              <td>
                 <button @click="editSubcategory(category, subcategory)" class="edit-button">
                   Editar
                 </button>
+              </td>
+              <td>
                 <button @click="deleteSubcategory(category, subcategory)" class="delete-button">
                   Eliminar
                 </button>
-              </div>
-            </div>
-            <div class="subcategory-list">
-              <div v-if="subcategory.subcategories.length === 0" class="message">
-                No hay subcategorías disponibles.
-              </div>
-              <ul>
-                <li v-for="subsubcategory in subcategory.subcategories" :key="subsubcategory.id" class="subcategory">
-                  <div class="subcategory-header">
-                    <span>{{ subsubcategory.name }}</span>
-                    <div class="subcategory-actions">
-                      <button @click="editSubcategory(subsubcategory)" class="edit-button">
-                        Editar
-                      </button>
-                      <button @click="deleteSubcategory(subcategory, subsubcategory)" class="delete-button">
-                        Eliminar
-                      </button>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-              <div class="add-subcategory">
-                <button @click="showCreateSubcategoryModal(subcategory)" class="add-button">
+              </td>
+            </tr>
+            <tr class="add-subcategory">
+              <td colspan="5">
+                <button @click="showCreateSubcategoryModal(category)" class="add-button">
                   Agregar Subcategoría
                 </button>
-              </div>
-            </div>
-          </li>
-        </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <div class="category-actions">
         <button @click="editCategory(category)" class="edit-button">
@@ -64,9 +59,6 @@
         </button>
         <button @click="deleteCategory(category)" class="delete-button">
           Eliminar
-        </button>
-        <button @click="showCreateSubcategoryModal(category)" class="add-button">
-          Agregar Subcategoría
         </button>
       </div>
     </div>
@@ -77,34 +69,20 @@
 
     <div v-if="showModal" class="modal">
       <div class="modal-content">
-        <h2 class="modal-title">Crear/Edita Categoría</h2>
-        <div class="modal-form">
-          <label for="categoryName" class="modal-label">Nombre:</label>
-          <input type="text" id="categoryName" v-model="modalCategoryName" class="modal-input">
-        </div>
-        <div class="modal-actions">
-          <button @click="saveCategory" class="save-button">
-            Guardar
-          </button>
-          <button @click="cancelModal" class="cancel-button">
-            Cancelar
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="showSubcategoryModal" class="modal">
-      <div class="modal-content">
-        <h2 class="modal-title">Crear Subcategoría</h2>
+        <h2 class="modal-title">{{ modalSubcategoryId ? 'Editar Subcategoría' : 'Agregar Subcategoría' }}</h2>
         <div class="modal-form">
           <label for="subcategoryName" class="modal-label">Nombre:</label>
           <input type="text" id="subcategoryName" v-model="modalSubcategoryName" class="modal-input">
+          <label for="subcategoryMinPrice" class="modal-label">Precio Mínimo:</label>
+          <input type="number" id="subcategoryMinPrice" v-model="modalSubcategoryMinPrice" class="modal-input">
+          <label for="subcategoryMaxPrice" class="modal-label">Precio Máximo:</label>
+          <input type="number" id="subcategoryMaxPrice" v-model="modalSubcategoryMaxPrice" class="modal-input">
         </div>
         <div class="modal-actions">
           <button @click="saveSubcategory" class="save-button">
-            Guardar
+            {{ modalSubcategoryId ? 'Guardar' : 'Agregar' }}
           </button>
-          <button @click="cancelSubcategoryModal" class="cancel-button">
+          <button @click="cancelModal" class="cancel-button">
             Cancelar
           </button>
         </div>
@@ -126,7 +104,8 @@ export default {
             {
               id: 1,
               name: 'Televisores',
-              subcategories: []
+              minPrice: 100,
+              maxPrice: 1000
             },
             {
               id: 2,
@@ -136,19 +115,22 @@ export default {
                 {
                   id: 1,
                   name: 'Laptops',
-                  subcategories: []
+                  minPrice: 500,
+                  maxPrice: 2000
                 },
                 {
                   id: 2,
                   name: 'Desktops',
-                  subcategories: []
+                  minPrice: 800,
+                  maxPrice: 3000
                 }
               ]
             },
             {
               id: 3,
               name: 'Teléfonos',
-              subcategories: []
+              minPrice: 200,
+              maxPrice: 1500
             }
           ]
         },
@@ -160,26 +142,31 @@ export default {
             {
               id: 1,
               name: 'Camisetas',
-              subcategories: []
+              minPrice: 10,
+              maxPrice: 50
             },
             {
               id: 2,
               name: 'Pantalones',
-              subcategories: []
+              minPrice: 20,
+              maxPrice: 100
             },
             {
               id: 3,
               name: 'Zapatos',
-              subcategories: []
+              minPrice: 50,
+              maxPrice: 200
             }
           ]
         }
       ],
       showModal: false,
-      showSubcategoryModal: false,
       modalCategoryId: null,
       modalCategoryName: '',
-      modalSubcategoryName: ''
+      modalSubcategoryId: null,
+      modalSubcategoryName: '',
+      modalSubcategoryMinPrice: null,
+      modalSubcategoryMaxPrice: null
     };
   },
   methods: {
@@ -200,8 +187,11 @@ export default {
     editSubcategory(category, subcategory) {
       this.modalCategoryId = category.id;
       this.modalCategoryName = category.name;
+      this.modalSubcategoryId = subcategory.id;
       this.modalSubcategoryName = subcategory.name;
-      this.showSubcategoryModal = true;
+      this.modalSubcategoryMinPrice = subcategory.minPrice;
+      this.modalSubcategoryMaxPrice = subcategory.maxPrice;
+      this.showModal = true;
     },
     deleteSubcategory(category, subcategory) {
       const index = category.subcategories.findIndex((s) => s.id === subcategory.id);
@@ -217,8 +207,11 @@ export default {
     showCreateSubcategoryModal(category) {
       this.modalCategoryId = category.id;
       this.modalCategoryName = category.name;
+      this.modalSubcategoryId = null;
       this.modalSubcategoryName = '';
-      this.showSubcategoryModal = true;
+      this.modalSubcategoryMinPrice = null;
+      this.modalSubcategoryMaxPrice = null;
+      this.showModal = true;
     },
     saveCategory() {
       if (this.modalCategoryName.trim() === '') {
@@ -241,32 +234,40 @@ export default {
       }
       this.cancelModal();
     },
-    cancelModal() {
-      this.showModal = false;
-      this.modalCategoryId = null;
-      this.modalCategoryName = '';
-    },
     saveSubcategory() {
-      if (this.modalSubcategoryName.trim() === '') {
-        alert('Ingrese un nombre de subcategoría válido.');
+      if (this.modalSubcategoryName.trim() === '' || this.modalSubcategoryMinPrice === null || this.modalSubcategoryMaxPrice === null) {
+        alert('Ingrese todos los campos requeridos.');
         return;
       }
       const category = this.categories.find((c) => c.id === this.modalCategoryId);
       if (category) {
-        const newSubcategory = {
-          id: Date.now(),
-          name: this.modalSubcategoryName,
-          subcategories: []
-        };
-        category.subcategories.push(newSubcategory);
+        if (this.modalSubcategoryId !== null) {
+          const subcategory = category.subcategories.find((s) => s.id === this.modalSubcategoryId);
+          if (subcategory) {
+            subcategory.name = this.modalSubcategoryName;
+            subcategory.minPrice = this.modalSubcategoryMinPrice;
+            subcategory.maxPrice = this.modalSubcategoryMaxPrice;
+          }
+        } else {
+          const newSubcategory = {
+            id: Date.now(),
+            name: this.modalSubcategoryName,
+            minPrice: this.modalSubcategoryMinPrice,
+            maxPrice: this.modalSubcategoryMaxPrice
+          };
+          category.subcategories.push(newSubcategory);
+        }
+        this.cancelModal();
       }
-      this.cancelSubcategoryModal();
     },
-    cancelSubcategoryModal() {
-      this.showSubcategoryModal = false;
+    cancelModal() {
+      this.showModal = false;
       this.modalCategoryId = null;
       this.modalCategoryName = '';
+      this.modalSubcategoryId = null;
       this.modalSubcategoryName = '';
+      this.modalSubcategoryMinPrice = null;
+      this.modalSubcategoryMaxPrice = null;
     }
   }
 };
@@ -327,23 +328,23 @@ export default {
 }
 
 .subcategory-list {
-  margin-left: 20px;
+  margin-top: 10px;
 }
 
-.subcategory {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.subcategory-table {
+  width: 100%;
+  border-collapse: collapse;
   margin-bottom: 10px;
 }
 
-.subcategory-header {
-  display: flex;
-  align-items: center;
+.subcategory-table th,
+.subcategory-table td {
+  padding: 8px;
 }
 
 .subcategory-actions {
-  margin-left: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .edit-button,
@@ -361,6 +362,7 @@ export default {
 
 .edit-button {
   background-color: #4299e1;
+  margin-right: 5px;
 }
 
 .edit-button:hover {
@@ -369,7 +371,6 @@ export default {
 
 .delete-button {
   background-color: #e53e3e;
-  margin-left: 10px;
 }
 
 .delete-button:hover {
@@ -378,7 +379,6 @@ export default {
 
 .add-button {
   background-color: #48bb78;
-  margin-left: 10px;
 }
 
 .add-button:hover {

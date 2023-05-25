@@ -1,15 +1,35 @@
 <template>
   <div>
-    <h3 class="text-2xl font-bold text-left py-2">En esta Pagina se cargan las noticias desde el backend (Pendiente Conectar)</h3>
+    <headerNav/>
+    <users_profile_component/>
+    <profile_modification/>
+    <orders/>
+    <sell_orders/>
   </div>
 </template>
 
 <script>
-export default {
+import headerNav from '@/components/headerNav.vue';
+import users_profile_component from '@/components/usersdashboard/users_profile_component.vue';
+import profile_modification from '@/components/usersdashboard/profile_modification.vue';
+import orders from '@/components/usersdashboard/orders.vue';
+import sell_orders from '@/components/usersdashboard/sell_orders.vue';
 
-}
+
+
+
+export default {
+  components: {
+    headerNav,
+    users_profile_component,
+    profile_modification,
+    orders,
+    sell_orders,
+
+  },
+};
 </script>
 
 <style>
-
+/* Estilos específicos para la página de lista de productos */
 </style>

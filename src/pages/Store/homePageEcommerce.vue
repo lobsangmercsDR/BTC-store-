@@ -20,6 +20,8 @@
     <rechar/>
     <inventory/>
     <homeview/>
+    <users_profile_component/>
+    
   </div>
 </template>
 
@@ -39,6 +41,7 @@ import rechar from '@/components/payments/rechar.vue';
 import inventory from '@/components/payments/inventory.vue'
 import productCard from '@/components/productCard.vue';
 import homeview from '@/components/homeview.vue';
+import users_profile_component from '@/components/usersdashboard/users_profile_component.vue';
 
 
 
@@ -60,7 +63,8 @@ export default {
     rechar,
     inventory,
     productCard,
-    homeview
+    homeview,
+    users_profile_component,
     
 
   },
@@ -119,6 +123,7 @@ export default {
   grid-gap: 20px; /* Espacio entre las celdas */
   max-width: 5000px;
   margin: auto;
+  
 }
 
 .table-container {
