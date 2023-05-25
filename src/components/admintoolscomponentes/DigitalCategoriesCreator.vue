@@ -114,6 +114,10 @@
 </template>
 
 <script>
+import axios from 'axios';
+import Cookies from 'js-cookie';
+
+
 export default {
   data() {
     return {
@@ -122,6 +126,7 @@ export default {
           id: 1,
           name: 'Electrónica',
           showSubcategories: false,
+          categories: null,
           subcategories: [
             {
               id: 1,
@@ -182,7 +187,22 @@ export default {
       modalSubcategoryName: ''
     };
   },
+
+  created(){
+    this.getCategories()
+  },
   methods: {
+    async getCategories() {
+      await axios.get("http://127.0.0.1:8000/api/categorias?prod=true", {
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      })
+      .then(response => {console.log(response.data)})
+      .catch(error => {console.log(error.response.data)})
+    },
+
+
     toggleSubcategories(category) {
       category.showSubcategories = !category.showSubcategories;
     },
