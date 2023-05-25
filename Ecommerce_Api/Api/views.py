@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 from .utils import services as uti
 from django.core import serializers
 from django.http import HttpResponse
-from .models import Product,Category,Transacts,User,InvitationCodes,RoleRequests
+from .models import Product,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
 from .serializers import (TransactsSerializer, 
                           CategorySerializer,
                           CategoryWithoutProductsSerializer, 
@@ -26,7 +26,8 @@ from .serializers import (TransactsSerializer,
                           InvitationCodesSerializer,
                           RoleRequestsSerializer,
                           AuthenticationSerializer,
-                          GroupsSerializer)
+                          GroupsSerializer,
+                          SubCategorySerializer)
 
 def format_data(data=None, nameClass=None, code=200):
     status = 0
@@ -160,15 +161,12 @@ class CategoryView(viewsets.ModelViewSet):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [IsAuthenticated,IsGroupAccepted]
 
-    @api_view(['GET'])
     #GET all Categories
     def nested_list_categories(self, request):
+        print(166)
         incldProd = request.GET.get('prod','false')
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)
-        if incldProd == 'true': 
-            for item in serializer.data:
-                item.pop('products')
         return JsonResponse(serializer.data, status=200, safe=False)   
 
 
@@ -193,6 +191,18 @@ class CategoryView(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception = True)
         self.perform_create(serializer)
         return JsonResponse(serializer.data, status=200)
+
+    # POST One subcategory
+    def post_subCategorie(self, request, *args, **kwargs):
+        value = self.get_object()
+        
+        serializer = SubCategorySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+        
+        newSub = SubCategory(category=value, **validated_data)
+        newSub.save()
+        return JsonResponse({"succes":True}, status=200)
     
     def update_category(self, request, *args, **kwargs):
         userPermision = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin])
@@ -226,6 +236,7 @@ class UserView(viewsets.ModelViewSet):
             instances = User.objects.filter(id=request.user.id)
         else:
             instances = User.objects.all()
+            print(instances[0].is_superuser,"229")
         serializer  = UserSerializer(instances, many=True)
         return JsonResponse(serializer.data, status=200, safe=False)
         
@@ -242,7 +253,7 @@ class UserView(viewsets.ModelViewSet):
         
         userObj = self.get_object()
         userPermision = uti.hasOrNotPermission(self, request, self, authClass=[IsAdmin, IsSeller,IsChecker, IsBuyer], oneObj=True, obj=userObj)
-        
+        print(userPermision)
         if not any(val is True for val in userPermision.values()):
             return JsonResponse({"message":"No tiene acceso a este objeto",'ID':request.user.id})
         if not userPermision['IsAdmin'] and roles=='true':
@@ -275,10 +286,12 @@ class UserView(viewsets.ModelViewSet):
     # DELETE one User
     def delete_user(self, request, *args, **kwargs):
         instance=self.get_object()
-        userPermision = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin],oneObj=True,obj=instance)
+        userPermision = uti.hasOrNotPermission(self, request, self, authClass=[IsAdmin],oneObj=True,obj=instance)
+        print(userPermision, 280)
         if not userPermision['IsAdmin']:
-            return {'message':'Largo de aqui'}
+            return JsonResponse({'message':'Largo de aqui'}, status=403)
         self.perform_destroy(instance=instance)
+        
         return JsonResponse({'message':'El usuario ha sido eliminado correctamente', 'status':200}, status=200)
     
     def get_permissions(self):

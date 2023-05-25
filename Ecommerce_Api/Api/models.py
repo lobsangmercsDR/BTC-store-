@@ -48,9 +48,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Category(models.Model):
     nameCategory = models.CharField(max_length=50)
-    @property
-    def products_quantity(self):
-        return self.product_set.count()
+
+class SubCategory(models.Model):
+    nameSubCategory = models.CharField(max_length=50)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 class Product(models.Model):
     nameProduct = models.CharField(max_length=50)
@@ -59,7 +60,6 @@ class Product(models.Model):
     active = models.BooleanField(default=False)
     is_digital = models.BooleanField(default=False)
     seller = models.ForeignKey(User, on_delete=models.CASCADE)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 class Transacts(models.Model):
     dateTransact = models.DateTimeField(auto_now_add=True)

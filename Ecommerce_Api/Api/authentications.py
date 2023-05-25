@@ -37,7 +37,8 @@ class IsAdmin(BaseAuthentication):
                     return True
             elif view.__class__.__name__=='UserView':
                     print("asasass")
-                    if obj.is_superuser:
+                    print(request.user.is_superuser,"ss")
+                    if request.user.is_superuser:
                         print("a")
                         return True
                     if 'administrator' in obj.groups.values_list('name',flat=True) or obj.is_superuser:

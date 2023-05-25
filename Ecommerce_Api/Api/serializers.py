@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 
 from rest_framework import serializers,exceptions
-from .models import Category, Product,Transacts,User,InvitationCodes,RoleRequests
+from .models import Category, Product,Transacts,User,InvitationCodes,RoleRequests, SubCategory
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
@@ -56,6 +56,7 @@ class UserSerializer(serializers.ModelSerializer):
 
  
     def get_group(self, obj):
+        print(obj.groups, "59")
         if obj.is_superuser:
             return "SuperUser"
         elif obj.is_active== False:
@@ -138,6 +139,17 @@ class UserCreatorSerializer(serializers.ModelSerializer):
         validated_data = self.context['request'].data   
         group_name = validated_data.pop('add_group', False)
         delete_group = validated_data.pop('delete_group', False)
+        change_group = validated_data.pop('change_group', False)
+        not_found_groups = []
+        if change_group:
+            try:
+                group = Group.objects.get(name=change_group)
+            except Group.DoesNotExist:
+                not_found_groups.append(change_group)
+            if not_found_groups:
+                message = f"Groups {', '.join(not_found_groups)} not found"
+                raise serializers.ValidationError(message, code=400)
+            instance.groups.set([group])
         
         print(group_name)
         evidence= True if "is_active" in validated_data.keys() or "group" in validated_data.keys() or "group_name" in validated_data.keys()  or "password" in validated_data.keys() else False
@@ -147,7 +159,7 @@ class UserCreatorSerializer(serializers.ModelSerializer):
             print(evidence)
             raise serializers.ValidationError({"message":"Acceso a estas propiedades no tienes"})
 
-        not_found_groups = []
+
         groups = []
         if group_name: 
             try:
@@ -199,25 +211,24 @@ class RoleRequestsSerializer(serializers.ModelSerializer):
         roleRequest = RoleRequests.objects.create(user=user, **validated_data)
         return roleRequest
 
+class SubCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubCategory
+        fields = ['id', 'nameSubCategory']
 
-class CategorySerializer(serializers.ModelSerializer):
-    product_count = serializers.SerializerMethodField()
-    products = serializers.SerializerMethodField()
+
+
+class CategorySerializer(serializers.ModelSerializer): 
+    subCategories = serializers.SerializerMethodField()
     class Meta:
         model = Category 
-        fields =  ['id','nameCategory','product_count','products']
-
-    def get_product_count(self,obj):
-        count = obj.products_quantity
-        self.prop = count
-        return count
+        fields =  ['id','nameCategory', 'subCategories']
     
-    def get_products(self, obj):
-        if obj.products_quantity == 0:
-            products = "N/A"
-            return products
-        products = Product.objects.filter(category_id=obj.id, active=True)
-        return ProductSerializer(products, many=True).data
+
+
+    def get_subCategories(self, obj):
+        subCategories = SubCategory.objects.filter(category=obj.id)
+        return SubCategorySerializer(subCategories, many=True).data
 
 
 class CategoryWithoutProductsSerializer(serializers.ModelSerializer):

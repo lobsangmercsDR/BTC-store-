@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Category,Transacts, User, InvitationCodes, RoleRequests
+from .models import Product, Category,Transacts, User, InvitationCodes, RoleRequests, SubCategory
  
 # Register your models here.
 admin.site.register(Product)
@@ -8,3 +8,4 @@ admin.site.register(Transacts)
 admin.site.register(User)
 admin.site.register(InvitationCodes)
 admin.site.register(RoleRequests)
+admin.site.register(SubCategory)
