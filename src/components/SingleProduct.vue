@@ -169,9 +169,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-import { addToCart } from '../cart';
-
+import { mapActions } from 'vuex';
 
 export default {
   data() {
@@ -216,9 +214,10 @@ export default {
     this.productPriceBTC = this.product.price * this.btcPrice;
   },
   methods: {
-    ...mapActions('cart', ['addToCart', 'removeFromCartLocal']),
+    ...mapActions('cart', ['addToCart']),
     addToCartLocal(product) {
-      this.$store.dispatch('cart/addToCart', product); // Utiliza la acción addToCart del módulo cart
+      console.log('addToCartLocal method invoked');
+      this.addToCart(product); // Utiliza la acción addToCart del módulo cart
     },
     incrementLikes() {
       this.product.likes++;
@@ -229,17 +228,17 @@ export default {
     convertToDollars(price) {
       return price * this.btcPrice;
     },
-    // addToCart() {
-    //   const item = {
-    //     id: this.product.id,
-    //     name: this.product.name,
-    //     price: this.product.price,
-    //     quantity: this.quantity,
-    //     variant: this.selectedVariant,
-    //   };
-    //   this.addToCartLocal(item); // Modificamos la llamada a `addToCartLocal`
-    //   this.showPaymentModal = true;
-    // },
+    addToCart() {
+      const item = {
+        id: this.product.id,
+        name: this.product.name,
+        price: this.product.price,
+        quantity: this.quantity,
+        variant: this.selectedVariant,
+      };
+      this.addToCartLocal(item); // Modificamos la llamada a `addToCartLocal`
+      this.showPaymentModal = true;
+    },
     removeProduct(product) {
       this.removeFromCart(product.id);
     },
