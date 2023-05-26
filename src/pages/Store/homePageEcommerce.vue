@@ -4,8 +4,10 @@
     <div>
       <homeview/>
       <div class="espacio"></div>
-      <productCard/>
+      
     </div>
+    <digital_product_view/>
+    <productCard/>
 
 
     <!-- Resto de los componentes -->
@@ -111,7 +113,7 @@ export default {
   display: none;
 }
 .bg-light-gray {
-  background-color: #f2f2f2;
+  background-color: #fff;
 }
 
 .homepage-container {
