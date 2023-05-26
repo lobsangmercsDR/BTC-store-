@@ -173,7 +173,7 @@ export default {
   },
   async mounted() {
     await this.fetchBTCValue();
-    this.qrCodeURL = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${this.walletAddress}`;
+    this.qrCodeURL = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${this.walletAddress}`;
   },
 };
 </script>
