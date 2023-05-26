@@ -8,13 +8,13 @@
 
     <div v-for="category in categories" :key="category.id" class="category">
       <div class="category-header">
-        <h2 class="category-name">{{ category.name }}</h2>
+        <h2 class="category-name">{{ category.nameCategory }}</h2>
         <button @click="toggleSubcategories(category)" class="toggle-button">
           {{ category.showSubcategories ? '-' : '+' }}
         </button>
       </div>
       <div v-if="category.showSubcategories" class="subcategory-list">
-        <div v-if="category.subcategories.length === 0" class="message">
+        <div v-if="category.subCategories.length === 0" class="message">
           No hay subcategorías disponibles.
         </div>
         <table class="subcategory-table">
@@ -28,10 +28,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="subcategory in category.subcategories" :key="subcategory.id" class="subcategory">
-              <td>{{ subcategory.name }}</td>
-              <td>{{ subcategory.minPrice }}</td>
-              <td>{{ subcategory.maxPrice }}</td>
+            <tr v-for="subcategory in category.subCategories" :key="subcategory.id" class="subcategory">
+              <td>{{ subcategory.nameSubCategory }}</td>
+              <td>{{ subcategory.minPriceBTC }}</td>
+              <td>{{ subcategory.maxPriceBTC }}</td>
               <td>
                 <button @click="editSubcategory(category, subcategory)" class="edit-button">
                   Editar
@@ -93,14 +93,14 @@
         <h2 class="modal-title">{{ modalSubcategoryId ? 'Editar Subcategoría' : 'Agregar Subcategoría' }}</h2>
         <div class="modal-form">
           <label for="subcategoryName" class="modal-label">Nombre:</label>
-          <input type="text" id="subcategoryName" v-model="modalSubcategoryName" class="modal-input">
+          <input type="text" id="subcategoryName" step="0.01" min="0" v-model="modalSubcategoryName" class="modal-input">
           <label for="subcategoryMinPrice" class="modal-label">Precio Mínimo:</label>
-          <input type="number" id="subcategoryMinPrice" v-model="modalSubcategoryMinPrice" class="modal-input">
+          <input type="number" step="0.01" min="0" id="subcategoryMinPrice" v-model="modalSubcategoryMinPrice" class="modal-input">
           <label for="subcategoryMaxPrice" class="modal-label">Precio Máximo:</label>
           <input type="number" id="subcategoryMaxPrice" v-model="modalSubcategoryMaxPrice" class="modal-input">
         </div>
         <div class="modal-actions">
-          <button @click="saveSubcategory" class="save-button">
+          <button @click="saveSubcategory " class="save-button">
             {{ modalSubcategoryId ? 'Guardar' : 'Agregar' }}
           </button>
           <button @click="cancelSubcategoryModal" class="cancel-button">
@@ -113,112 +113,114 @@
 </template>
 
 <script>
+import axios from 'axios';
+import Cookies from 'js-cookie';
+
 export default {
   data() {
     return {
-      categories: [
-        {
-          id: 1,
-          name: 'Electrónica',
-          showSubcategories: false,
-          subcategories: [
-            {
-              id: 1,
-              name: 'Televisores',
-              minPrice: 100,
-              maxPrice: 1000
-            },
-            {
-              id: 2,
-              name: 'Computadoras',
-              showSubcategories: false,
-              subcategories: [
-                {
-                  id: 1,
-                  name: 'Laptops',
-                  minPrice: 500,
-                  maxPrice: 2000
-                },
-                {
-                  id: 2,
-                  name: 'Desktops',
-                  minPrice: 800,
-                  maxPrice: 3000
-                }
-              ]
-            },
-            {
-              id: 3,
-              name: 'Teléfonos',
-              minPrice: 200,
-              maxPrice: 1500
-            }
-          ]
-        },
-        {
-          id: 2,
-          name: 'Ropa',
-          showSubcategories: false,
-          subcategories: [
-            {
-              id: 1,
-              name: 'Camisetas',
-              minPrice: 10,
-              maxPrice: 50
-            },
-            {
-              id: 2,
-              name: 'Pantalones',
-              minPrice: 20,
-              maxPrice: 100
-            },
-            {
-              id: 3,
-              name: 'Zapatos',
-              minPrice: 50,
-              maxPrice: 200
-            }
-          ]
-        }
-      ],
+      categories: [],
+      category: null,
       showModal: false,
       showSubcategoryModal: false,
-      modalCategoryId: null,
+      modalCategoryId: -1,
       modalCategoryName: '',
       modalSubcategoryId: null,
       modalSubcategoryName: '',
       modalSubcategoryMinPrice: null,
-      modalSubcategoryMaxPrice: null
+      modalSubcategoryMaxPrice: null,
     };
   },
+
+  created() {
+    this.getCategories()
+  },
   methods: {
+    async getCategories() {
+      await axios.get("http://127.0.0.1:8000/api/categorias", {
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      })
+        .then(response => { 
+          console.log(response.data)
+          let values = response.data
+          values.forEach(element => {
+            element.showSubcategories = false
+          });
+          console.log(values)
+          this.categories = response.data 
+        })
+        .catch(error => { console.log(error) })
+    },
+    async updateCategoriesinAPI() {
+      await axios.put(`http://127.0.0.1:8000/api/categorias/${this.modalCategoryId}`, { nameCategory: this.modalCategoryName }, {
+            headers: {
+              Authorization: `Token ${Cookies.get('token')}`
+            }
+          })
+            .then(response => { this.getCategories() })
+            .catch(error => { console.log(error.response) })
+    },
+
+    async CreateCategoriesInAPI() {
+      await axios.post("http://127.0.0.1:8000/api/categorias", {nameCategory: this.modalCategoryName},{
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      })
+    },
+
+
     toggleSubcategories(category) {
       category.showSubcategories = !category.showSubcategories;
     },
-    editCategory(category) {
+     editCategory(category) {
       this.modalCategoryId = category.id;
-      this.modalCategoryName = category.name;
+      this.modalCategoryName = category.nameCategory;
       this.showModal = true;
     },
-    deleteCategory(category) {
+    async deleteCategory(category) {
       const index = this.categories.findIndex((c) => c.id === category.id);
-      if (index !== -1) {
-        this.categories.splice(index, 1);
-      }
-    },
+
+      if(confirm("¿Seguro desea eliminar esta categoria?")) {
+        await axios.delete(`http://127.0.0.1:8000/api/categorias/${category.id}`, {
+          headers: {
+            Authorization: `Token ${Cookies.get('token')}`
+          }
+        })
+          .then(response => { console.log(response.data) })
+          .catch(error => { console.log(error.response.data); throw new Error(error.response.data) })
+
+
+        if (index !== -1) {
+          this.categories.splice(index, 1);
+        }
+    }
+  },
     editSubcategory(category, subcategory) {
       this.modalCategoryId = category.id;
-      this.modalCategoryName = category.name;
+      this.modalCategoryName = category.nameCategory;
       this.modalSubcategoryId = subcategory.id;
-      this.modalSubcategoryName = subcategory.name;
-      this.modalSubcategoryMinPrice = subcategory.minPrice;
-      this.modalSubcategoryMaxPrice = subcategory.maxPrice;
+      this.modalSubcategoryName = subcategory.nameSubCategory;
+      this.modalSubcategoryMinPrice = subcategory.minPriceBTC;
+      this.modalSubcategoryMaxPrice = subcategory.maxPriceBTC;
       this.showSubcategoryModal = true;
+
+      console.log(category, subcategory)
     },
-    deleteSubcategory(category, subcategory) {
-      const index = category.subcategories.findIndex((s) => s.id === subcategory.id);
+    async deleteSubcategory(category, subcategory) {
+      const index = category.subCategories.findIndex((s) => s.id === subcategory.id);
+      console.log(index)
+      await axios.delete(`http://127.0.0.1:8000/api/categorias/${category.id}/${subcategory.id}`, {
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      })
+      .then(response => {console.log(response.data)})
+      .catch(error => {console.log(error.response.data)})
       if (index !== -1) {
-        category.subcategories.splice(index, 1);
+        category.subCategories.splice(index, 1);
       }
     },
     showCreateCategoryModal() {
@@ -235,28 +237,49 @@ export default {
       this.modalSubcategoryMaxPrice = null;
       this.showSubcategoryModal = true;
     },
-    saveCategory() {
+    async saveCategory() {
       if (this.modalCategoryName.trim() === '') {
         alert('Ingrese un nombre de categoría válido.');
-        return;
       }
-      if (this.modalCategoryId !== null) {
-        const category = this.categories.find((c) => c.id === this.modalCategoryId);
-        if (category) {
-          category.name = this.modalCategoryName;
+      console.log(this.modalCategoryId)
+      console.log(this.modalCategoryId)
+      if (this.modalCategoryId != null) {
+        console.log("ss")
+        if (confirm("¿Esta seguro que desea cambiar el nombre de esta categoria?")) {
+          this.updateCategoriesinAPI()
+          this.cancelModal();
         }
-      } else {
+      } else{
         const newCategory = {
-          id: Date.now(),
-          name: this.modalCategoryName,
-          showSubcategories: false,
-          subcategories: []
-        };
-        this.categories.push(newCategory);
-      }
-      this.cancelModal();
+            nameCategory: this.modalCategoryName,
+          }
+          console.log(newCategory)
+          await axios.post("http://127.0.0.1:8000/api/categorias", newCategory, {
+            headers: {
+              Authorization: `Token ${Cookies.get('token')}`
+            }
+          })
+            .then(response => { console.log(response.data); this.getCategories()})
+            .catch(error => { console.log(error.response.data) })
+        }
+      },
+      cancelModal() {
+      this.showModal = false;
+      this.modalCategoryId = null;
+      this.modalCategoryName = '';
     },
-    saveSubcategory() {
+   
+    cancelSubcategoryModal() {
+      this.showSubcategoryModal = false;
+      this.modalCategoryId = null;
+      this.modalCategoryName = '';
+      this.modalSubcategoryId = null;
+      this.modalSubcategoryName = '';
+      this.modalSubcategoryMinPrice = null;
+      this.modalSubcategoryMaxPrice = null;
+    },
+
+     async saveSubcategory() {
       if (
         this.modalSubcategoryName.trim() === '' ||
         this.modalSubcategoryMinPrice === null ||
@@ -266,42 +289,56 @@ export default {
         return;
       }
       const category = this.categories.find((c) => c.id === this.modalCategoryId);
+
       if (category) {
         if (this.modalSubcategoryId !== null) {
-          const subcategory = category.subcategories.find((s) => s.id === this.modalSubcategoryId);
-          if (subcategory) {
-            subcategory.name = this.modalSubcategoryName;
-            subcategory.minPrice = this.modalSubcategoryMinPrice;
-            subcategory.maxPrice = this.modalSubcategoryMaxPrice;
+          let subcategory = category.subCategories.find((s) => s.id === this.modalSubcategoryId);
+          console.log(subcategory)
+          let subcategoryObj = {
+            nameSubCategory:this.modalSubcategoryName,
+            minPriceBTC: this.modalSubcategoryMinPrice,
+            maxPriceBTC: this.modalSubcategoryMaxPrice
           }
-        } else {
-          const newSubcategory = {
-            id: Date.now(),
-            name: this.modalSubcategoryName,
-            minPrice: this.modalSubcategoryMinPrice,
-            maxPrice: this.modalSubcategoryMaxPrice
-          };
-          category.subcategories.push(newSubcategory);
+          console.log(subcategoryObj)
+          await axios.put(`http://127.0.0.1:8000/api/categorias/${category.id}/${subcategory.id}`,subcategoryObj,{
+            headers: {
+              Authorization: `Token ${Cookies.get('token')}`
+            }
+          })
+          .then(response=> {
+             let finalSubC = category.subCategories.findIndex((elem) => elem.id == response.data.id)
+              category.subCategories[finalSubC] = response.data
+            })
+          .catch(error=> {error})
+        } 
+        else {
+          const subcategory = {
+            nameSubCategory: this.modalSubcategoryName,
+            minPriceBTC: this.modalSubcategoryMinPrice,
+            maxPriceBTC: this.modalSubcategoryMaxPrice,
+          }
+          console.log(subcategory)
+          await axios.post(`http://127.0.0.1:8000/api/categorias/${category.id}`, subcategory, {
+            headers: {
+              Authorization: `Token ${Cookies.get('token')}`
+            }
+          })
+          .then(response => {
+            this.getCategories();
+            categoryObj = this.categories.find((sub) => sub.id === response.data.id);
+            this.toggleSubcategories(categoryObj)
+            console.log(response.data)
+          })
+          .catch(error => console.log(error))
         }
         this.cancelSubcategoryModal();
       }
     },
-    cancelModal() {
-      this.showModal = false;
-      this.modalCategoryId = null;
-      this.modalCategoryName = '';
-    },
-    cancelSubcategoryModal() {
-      this.showSubcategoryModal = false;
-      this.modalCategoryId = null;
-      this.modalCategoryName = '';
-      this.modalSubcategoryId = null;
-      this.modalSubcategoryName = '';
-      this.modalSubcategoryMinPrice = null;
-      this.modalSubcategoryMaxPrice = null;
-    }
+  },
+
+
   }
-};
+
 </script>
 
 <style scoped>

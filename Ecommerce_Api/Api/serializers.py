@@ -218,7 +218,7 @@ class RoleRequestsSerializer(serializers.ModelSerializer):
 class SubCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = SubCategory
-        fields = ['id', 'nameSubCategory']
+        fields = ['id', 'nameSubCategory', 'minPriceBTC','maxPriceBTC']
 
 
 

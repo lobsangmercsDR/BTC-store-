@@ -51,6 +51,8 @@ class Category(models.Model):
 
 class SubCategory(models.Model):
     nameSubCategory = models.CharField(max_length=50)
+    minPriceBTC = models.DecimalField(max_digits=10, decimal_places=2)
+    maxPriceBTC = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 class Product(models.Model):
