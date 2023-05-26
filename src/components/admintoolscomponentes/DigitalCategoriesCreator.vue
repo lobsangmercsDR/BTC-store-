@@ -60,6 +60,9 @@
         <button @click="deleteCategory(category)" class="delete-button">
           Eliminar
         </button>
+        <button @click="showCreateSubcategoryModal(category)" class="add-button">
+          Agregar Subcategoría
+        </button>
       </div>
     </div>
 
@@ -68,6 +71,24 @@
     </button>
 
     <div v-if="showModal" class="modal">
+      <div class="modal-content">
+        <h2 class="modal-title">{{ modalCategoryId ? 'Editar Categoría' : 'Agregar Categoría' }}</h2>
+        <div class="modal-form">
+          <label for="categoryName" class="modal-label">Nombre:</label>
+          <input type="text" id="categoryName" v-model="modalCategoryName" class="modal-input">
+        </div>
+        <div class="modal-actions">
+          <button @click="saveCategory" class="save-button">
+            {{ modalCategoryId ? 'Guardar' : 'Agregar' }}
+          </button>
+          <button @click="cancelModal" class="cancel-button">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="showSubcategoryModal" class="modal">
       <div class="modal-content">
         <h2 class="modal-title">{{ modalSubcategoryId ? 'Editar Subcategoría' : 'Agregar Subcategoría' }}</h2>
         <div class="modal-form">
@@ -82,7 +103,7 @@
           <button @click="saveSubcategory" class="save-button">
             {{ modalSubcategoryId ? 'Guardar' : 'Agregar' }}
           </button>
-          <button @click="cancelModal" class="cancel-button">
+          <button @click="cancelSubcategoryModal" class="cancel-button">
             Cancelar
           </button>
         </div>
@@ -92,10 +113,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-import Cookies from 'js-cookie';
-
-
 export default {
   data() {
     return {
@@ -104,7 +121,6 @@ export default {
           id: 1,
           name: 'Electrónica',
           showSubcategories: false,
-          categories: null,
           subcategories: [
             {
               id: 1,
@@ -166,6 +182,7 @@ export default {
         }
       ],
       showModal: false,
+      showSubcategoryModal: false,
       modalCategoryId: null,
       modalCategoryName: '',
       modalSubcategoryId: null,
@@ -174,22 +191,7 @@ export default {
       modalSubcategoryMaxPrice: null
     };
   },
-
-  created(){
-    this.getCategories()
-  },
   methods: {
-    async getCategories() {
-      await axios.get("http://127.0.0.1:8000/api/categorias?prod=true", {
-        headers: {
-          Authorization: `Token ${Cookies.get('token')}`
-        }
-      })
-      .then(response => {console.log(response.data)})
-      .catch(error => {console.log(error.response.data)})
-    },
-
-
     toggleSubcategories(category) {
       category.showSubcategories = !category.showSubcategories;
     },
@@ -211,7 +213,7 @@ export default {
       this.modalSubcategoryName = subcategory.name;
       this.modalSubcategoryMinPrice = subcategory.minPrice;
       this.modalSubcategoryMaxPrice = subcategory.maxPrice;
-      this.showModal = true;
+      this.showSubcategoryModal = true;
     },
     deleteSubcategory(category, subcategory) {
       const index = category.subcategories.findIndex((s) => s.id === subcategory.id);
@@ -231,7 +233,7 @@ export default {
       this.modalSubcategoryName = '';
       this.modalSubcategoryMinPrice = null;
       this.modalSubcategoryMaxPrice = null;
-      this.showModal = true;
+      this.showSubcategoryModal = true;
     },
     saveCategory() {
       if (this.modalCategoryName.trim() === '') {
@@ -255,7 +257,11 @@ export default {
       this.cancelModal();
     },
     saveSubcategory() {
-      if (this.modalSubcategoryName.trim() === '' || this.modalSubcategoryMinPrice === null || this.modalSubcategoryMaxPrice === null) {
+      if (
+        this.modalSubcategoryName.trim() === '' ||
+        this.modalSubcategoryMinPrice === null ||
+        this.modalSubcategoryMaxPrice === null
+      ) {
         alert('Ingrese todos los campos requeridos.');
         return;
       }
@@ -277,11 +283,16 @@ export default {
           };
           category.subcategories.push(newSubcategory);
         }
-        this.cancelModal();
+        this.cancelSubcategoryModal();
       }
     },
     cancelModal() {
       this.showModal = false;
+      this.modalCategoryId = null;
+      this.modalCategoryName = '';
+    },
+    cancelSubcategoryModal() {
+      this.showSubcategoryModal = false;
       this.modalCategoryId = null;
       this.modalCategoryName = '';
       this.modalSubcategoryId = null;
@@ -354,7 +365,6 @@ export default {
 .subcategory-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 10px;
 }
 
 .subcategory-table th,

@@ -21,6 +21,7 @@
     <inventory/>
     <homeview/>
     <users_profile_component/>
+    <digital_product_view/>
     
   </div>
 </template>
@@ -42,6 +43,7 @@ import inventory from '@/components/payments/inventory.vue'
 import productCard from '@/components/productCard.vue';
 import homeview from '@/components/homeview.vue';
 import users_profile_component from '@/components/usersdashboard/users_profile_component.vue';
+import digital_product_view from '@/components/digital_product_view.vue';
 
 
 
@@ -65,6 +67,7 @@ export default {
     productCard,
     homeview,
     users_profile_component,
+    digital_product_view,
     
 
   },

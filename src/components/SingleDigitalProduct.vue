@@ -72,6 +72,24 @@
               </p>
             </div>
 
+            <!-- Botón Need checker -->
+            <div class="flex items-center mb-2">
+              <button
+                v-if="needChecker"
+                @click="openCheckerModal"
+                class="bg-red-500 hover:bg-green-600 text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 mr-2"
+              >
+                Need checker
+              </button>
+              <button
+                v-else
+                class="bg-green-500 text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 mr-2"
+                disabled
+              >
+                This product has checker
+              </button>
+            </div>
+
             <div class="flex mt-4 justify-end">
               <button
                 @click="addToCart"
@@ -140,6 +158,22 @@
         </div>
       </div>
     </transition>
+
+    <!-- Ventana emergente de Need Checker -->
+    <transition name="modal">
+      <div v-if="showCheckerModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
+          <h2 class="text-2xl font-semibold mb-4">Need Checker</h2>
+          <p v-if="needChecker" class="text-red-500">Este producto requiere el uso de un checker.</p>
+          <p v-else class="text-green-500">Este producto ya ha sido verificado.</p>
+          <textarea v-model="checkerInput" class="border border-gray-300 rounded-lg p-2 mb-4 w-full h-32 resize-none" placeholder="Introduce tu texto..."></textarea>
+          <div class="flex justify-end mt-4">
+            <button @click="closeCheckerModal" class="text-gray-500 hover:text-gray-700 mr-2">Cerrar</button>
+            <button v-if="needChecker" @click="sendCheckerRequest" class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -148,16 +182,19 @@ export default {
   data() {
     return {
       product: null,
+      hasPurchased: false,
       quantity: 1,
-      btcPrice: 27.419,
-      productPriceBTC: 0,
+      btcPrice: 40000,
       user: {
-        username: "Djangolapara",
-        balanceBTC: 2.345,
+        username: "JohnDoe",
+        balanceBTC: 0.5,
       },
       showPaymentModal: false,
       showDownloadModal: false,
       showDeclinedModal: false,
+      needChecker: true,
+      checkerInput: "",
+      showCheckerModal: false,
     };
   },
   mounted() {
@@ -220,6 +257,18 @@ export default {
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
+    },
+    openCheckerModal() {
+      this.showCheckerModal = true;
+    },
+    closeCheckerModal() {
+      this.showCheckerModal = false;
+    },
+    sendCheckerRequest() {
+      // Lógica para enviar la solicitud del checker
+
+      // Cerrar el modal después de enviar la solicitud
+      this.showCheckerModal = false;
     },
   },
 };
@@ -346,5 +395,13 @@ export default {
 
 .modal-leave-to {
   transform: translate(-50%, -60%);
+}
+
+.border {
+  border-width: 1px;
+}
+
+.resize-none {
+  resize: none;
 }
 </style>
