@@ -141,6 +141,10 @@ class UserCreatorSerializer(serializers.ModelSerializer):
         delete_group = validated_data.pop('delete_group', False)
         change_group = validated_data.pop('change_group', False)
         not_found_groups = []
+        if change_group == "SuperUser":
+            print(145)
+            instance.groups.set([])
+            return super().update(instance, validated_data)
         if change_group:
             try:
                 group = Group.objects.get(name=change_group)

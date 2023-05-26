@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from django.http import response
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import viewsets,permissions, authentication,mixins, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
@@ -164,7 +165,6 @@ class CategoryView(viewsets.ModelViewSet):
     #GET all Categories
     def nested_list_categories(self, request):
         print(166)
-        incldProd = request.GET.get('prod','false')
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)
         return JsonResponse(serializer.data, status=200, safe=False)   
@@ -184,6 +184,9 @@ class CategoryView(viewsets.ModelViewSet):
         
     # POST One category
     def post_category(self, request):
+        userPermision = uti.hasOrNotPermission(self, request, self, authClass=[IsAdmin])
+        if not userPermision['IsAdmin']:
+            return JsonResponse({'message':'No tienes acceso a esta vista'})
         userPermision = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin])
         if not userPermision['IsAdmin']:
             return JsonResponse({'message':'No esta autorizado para esto'},status=400)
@@ -195,14 +198,47 @@ class CategoryView(viewsets.ModelViewSet):
     # POST One subcategory
     def post_subCategorie(self, request, *args, **kwargs):
         value = self.get_object()
-        
+        userPermision = uti.hasOrNotPermission(self, request, self, authClass=[IsAdmin])
+        if not userPermision['IsAdmin']:
+            return JsonResponse({'message':'No tienes acceso a esta vista'})
         serializer = SubCategorySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
         
         newSub = SubCategory(category=value, **validated_data)
         newSub.save()
-        return JsonResponse({"succes":True}, status=200)
+        categoryObj = Category.objects.get(id=value.id)
+        serializer = self.get_serializer(categoryObj)
+        return JsonResponse(serializer.data, status=200)
+    
+    def update_subCategory(self, request, subCat_id, *args, **kwargs):
+        userPermision = uti.hasOrNotPermission(self, request, self, authClass=[IsAdmin])
+        if not userPermision['IsAdmin']:
+            return JsonResponse({'message':'No tienes acceso a esta vista'})
+        print(subCat_id)
+        try:
+            subObj= SubCategory.objects.get(id=subCat_id)
+        except SubCategory.DoesNotExist:
+            return JsonResponse({'detail':'No existe'}) 
+
+        serializer = SubCategorySerializer(subObj, request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()   
+        return  JsonResponse(serializer.data)
+    
+    def delete_subCategory(self, request, subCat_id, *args, **kwargs):
+        print(subCat_id)
+        userPermision = uti.hasOrNotPermission(self, request, self, authClass=[IsAdmin])
+        if not userPermision['IsAdmin']:
+            return JsonResponse({'message':'No tienes acceso a esta vista'})
+        try:
+            subObj= SubCategory.objects.get(id=subCat_id)
+        except SubCategory.DoesNotExist:
+            return JsonResponse({'detail':'No existe'}) 
+        print(subObj)
+        subObj.delete()
+        print(00)
+        return JsonResponse({'message':'Campo borrado exitosamente'})
     
     def update_category(self, request, *args, **kwargs):
         userPermision = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin])
