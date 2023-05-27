@@ -220,8 +220,6 @@ class SubCategorySerializer(serializers.ModelSerializer):
         model = SubCategory
         fields = ['id', 'nameSubCategory', 'minPriceBTC','maxPriceBTC']
 
-
-
 class CategorySerializer(serializers.ModelSerializer): 
     subCategories = serializers.SerializerMethodField()
     class Meta:
@@ -233,7 +231,6 @@ class CategorySerializer(serializers.ModelSerializer):
     def get_subCategories(self, obj):
         subCategories = SubCategory.objects.filter(category=obj.id)
         return SubCategorySerializer(subCategories, many=True).data
-
 
 class CategoryWithoutProductsSerializer(serializers.ModelSerializer):
     product_count = serializers.SerializerMethodField()
@@ -254,7 +251,7 @@ class CategoryNestedSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     seller = UserNestedSerializer(read_only=True)
     category = CategoryNestedSerializer(read_only=True)
-    category_id = serializers.IntegerField(required=True, write_only=True)
+    subcategory_id = serializers.IntegerField(required=True, write_only=True)
     price = serializers.SerializerMethodField()
     priceProduct = serializers.DecimalField(max_digits=10,decimal_places=2,write_only=True)
 
@@ -268,28 +265,40 @@ class ProductSerializer(serializers.ModelSerializer):
                     'id',
                     'nameProduct',
                     'price',
+                    'image_product',
                     'dateReleased',
                     'is_digital',
                     'active',
+                    'brand',
+                    'aditional_details',
                     'seller', 
+                    'variants',
+                    'quantity',
+                    'description',
                     'category',
-                    'category_id',
+                    'subcategory_id',
                     'priceProduct'
                 ]
 
+    def validate_subCategory_id(self, value):
+        subObj = SubCategory.objects.filter(id=value).first()
+        if subObj == None:
+            raise serializers.ValidationError("La sub categoria planteada no existe")
+        return value
+
+
+
+
+
 
     def create(self, validated_data):
+        print(validated_data, 290)
         request = self.context.get('request')
-        category_id = validated_data.pop('category_id', None)
+        category_id = validated_data.pop('subcategory_id', None)
         price = validated_data.pop('priceProduct', None)
-        validated_data.pop('seller_id')
-        print("asdas")
         seller = User.objects.get(id=request.user.id)
-        try:
-            category = Category.objects.get(id=category_id)
-        except:
-            raise exceptions.ValidationError("La categoria especificada no existe")
-        product = Product.objects.create(seller=seller, priceProduct=price, category=category, **validated_data)
+        subCategory = SubCategory.objects.get(id=category_id)
+        product = Product.objects.create(seller=seller, priceProduct=price, subCategory=subCategory, **validated_data)
         return product
 
     def update(self, instance, validated_data):

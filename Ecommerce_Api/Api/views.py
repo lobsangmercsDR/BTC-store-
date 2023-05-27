@@ -120,12 +120,7 @@ class ProductView(viewsets.ModelViewSet):
 
     # POST a new product (Taking Seller id)
     def post_product(self,request):
-        sellerPermision = hasOrNotPermission(self, request,self.__class__, authClass=IsSeller)
-        checkerPermision = hasOrNotPermission(self, request,self.__class__, authClass=IsChecker)
-        buyerPermsision = hasOrNotPermission(self, request,self.__class__, authClass=IsBuyer)
         userPerm = uti.hasOrNotPermission(self, request,self.__class__, authClass=[IsSeller,IsChecker,IsBuyer,IsAdmin])
-        print(userPerm)
-        print(request.data)
         if not userPerm["IsSeller"] and not userPerm["IsAdmin"]:
             return JsonResponse({"message":"No tiene permiso para realizar esta accion"}, status=403)
         serializer = ProductSerializer(data=request.data, context={'request':request, 'userPermision':userPerm})
