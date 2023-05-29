@@ -5,7 +5,7 @@
       <form @submit.prevent="addProduct" class="grid grid-cols-2 gap-4">
         <div>
           <label for="productName" class="text-lg font-semibold">Nombre del Producto:</label>
-          <input v-model="newProduct.name" id="productName" type="text" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" required>
+          <input v-model="newProduct.nameProduct" id="productName" type="text" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" required>
         </div>
         <div>
           <label for="productDescription" class="text-lg font-semibold">Descripción del Producto:</label>
@@ -43,14 +43,14 @@
         </div>
         <div>
           <label for="productCategories" class="text-lg font-semibold">Categorías del Producto:</label>
-          <select v-model="newProduct.category" id="productCategories" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" required>
-            <option v-for="category in categories" :key="category.id" :value="category.name">{{ category.name }}</option>
+          <select v-model="Indcategory" id="productCategories" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" required>
+            <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.nameCategory }}</option>
           </select>
         </div>
         <div>
           <label for="productSubcategories" class="text-lg font-semibold">Subcategorías del Producto:</label>
           <select v-model="newProduct.subcategory" id="productSubcategories" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" required>
-            <option v-for="subcategory in getSubcategories(newProduct.category)" :key="subcategory" :value="subcategory">{{ subcategory }}</option>
+            <option v-for="subcategory in getSubcategories(Indcategory)" :key="subcategory" :value="subcategory">{{ subcategory.nameSubCategory }}</option>
           </select>
         </div>
         <div>
@@ -62,7 +62,7 @@
           <textarea v-model="newProduct.additionalDetails" id="productDetails" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
         </div>
         <div class="col-span-2">
-          <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 self-end">
+          <button type="submit" @click="CreateProduct" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 self-end">
             Agregar Producto
           </button>
         </div>
@@ -73,57 +73,99 @@
 
 <script>
 import axios from 'axios';
+import Cookies from 'js-cookie'
 
 export default {
   data() {
     return {
       newProduct: {
-        name: '',
-        description: '',
-        priceBTC: 0,
-        priceUSD: 0,
-        image: '',
-        brand: '',
-        variants: '',
-        category: '',
-        subcategory: '',
-        quantity: 0,
-        additionalDetails: '',
+        nameProduct: 'Ayuda',
+        description: 'IDK',
+        price: 0,
+        priceUSD: 11231,
+        image_product: null,
+        is_digital: true,
+        brand: 'Huae',
+        variants: '13123123',
+        subcategory_id: 0,
+        quantity: 13,
+        aditional_details: '131231231sd3',
       },
       btcPrice: 0,
-      categories: [
-        {
-          id: 1,
-          name: 'Electrónica',
-          subcategories: ['Teléfonos', 'Computadoras', 'Accesorios'],
-        },
-        {
-          id: 2,
-          name: 'Ropa',
-          subcategories: ['Hombres', 'Mujeres', 'Niños'],
-        },
-        {
-          id: 3,
-          name: 'Hogar',
-          subcategories: ['Decoración', 'Electrodomésticos', 'Muebles'],
-        },
-        {
-          id: 4,
-          name: 'Deportes',
-          subcategories: ['Fútbol', 'Baloncesto', 'Natación'],
-        },
-        {
-          id: 5,
-          name: 'Alimentación',
-          subcategories: ['Frutas', 'Verduras', 'Carnes'],
-        },
-      ],
+      categories: [],
+      Indcategory: null,
+      // categories: [
+      //   {
+      //     id: 1,
+      //     name: 'Electrónica',
+      //     subcategories: ['Teléfonos', 'Computadoras', 'Accesorios'],
+      //   },
+      //   {
+      //     id: 2,
+      //     name: 'Ropa',
+      //     subcategories: ['Hombres', 'Mujeres', 'Niños'],
+      //   },
+      //   {
+      //     id: 3,
+      //     name: 'Hogar',
+      //     subcategories: ['Decoración', 'Electrodomésticos', 'Muebles'],
+      //   },
+      //   {
+      //     id: 4,
+      //     name: 'Deportes',
+      //     subcategories: ['Fútbol', 'Baloncesto', 'Natación'],
+      //   },
+      //   {
+      //     id: 5,
+      //     name: 'Alimentación',
+      //     subcategories: ['Frutas', 'Verduras', 'Carnes'],
+      //   },
+      // ],
     };
   },
   mounted() {
     this.fetchBTCPrice();
   },
+
+  created() {
+    this.fetchProducts()
+    this.fetchCategoriesForCreate()
+  },
+
   methods: {
+    async fetchProducts() {
+      await axios.get('http://127.0.0.1:8000/api/productos', {
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      })
+      .then(response => {console.log(response.data)})
+      .catch(error => {console.log(error)})
+    },
+
+    async fetchCategoriesForCreate() {
+      await axios.get("http://127.0.0.1:8000/api/categorias", {
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      })
+      .then(response => {this.categories = response.data; console.log(response.data)})
+      .catch(error => {console.log(error.response.data)})
+    },
+
+    async CreateProduct() {
+      delete this.newProduct.subcategory
+      delete this.newProduct.priceUSD 
+      delete this.newProduct.priceBTC
+      await axios.post('http://127.0.0.1:8000/api/productos',this.newProduct,{
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      })
+      .then(response=> {console.log(response)})
+      .catch(error => {console.log(error.response.data)})
+    },
+
     async fetchBTCPrice() {
       try {
         const response = await axios.get('https://api.coinbase.com/v2/prices/spot?currency=USD');
@@ -143,7 +185,7 @@ export default {
         brand: '',
         variants: '',
         category: '',
-        subcategory: '',
+        subcategory_id: 0,
         quantity: 0,
         additionalDetails: '',
       };
@@ -165,8 +207,12 @@ export default {
       reader.readAsDataURL(file);
     },
     getSubcategories(category) {
-      const selectedCategory = this.categories.find((c) => c.name === category);
-      return selectedCategory ? selectedCategory.subcategories : [];
+        console.log(category)
+      if (category !== null && this.category !== null) {
+        const selectedCategory = this.categories.find((c) => c.id == category )
+        return selectedCategory.subCategories
+      }
+
     },
   },
 };

@@ -51,14 +51,23 @@ class Category(models.Model):
 
 class SubCategory(models.Model):
     nameSubCategory = models.CharField(max_length=50)
+    minPriceBTC = models.DecimalField(max_digits=10, decimal_places=2)
+    maxPriceBTC = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 class Product(models.Model):
     nameProduct = models.CharField(max_length=50)
+    image_product = models.ImageField(upload_to='images/', default=None)
+    description = models.CharField(max_length=200, default="")
     priceProduct = models.DecimalField(max_digits=10, decimal_places=2)
     dateReleased = models.DateField(auto_now_add=True)
     active = models.BooleanField(default=False)
+    brand = models.CharField(max_length=50, default="")
+    aditional_details = models.CharField(max_length=200, default="")
+    variants = models.CharField(max_length=200, default="")
+    quantity = models.IntegerField(default=0)
     is_digital = models.BooleanField(default=False)
+    subCategory = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True)
     seller = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Transacts(models.Model):

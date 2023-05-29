@@ -198,6 +198,7 @@ export default {
       delete this.editUserData.purchases_count
       delete this.editUserData.last_login
       delete this.editUserData.createdAt
+      console.log(this.editUserData)
       await axios.put(`http://127.0.0.1:8000/api/users/${Id}?roles=true`,this.editUserData,{
         headers: {
           Authorization: `Token ${Cookies.get('token')}`
