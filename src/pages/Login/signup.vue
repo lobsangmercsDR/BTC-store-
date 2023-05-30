@@ -40,7 +40,7 @@
                           <div v-if="error && error.hasOwnProperty('invitation_code')" class="text-red-500 errorText">
                             <small>{{ error.invitation_code[0] }}</small>
                           </div>
-                          <input type="text" class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full" placeholder="Your invitation code" v-model="invitation_code" style="transition: all 0.15s ease 0s;" :class="{'errorInput' : error && error.hasOwnProperty('invitation_code')}"/>
+                          <input type="email" class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full" placeholder="Your invitation codes" v-model="invitation_code" style="transition: all 0.15s ease 0s;" :class="{'errorInput' : error && error.hasOwnProperty('invitation_code')}"/>
                         </div>
                         <div class="relative w-full mb-3">
                           <label class="block uppercase text-gray-700 text-xs font-bold mb-2" for="grid-password">Password</label>
@@ -93,33 +93,12 @@
                 </div>
               </div>
             </div>
+            <footer-component></footer-component>
           </div>
-          <footer-component></footer-component>
         </section>
-  
-        <transition name="fade">
-          <div class="modal-wrapper" v-if="showLoadingModal">
-            <div class="modal-content">
-              <div class="spinner"></div>
-              <p>Creating user...</p>
-            </div>
-          </div>
-        </transition>
-  
-        <transition name="fade">
-          <div class="modal-wrapper" v-if="showSuccessModal">
-            <div class="modal-content">
-              <h2 class="text-2xl font-bold mb-4">User Created</h2>
-              <p>Cart ID: {{ cartId }}</p>
-              <p>BTC Wallet: <input type="text" v-model="btcWallet" class="border p-1"></p>
-              <button class="bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mt-4" @click="closeSuccessModal">Close</button>
-            </div>
-          </div>
-        </transition>
       </main>
     </div>
   </template>
-  
   <script>
   import axios from 'axios';
   
@@ -141,10 +120,6 @@
           position: '',
         },
         captchaResult: '',
-        btcWallet: '',
-        cartId: '',
-        showLoadingModal: false,
-        showSuccessModal: false,
       };
     },
     mounted() {
@@ -171,123 +146,45 @@
             return;
           }
   
-          this.showLoadingModal = true;
-  
-          await new Promise(resolve => setTimeout(resolve, 4000));
-  
-          this.cartId = this.generateCartId();
-  
-          this.showLoadingModal = false;
-          this.showSuccessModal = true;
-  
-          this.name = '';
-          this.email = '';
-          this.password = '';
-          this.confirm_pass = '';
-          this.invitation_code = '';
-          this.captchaResult = '';
-          this.btcWallet = '';
+          const response = await axios.post("http://127.0.0.1:8000/api/users", {
+            name: this.name,
+            email: this.email,
+            password: this.password,
+            confirm_pass: this.confirm_pass,
+            invitation_code: this.invitation_code
+          });
+          console.log(response.data);
         } catch (error) {
           this.error = error.response.data;
           console.log(error.response.data);
         }
-      },
-      closeSuccessModal() {
-        this.showSuccessModal = false;
-      },
-      generateCartId() {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let result = '';
-  
-        for (let i = 0; i < 8; i++) {
-          result += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-  
-        return result;
-      },
-    },
+      }
+    }
   };
   </script>
   
   <style scoped>
-  /* Estilos personalizados */
-  .modal-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 9999;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    text-align: center;
-  }
-  
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: opacity 0.3s;
-  }
-  
-  .fade-enter,
-  .fade-leave-to {
-    opacity: 0;
-  }
-  
-  .spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-left-color: #edf2f7;
-    animation: spin 1s infinite linear;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-  }
-  
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-  
+  /* Estilos CSS personalizados */
   .captcha-board {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    margin-bottom: 1rem;
   }
   
   .captcha-row {
     display: flex;
+    justify-content: center;
   }
   
   .captcha-cell {
-    width: 3rem;
-    height: 3rem;
+    width: 30px;
+    height: 30px;
+    border: 1px solid black;
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px solid #000;
+    margin: 5px;
     cursor: pointer;
-  }
-  
-  .errorText {
-    margin-top: 0.25rem;
-    color: red;
-  }
-  
-  .errorInput {
-    border-color: red;
   }
   </style>
   
