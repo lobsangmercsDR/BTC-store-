@@ -159,7 +159,6 @@ class CategoryView(viewsets.ModelViewSet):
 
     #GET all Categories
     def nested_list_categories(self, request):
-        print(166)
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)
         return JsonResponse(serializer.data, status=200, safe=False)   
@@ -232,7 +231,6 @@ class CategoryView(viewsets.ModelViewSet):
             return JsonResponse({'detail':'No existe'}) 
         print(subObj)
         subObj.delete()
-        print(00)
         return JsonResponse({'message':'Campo borrado exitosamente'})
     
     def update_category(self, request, *args, **kwargs):

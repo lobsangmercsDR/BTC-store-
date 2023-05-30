@@ -49,8 +49,8 @@
         </div>
         <div>
           <label for="productSubcategories" class="text-lg font-semibold">Subcategorías del Producto:</label>
-          <select v-model="newProduct.subcategory" id="productSubcategories" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" required>
-            <option v-for="subcategory in getSubcategories(Indcategory)" :key="subcategory" :value="subcategory">{{ subcategory.nameSubCategory }}</option>
+          <select v-model="Indsubcategory"  @change="ChangeSubCategory()" id="productSubcategories" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" required>
+            <option v-for="subcategory in getSubcategories(Indcategory)" :key="subcategory.id" :value="subcategory" >{{ subcategory.nameSubCategory }}</option>
           </select>
         </div>
         <div>
@@ -84,6 +84,7 @@ export default {
         price: 0,
         priceUSD: 11231,
         image_product: null,
+        image: null,
         is_digital: true,
         brand: 'Huae',
         variants: '13123123',
@@ -94,6 +95,7 @@ export default {
       btcPrice: 0,
       categories: [],
       Indcategory: null,
+      Indsubcategory: null,
       // categories: [
       //   {
       //     id: 1,
@@ -123,6 +125,8 @@ export default {
       // ],
     };
   },
+
+
   mounted() {
     this.fetchBTCPrice();
   },
@@ -133,13 +137,20 @@ export default {
   },
 
   methods: {
+    ChangeSubCategory(event) {
+      console.log(event)
+      this.newProduct.subcategory_id = event.target.value
+      console.log(this.newProduct.subcategory_id)
+    },
+
+
     async fetchProducts() {
       await axios.get('http://127.0.0.1:8000/api/productos', {
         headers: {
           Authorization: `Token ${Cookies.get('token')}`
         }
       })
-      .then(response => {console.log(response.data)})
+      .then(response => {})
       .catch(error => {console.log(error)})
     },
 
@@ -149,15 +160,30 @@ export default {
           Authorization: `Token ${Cookies.get('token')}`
         }
       })
-      .then(response => {this.categories = response.data; console.log(response.data)})
+      .then(response => {this.categories = response.data})
       .catch(error => {console.log(error.response.data)})
     },
+    
 
     async CreateProduct() {
-      delete this.newProduct.subcategory
-      delete this.newProduct.priceUSD 
-      delete this.newProduct.priceBTC
-      await axios.post('http://127.0.0.1:8000/api/productos',this.newProduct,{
+      const formData= new FormData();
+      const ObjCopy = Object.assign({}, this.newProduct)
+
+      delete ObjCopy.subcategory
+      delete ObjCopy.priceUSD 
+      ObjCopy.priceProduct = ObjCopy.priceBTC
+      console.log(ObjCopy)
+      delete ObjCopy.priceBTC
+      delete ObjCopy.image
+      console.log(this.newProduct)
+      console.log(ObjCopy)
+      let properties = Object.keys(ObjCopy)
+      for (let i = 0; i < properties.length; i++) {
+        let clave = properties[i]
+        let Obj = ObjCopy[clave]
+        formData.append(clave, Obj)
+      }
+      await axios.post('http://127.0.0.1:8000/api/productos',formData,{
         headers: {
           Authorization: `Token ${Cookies.get('token')}`
         }
@@ -182,6 +208,7 @@ export default {
         priceBTC: 0,
         priceUSD: 0,
         image: '',
+        image_product: null,
         brand: '',
         variants: '',
         category: '',
@@ -200,6 +227,7 @@ export default {
     },
     handleImageUpload(event) {
       const file = event.target.files[0];
+      this.newProduct.image_product = file;
       const reader = new FileReader();
       reader.onload = () => {
         this.newProduct.image = reader.result;
@@ -207,13 +235,18 @@ export default {
       reader.readAsDataURL(file);
     },
     getSubcategories(category) {
-        console.log(category)
       if (category !== null && this.category !== null) {
         const selectedCategory = this.categories.find((c) => c.id == category )
+        console.log(selectedCategory.subCategories)
+        console.log(this.newProduct.subcategory_id)
+
         return selectedCategory.subCategories
       }
-
     },
+
+    getSelectedSub(suB) {
+      console
+    }
   },
 };
 </script>

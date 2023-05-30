@@ -281,20 +281,15 @@ class ProductSerializer(serializers.ModelSerializer):
                 ]
 
     def validate_subCategory_id(self, value):
-        subObj = SubCategory.objects.filter(id=value).first()
+        subObj = SubCategory.objects.get(id=value)
         if subObj == None:
             raise serializers.ValidationError("La sub categoria planteada no existe")
         return value
 
-
-
-
-
-
     def create(self, validated_data):
-        print(validated_data, 290)
         request = self.context.get('request')
         category_id = validated_data.pop('subcategory_id', None)
+        print(category_id,293)
         price = validated_data.pop('priceProduct', None)
         seller = User.objects.get(id=request.user.id)
         subCategory = SubCategory.objects.get(id=category_id)
