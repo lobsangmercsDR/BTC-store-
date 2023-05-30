@@ -42,7 +42,8 @@
           <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Likes:</span>
             <span class="text-lg">{{ product.likes }}</span>
-            <button @click="incrementLikes" class="text-green-500 hover:text-green-600 focus:outline-none">
+            <button @click="incrementLikes" class="text-green-500 hover:text-green-600 focus:outline-none"
+              :disabled="liked">
               <svg class="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path
                   d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z" />
@@ -54,7 +55,8 @@
           <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Dislikes:</span>
             <span class="text-lg">{{ product.dislikes }}</span>
-            <button @click="incrementDislikes" class="text-red-500 hover:text-red-600 focus:outline-none">
+            <button @click="incrementDislikes" class="text-red-500 hover:text-red-600 focus:outline-none"
+              :disabled="disliked">
               <svg class="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path
                   d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z" />
@@ -195,6 +197,8 @@ export default {
       shippingAddress: '',
       orderNumber: '',
       formattedDate: '',
+      liked: false,
+      disliked: false,
     };
   },
   mounted() {
@@ -220,10 +224,16 @@ export default {
       this.addToCart(product); // Utiliza la acción addToCart del módulo cart
     },
     incrementLikes() {
-      this.product.likes++;
+      if (!this.liked && !this.disliked) {
+        this.product.likes++;
+        this.liked = true;
+      }
     },
     incrementDislikes() {
-      this.product.dislikes++;
+      if (!this.liked && !this.disliked) {
+        this.product.dislikes++;
+        this.disliked = true;
+      }
     },
     convertToDollars(price) {
       return price * this.btcPrice;
@@ -329,17 +339,6 @@ export default {
 }
 
 .select-variant {
-  text-align: left;
-  width: 100%;
-}
-
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.2s;
-}
-
-.modal-enter,
-.modal-leave-to {
-  opacity: 0;
+  width: 200px;
 }
 </style>

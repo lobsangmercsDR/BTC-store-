@@ -107,6 +107,7 @@
                             </div>
                             <h4 class="product-name">{{ product.name }}</h4>
                             <p class="product-price">$ {{ product.price }}</p>
+                            <p>Subido por:</p>
                             <button class="product-button" @click="goToProduct(product.id)">Go to Product</button>
                         </div>
                     </div>
@@ -114,7 +115,7 @@
             </div>
         </div>
         <div class="div4">
-            <h1>Productos Fisicos mas vendidos</h1>
+            <h1>Ultimos Productos Fisicos vendidos</h1>
 
             <div class="slider-container hidden md:block">
                 <agile :options="sliderOptions1" @afterChange="handleAfterChange" ref="agile">
@@ -125,6 +126,7 @@
                             </div>
                             <h4 class="product-name">{{ product.name }}</h4>
                             <p class="product-price">$ {{ product.price }}</p>
+                            <p>Comprado por:</p>
                             <button class="product-button" @click="goToProduct(product.id)">Go to Product</button>
                         </div>
                     </div>
@@ -475,7 +477,7 @@ export default {
 }
 
 .slider-item {
-    height: 220px;
+    height: 320px;
     width: 180px;
     display: flex;
     flex-direction: column;
@@ -503,7 +505,7 @@ export default {
 
 .product-image img {
     width: 100%;
-    height: 120px;
+    height: 180px;
     object-fit: cover;
     border-radius: 8px;
     margin-bottom: 10px;
@@ -532,10 +534,6 @@ export default {
     font-size: 14px;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
 }
 
 .product-button:hover {

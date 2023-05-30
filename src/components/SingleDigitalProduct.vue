@@ -70,6 +70,7 @@
               <p class="text-green-500 text-lg font-extrabold">
                 ${{ convertToDollars(productPriceBTC).toFixed(2) }} USD
               </p>
+              <p v-if="!needChecker" class="ml-2 text-gray-600 text-sm">(+{{ product.checkerPrice.toFixed(8) }} BTC FOR Checker)</p>
             </div>
 
             <!-- Botón Need checker -->
@@ -120,6 +121,11 @@
           <p>Producto: {{ product.name }}</p>
           <p>Cantidad: {{ quantity }}</p>
           <p>Precio total: {{ (product.price * quantity * btcPrice).toFixed(8) }} BTC / ${{ (product.price * quantity).toFixed(2) }} USD</p>
+          <p>
+            <input type="checkbox" v-model="addChecker" class="mr-2" :disabled="needChecker" />
+            <span>Agregar Checker (+{{ product.checkerPrice.toFixed(8) }} BTC)</span>
+          </p>
+          <p v-if="addChecker" class="text-red-500 text-sm">Los productos digitales comprados sin checker no tienen derecho a garantía.</p>
           <hr class="my-4">
           <p>Username: {{ user.username }}</p>
           <p>Saldo disponible en BTC: <span class="text-green-500">{{ user.balanceBTC.toFixed(8) }} BTC</span></p>
@@ -132,15 +138,24 @@
       </div>
     </transition>
 
-    <!-- Ventana emergente de descarga -->
+    <!-- Ventana emergente de pago exitoso -->
     <transition name="modal">
-      <div v-if="showDownloadModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div v-if="showSuccessModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
-          <h2 class="text-2xl font-semibold mb-4">{{ product.name }}</h2>
-          <p class="text-gray-600">{{ product.additionalDetails }}</p>
+          <h2 class="text-2xl font-semibold mb-4">Pago Exitoso</h2>
+          <p>¡Gracias por tu compra!</p>
+          <div class="mt-4">
+            <h3 class="text-xl font-semibold mb-2">Factura:</h3>
+            <p>Orden: {{ orderNumber }}</p>
+            <p>Producto: {{ product.name }}</p>
+            <p>Cantidad: {{ quantity }}</p>
+            <p>Vendedor: {{ product.brand }}</p>
+            <p>Dirección de la transacción: {{ transactionAddress }}</p>
+          </div>
           <div class="flex justify-end mt-4">
-            <button @click="showDownloadModal = false" class="text-gray-500 hover:text-gray-700 mr-2">Cerrar</button>
-            <button @click="downloadPreview" class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">Descargar</button>
+            <button @click="showSuccessModal = false" class="text-gray-500 hover:text-gray-700 mr-2">Cerrar</button>
+            <button @click="downloadInvoice" class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">Descargar Factura</button>
+            <button @click="downloadContent" class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">Descargar Contenido</button>
           </div>
         </div>
       </div>
@@ -178,6 +193,8 @@
 </template>
 
 <script>
+import jsPDF from "jspdf";
+
 export default {
   data() {
     return {
@@ -190,19 +207,21 @@ export default {
         balanceBTC: 0.5,
       },
       showPaymentModal: false,
-      showDownloadModal: false,
+      showSuccessModal: false,
       showDeclinedModal: false,
-      needChecker: true,
-      checkerInput: "",
       showCheckerModal: false,
+      needChecker: false,
+      checkerInput: "",
+      addChecker: false,
+      orderNumber: "",
+      transactionAddress: "",
     };
   },
   mounted() {
     this.product = {
-      name: 'PUFFY 2G - Girls (Super Blends)',
-      description: 'Super Blends were carefully crafted to mimic the live resin experience',
+      name: 'Pack 100000 cuentas de GMAIL',
+      description: 'Compra lass cuentas',
       price: 0.011,
-      brand: 'Puffy',
       likes: 0,
       dislikes: 0,
       additionalDetails:
@@ -211,7 +230,8 @@ export default {
       quantity: 0,
       category: [],
       subcategory: [],
-      seller_username: "Djangolapara"
+      seller_username: "Djangolapara",
+      checkerPrice: 0.005, // Precio adicional del checker
     };
     this.productPriceBTC = this.product.price * this.btcPrice;
   },
@@ -238,31 +258,50 @@ export default {
 
         // Lógica adicional para procesar el pago
 
-        // Mostrar el modal de descarga
+        // Mostrar el modal de éxito
         this.showPaymentModal = false;
-        this.showDownloadModal = true;
+        this.showSuccessModal = true;
+
+        // Generar número de orden y dirección de la transacción
+        this.orderNumber = Math.floor(Math.random() * 1000000);
+        this.transactionAddress = "0x123abc...";
+
+        // Resetear el estado
+        this.quantity = 1;
+        this.addChecker = false;
       } else {
         // Mostrar el modal de transacción declinada
         this.showPaymentModal = false;
         this.showDeclinedModal = true;
       }
     },
-    downloadPreview() {
+    downloadInvoice() {
+      const doc = new jsPDF();
+      doc.setFontSize(18);
+      doc.text("Factura de Compra", 20, 20);
+      doc.setFontSize(12);
+      doc.text(`Orden: ${this.orderNumber}`, 20, 30);
+      doc.text(`Producto: ${this.product.name}`, 20, 40);
+      doc.text(`Cantidad: ${this.quantity}`, 20, 50);
+      doc.text(`Vendedor: ${this.product.brand}`, 20, 60);
+      doc.text(`Dirección de la Transacción: ${this.transactionAddress}`, 20, 70);
+      doc.save("invoice.pdf");
+    },
+    downloadContent() {
       const text = this.product.additionalDetails;
-
       const element = document.createElement("a");
       const file = new Blob([text], { type: "text/plain" });
       element.href = URL.createObjectURL(file);
-      element.download = "preview.txt";
+      element.download = "content.txt";
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
     },
-    openCheckerModal() {
-      this.showCheckerModal = true;
-    },
     closeCheckerModal() {
       this.showCheckerModal = false;
+    },
+    openCheckerModal() {
+      this.showCheckerModal = true;
     },
     sendCheckerRequest() {
       // Lógica para enviar la solicitud del checker
@@ -316,7 +355,7 @@ export default {
 }
 
 .bg-black {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #000;
 }
 
 .bg-opacity-50 {
@@ -327,42 +366,126 @@ export default {
   border-radius: 0.5rem;
 }
 
-.p-8 {
+.p-4 {
+  padding: 1rem;
+}
+
+.md\:p-8 {
   padding: 2rem;
+}
+
+.transition-colors {
+  transition-property: color;
+  transition-duration: 0.5s;
+}
+
+.hover\:bg-blue-50:hover {
+  background-color: #f0f4ff;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.text-orange-600 {
+  color: #fb923c;
+}
+
+.hover\:text-purple-800:hover {
+  color: #6b46c1;
+}
+
+.mt-8 {
+  margin-top: 2rem;
+}
+
+.space-x-4 > * {
+  margin-right: 1rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.text-gray-600 {
+  color: #718096;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.tracking-wide {
+  letter-spacing: 0.025em;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
 }
 
 .text-2xl {
   font-size: 1.5rem;
-  font-weight: 600;
+  line-height: 2.25rem;
 }
 
-.mb-4 {
-  margin-bottom: 1rem;
+.mr-2 {
+  margin-right: 0.5rem;
 }
 
-.my-4 {
+.text-green-500 {
+  color: #84cc16;
+}
+
+.font-extrabold {
+  font-weight: 800;
+}
+
+.text-red-500 {
+  color: #f87171;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.mt-4 {
   margin-top: 1rem;
-  margin-bottom: 1rem;
 }
 
-.text-gray-500 {
-  color: #a0aec0;
+.justify-end {
+  justify-content: flex-end;
 }
 
-.hover:text-gray-700:hover {
-  color: #4a5568;
-}
-
-.text-white {
-  color: #fff;
-}
-
-.bg-blue-500 {
-  background-color: #4299e1;
-}
-
-.hover:bg-blue-700:hover {
-  background-color: #2b6cb0;
+.mr-2 {
+  margin-right: 0.5rem;
 }
 
 .px-4 {
@@ -379,29 +502,1134 @@ export default {
   border-radius: 0.25rem;
 }
 
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.3s ease;
+.uppercase {
+  text-transform: uppercase;
 }
 
-.modal-enter,
-.modal-leave-to {
-  opacity: 0;
+.focus\:outline-none:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
 }
 
-.modal-enter {
-  transform: translate(-50%, -50%);
+.focus\:ring-2:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
 }
 
-.modal-leave-to {
-  transform: translate(-50%, -60%);
+.bg-red-500 {
+  background-color: #f87171;
 }
 
-.border {
-  border-width: 1px;
+.hover\:bg-green-600:hover {
+  background-color: #047857;
 }
 
-.resize-none {
-  resize: none;
+.text-white {
+  color: #fff;
 }
+
+.hover\:bg-[#fa7328]:hover {
+  background-color: #f87171;
+}
+
+.bg-green-500 {
+  background-color: #84cc16;
+}
+
+.hover\:bg-[#d836e8]:hover {
+  background-color: #6b46c1;
+}
+
+.bg-[#ac15c1] {
+  background-color: #ac15c1;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.text-purple-800 {
+  color: #6b46c1;
+}
+
+.focus\:ring-red-500:focus {
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.5);
+}
+
+.bg-[#f76108] {
+  background-color: #f76108;
+}
+
+.hover\:bg-[#fa7328]:hover {
+  background-color: #fa7328;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.rounded {
+  border-radius: 0.25rem;
+}
+
+.text-white {
+  color: #fff;
+}
+
+.bg-[#ac15c1] {
+  background-color: #ac15c1;
+}
+
+.hover\:bg-[#d836e8]:hover {
+  background-color: #d836e8;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.rounded {
+  border-radius: 0.25rem;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.focus\:outline-none:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.focus\:ring-2:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+.bg-red-500 {
+  background-color: #f87171;
+}
+
+.hover\:bg-green-600:hover {
+  background-color: #047857;
+}
+
+.text-white {
+  color: #fff;
+}
+
+.hover\:bg-[#fa7328]:hover {
+  background-color: #f87171;
+}
+
+.bg-green-500 {
+  background-color: #84cc16;
+}
+
+.hover\:bg-[#d836e8]:hover {
+  background-color: #6b46c1;
+}
+
+.bg-[#ac15c1] {
+  background-color: #ac15c1;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.text-purple-800 {
+  color: #6b46c1;
+}
+
+.focus\:ring-red-500:focus {
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.5);
+}
+
+.bg-white {
+  background-color: #fff;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.text-gray-600 {
+  color: #718096;
+}
+
+.mt-8 {
+  margin-top: 2rem;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.bg-opacity-50 {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+
+.bg-opacity-50 {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.tracking-wide {
+  letter-spacing: 0.025em;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.text-gray-600 {
+  color: #718096;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.rounded {
+  border-radius: 0.25rem;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.focus\:outline-none:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.focus\:ring-2:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+.bg-red-500 {
+  background-color: #f87171;
+}
+
+.hover\:bg-green-600:hover {
+  background-color: #047857;
+}
+
+.text-white {
+  color: #fff;
+}
+
+.hover\:bg-[#fa7328]:hover {
+  background-color: #f87171;
+}
+
+.bg-green-500 {
+  background-color: #84cc16;
+}
+
+.hover\:bg-[#d836e8]:hover {
+  background-color: #6b46c1;
+}
+
+.bg-[#ac15c1] {
+  background-color: #ac15c1;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.text-purple-800 {
+  color: #6b46c1;
+}
+
+.focus\:ring-red-500:focus {
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.5);
+}
+
+.bg-white {
+  background-color: #fff;
+}
+
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.text-gray-600 {
+  color: #718096;
+}
+
+.mt-8 {
+  margin-top: 2rem;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.bg-opacity-50 {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.tracking-wide {
+  letter-spacing: 0.025em;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.text-gray-600 {
+  color: #718096;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.rounded {
+  border-radius: 0.25rem;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.focus\:outline-none:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.focus\:ring-2:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+.bg-red-500 {
+  background-color: #f87171;
+}
+
+.hover\:bg-green-600:hover {
+  background-color: #047857;
+}
+
+.text-white {
+  color: #fff;
+}
+
+.hover\:bg-[#fa7328]:hover {
+  background-color: #f87171;
+}
+
+.bg-green-500 {
+  background-color: #84cc16;
+}
+
+.hover\:bg-[#d836e8]:hover {
+  background-color: #6b46c1;
+}
+
+.bg-[#ac15c1] {
+  background-color: #ac15c1;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.text-purple-800 {
+  color: #6b46c1;
+}
+
+.focus\:ring-red-500:focus {
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.5);
+}
+
+.bg-white {
+  background-color: #fff;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.text-gray-600 {
+  color: #718096;
+}
+
+.mt-8 {
+  margin-top: 2rem;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.bg-opacity-50 {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.tracking-wide {
+  letter-spacing: 0.025em;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.text-gray-600 {
+  color: #718096;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.rounded {
+  border-radius: 0.25rem;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.focus\:outline-none:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.focus\:ring-2:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+.bg-red-500 {
+  background-color: #f87171;
+}
+
+.hover\:bg-green-600:hover {
+  background-color: #047857;
+}
+
+.text-white {
+  color: #fff;
+}
+
+.hover\:bg-[#fa7328]:hover {
+  background-color: #f87171;
+}
+
+.bg-green-500 {
+  background-color: #84cc16;
+}
+
+.hover\:bg-[#d836e8]:hover {
+  background-color: #6b46c1;
+}
+
+.bg-[#ac15c1] {
+  background-color: #ac15c1;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.text-purple-800 {
+  color: #6b46c1;
+}
+
+.focus\:ring-red-500:focus {
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.5);
+}
+
+.bg-white {
+  background-color: #fff;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.text-gray-600 {
+  color: #718096;
+}
+
+.mt-8 {
+  margin-top: 2rem;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.bg-opacity-50 {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.tracking-wide {
+  letter-spacing: 0.025em;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.text-gray-600 {
+  color: #718096;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.rounded {
+  border-radius: 0.25rem;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.focus\:outline-none:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.focus\:ring-2:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+.bg-red-500 {
+  background-color: #f87171;
+}
+
+.hover\:bg-green-600:hover {
+  background-color: #047857;
+}
+
+.text-white {
+  color: #fff;
+}
+
+.hover\:bg-[#fa7328]:hover {
+  background-color: #f87171;
+}
+
+.bg-green-500 {
+  background-color: #84cc16;
+}
+
+.hover\:bg-[#d836e8]:hover {
+  background-color: #6b46c1;
+}
+
+.bg-[#ac15c1] {
+  background-color: #ac15c1;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.text-purple-800 {
+  color: #6b46c1;
+}
+
+.focus\:ring-red-500:focus {
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.5);
+}
+
+.bg-white {
+  background-color: #fff;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.text-gray-600 {
+  color: #718096;
+}
+
+.mt-8 {
+  margin-top: 2rem;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.bg-opacity-50 {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.tracking-wide {
+  letter-spacing: 0.025em;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.text-gray-600 {
+  color: #718096;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.rounded {
+  border-radius: 0.25rem;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.focus\:outline-none:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.focus\:ring-2:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+.bg-red-500 {
+  background-color: #f87171;
+}
+
+.hover\:bg-green-600:hover {
+  background-color: #047857;
+}
+
+.text-white {
+  color: #fff;
+}
+
+.hover\:bg-[#fa7328]:hover {
+  background-color: #f87171;
+}
+
+.bg-green-500 {
+  background-color: #84cc16;
+}
+
+.hover\:bg-[#d836e8]:hover {
+  background-color: #6b46c1;
+}
+
+.bg-[#ac15c1] {
+  background-color: #ac15c1;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.text-purple-800 {
+  color: #6b46c1;
+}
+
+.focus\:ring-red-500:focus {
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.5);
+}
+
 </style>
