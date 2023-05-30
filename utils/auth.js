@@ -1,8 +1,7 @@
 import Cookies from "js-cookie";
 
 export function isAuthenticated() {
-    const token = getAuthToken();
-    console.log(token) 
+    const token = getAuthToken(); 
     if (token == undefined) {
       return false
     } else {
