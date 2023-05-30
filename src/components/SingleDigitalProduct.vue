@@ -210,7 +210,7 @@ export default {
       showSuccessModal: false,
       showDeclinedModal: false,
       showCheckerModal: false,
-      needChecker: false,
+      needChecker: true,
       checkerInput: "",
       addChecker: false,
       orderNumber: "",
