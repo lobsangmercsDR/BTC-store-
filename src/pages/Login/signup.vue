@@ -83,7 +83,7 @@
                           </div>
                         </div>
                         <div class="text-center">
-                          <button :disabled="captchaResult !== 'Correct'" class="bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1" type="submit" style="transition: all 0.15s ease 0s;">
+                          <button :disabled="captchaResult !== 'Correct'" class="bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1" type="button" @click="register" style="transition: all 0.15s ease 0s;">
                             Register
                           </button>
                         </div>
@@ -97,8 +97,29 @@
           </div>
         </section>
       </main>
+      
+      <div v-if="loading" class="modal">
+        <div class="modal-content">
+          <div class="spinner"></div>
+          <p>Creando cuenta...</p>
+        </div>
+      </div>
+      
+      <div v-if="registrationSuccess" class="modal">
+        <div class="modal-content">
+          <h2>Registro exitoso</h2>
+          <p>Los datos del registro son:</p>
+          <ul>
+            <li><strong>Nombre:</strong> {{ registrationData.name }}</li>
+            <li><strong>Email:</strong> {{ registrationData.email }}</li>
+            <!-- Agrega aquí más campos si es necesario -->
+          </ul>
+          <button class="close-btn" @click="closeModal">Cerrar</button>
+        </div>
+      </div>
     </div>
   </template>
+  
   <script>
   import axios from 'axios';
   
@@ -120,6 +141,9 @@
           position: '',
         },
         captchaResult: '',
+        loading: false,
+        registrationSuccess: false,
+        registrationData: {}
       };
     },
     mounted() {
@@ -146,6 +170,11 @@
             return;
           }
   
+          this.loading = true; // Mostrar el modal de carga
+  
+          await new Promise(resolve => setTimeout(resolve, 5000)); // Esperar 5 segundos
+  
+          // Enviar los datos a la API
           const response = await axios.post("http://127.0.0.1:8000/api/users", {
             name: this.name,
             email: this.email,
@@ -153,11 +182,18 @@
             confirm_pass: this.confirm_pass,
             invitation_code: this.invitation_code
           });
-          console.log(response.data);
+  
+          this.registrationData = response.data; // Almacenar los datos del registro exitoso
+          this.registrationSuccess = true; // Mostrar el segundo modal
         } catch (error) {
           this.error = error.response.data;
           console.log(error.response.data);
+        } finally {
+          this.loading = false; // Ocultar el modal de carga
         }
+      },
+      closeModal() {
+        this.registrationSuccess = false;
       }
     }
   };
@@ -184,6 +220,68 @@
     justify-content: center;
     align-items: center;
     margin: 5px;
+    cursor: pointer;
+  }
+  
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+  }
+  
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .modal h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .modal ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .modal li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .close-btn {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
     cursor: pointer;
   }
   </style>
