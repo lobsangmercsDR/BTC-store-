@@ -2,9 +2,6 @@
   <div>
     <headerNav/>
     <users_profile_component/>
-    <profile_modification/>
-    <orders/>
-    <sell_orders/>
   </div>
 </template>
 
@@ -14,6 +11,8 @@ import users_profile_component from '@/components/usersdashboard/users_profile_c
 import profile_modification from '@/components/usersdashboard/profile_modification.vue';
 import orders from '@/components/usersdashboard/orders.vue';
 import sell_orders from '@/components/usersdashboard/sell_orders.vue';
+import buy_categories from '@/components/usersdashboard/buy_categories.vue';
+import user_checker from '@/components/usersdashboard/user_checker.vue';
 
 
 
@@ -25,6 +24,8 @@ export default {
     profile_modification,
     orders,
     sell_orders,
+    buy_categories,
+    user_checker
 
   },
 };
