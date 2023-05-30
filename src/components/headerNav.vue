@@ -49,7 +49,6 @@
                   <div>${{ total }}</div>
                 </div>
               </div>
-              
             </div>
             <!-- User -->
             <div class="relative cursor-pointer" @click="toggleUserMenu">
@@ -57,15 +56,14 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
-                <span class="ml-2">{{ userID }}</span>
+                <span class="ml-2">{{ username }}</span>
               </a>
               <!-- User Dropdown -->
               <div class="absolute right-0 mt-12 bg-white w-64 rounded shadow-lg p-6 z-10 text-gray-800" v-if="userMenuOpen">
                 <h2 class="font-bold mb-4">User Menu</h2>
                 <h2 class="font-bold mb-4">Your Balance: 0 BTC</h2>
-
                 <ul class="space-y-2">
-                  <li><a href="" class="hover:text-blue-500" ><router-link to="/profile" >Perfil</router-link></a></li>
+                  <li><a href="" class="hover:text-blue-500"><router-link to="/profile">Perfil</router-link></a></li>
                   <li><a href="#" class="hover:text-blue-500">Logout</a></li>
                 </ul>
               </div>
@@ -83,14 +81,18 @@
   </div>
 </template>
 
+
 <script>
+import axios from 'axios';
+import Cookies from 'js-cookie';
+
 export default {
   data() {
     return {
       menuOpen: false,
       cartOpen: false,
       userMenuOpen: false,
-      userID: 'User123',
+      username: '',
       cart: [
         { id: 1, name: 'Product 1', price: 100 },
         { id: 2, name: 'Product 2', price: 200 },
@@ -114,8 +116,24 @@ export default {
       this.userMenuOpen = !this.userMenuOpen;
     },
     removeProduct(product) {
-      this.cart = this.cart.filter(p => p.id !== product.id);
+      this.cart = this.cart.filter((p) => p.id !== product.id);
     },
+    async getUserData(id) {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/users/', {
+          headers: {
+            Authorization: `Token ${Cookies.get('token')}`,
+          },
+        });
+        console.log(id),
+        this.username = response.data.username;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  },
+  mounted() {
+    this.getUserData();
   },
 };
 </script>

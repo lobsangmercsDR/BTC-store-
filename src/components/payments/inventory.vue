@@ -9,11 +9,11 @@
       />
       <select v-model="selectedCategory" @change="updateSubcategories" class="p-2 border border-gray-300 rounded-md mb-2 md:mb-0 md:mr-2 w-full md:w-auto">
         <option value="">Todas las categorías</option>
-        <option v-for="category in categories" :value="category">{{ category }}</option>
+        <option v-for="category in categories" :value="category">{{ category.nameCategory }}</option>
       </select>
       <select v-model="selectedSubcategory" class="p-2 border border-gray-300 rounded-md mb-2 md:mb-0 md:mr-2 w-full md:w-auto">
         <option value="">Todas las subcategorías</option>
-        <option v-for="subcategory in filteredSubcategories" :value="subcategory">{{ subcategory }}</option>
+        <option v-for="subcategory in filteredSubcategories" :value="subcategory">{{ subcategories.selectedCategory }}</option>
       </select>
     </div>
     <div class="overflow-x-auto">
