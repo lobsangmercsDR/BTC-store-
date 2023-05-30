@@ -9,11 +9,11 @@
       />
       <select v-model="selectedCategory" @change="updateSubcategories" class="p-2 border border-gray-300 rounded-md mb-2 md:mb-0 md:mr-2 w-full md:w-auto">
         <option value="">Todas las categorías</option>
-        <option v-for="category in categories" :value="category">{{ category }}</option>
+        <option v-for="category in categories" :value="category">{{ category.nameCategory }}</option>
       </select>
       <select v-model="selectedSubcategory" class="p-2 border border-gray-300 rounded-md mb-2 md:mb-0 md:mr-2 w-full md:w-auto">
         <option value="">Todas las subcategorías</option>
-        <option v-for="subcategory in filteredSubcategories" :value="subcategory">{{ subcategory }}</option>
+        <option v-for="subcategory in filteredSubcategories" :value="subcategory">{{ subcategories.selectedCategory }}</option>
       </select>
     </div>
     <div class="overflow-x-auto">
@@ -51,26 +51,54 @@
 </template>
 
 <script>
+import axios from 'axios';
+import Cookies from 'js-cookie';
+
 export default {
   data() {
     return {
       searchTerm: '',
       selectedCategory: '',
       selectedSubcategory: '',
-      categories: ['Electrónica', 'Ropa', 'Hogar'],
-      subcategories: {
-        Electrónica: ['Teléfonos', 'Televisores'],
-        Ropa: ['Pantalones', 'Camisetas'],
-        Hogar: ['Muebles', 'Electrodomésticos'],
-      },
-      products: [
-        { id: 1, name: 'Producto 1', category: 'Electrónica', subcategory: 'Teléfonos', price: 99.99, quantity: 10, createdBy: 'Admin' },
-        { id: 2, name: 'Producto 2', category: 'Ropa', subcategory: 'Pantalones', price: 49.99, quantity: 5, createdBy: 'User' },
-        { id: 3, name: 'Producto 3', category: 'Ropa', subcategory: 'Camisetas', price: 19.99, quantity: 20, createdBy: 'Admin' },
-        { id: 4, name: 'Producto 4', category: 'Hogar', subcategory: 'Muebles', price: 199.99, quantity: 2, createdBy: 'User' },
-        { id: 5, name: 'Producto 5', category: 'Hogar', subcategory: 'Electrodomésticos', price: 299.99, quantity: 8, createdBy: 'Admin' },
-      ],
+      categories: [],
+      subcategories: {},
+      products: [],
     };
+  },
+  created() {
+    this.getCategories();
+    this.getProducts();
+  },
+  methods: {
+    async getCategories() {
+      try {
+        const token = Cookies.get('token'); // Obtener la cookie de autenticación
+        const response = await axios.get('http://127.0.0.1:8000/api/categorias', {
+          headers: {
+            Authorization: `Token ${token}`, // Incluir la cookie en el encabezado Authorization
+          },
+        });
+        this.categories = response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async getProducts() {
+      try {
+        const token = Cookies.get('token'); // Obtener la cookie de autenticación
+        const response = await axios.get('http://127.0.0.1:8000/api/productos', {
+          headers: {
+            Authorization: `Token ${token}`, // Incluir la cookie en el encabezado Authorization
+          },
+        });
+        this.products = response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    updateSubcategories() {
+      this.selectedSubcategory = '';
+    },
   },
   computed: {
     filteredProducts() {
@@ -84,11 +112,6 @@ export default {
     },
     filteredSubcategories() {
       return this.subcategories[this.selectedCategory] || [];
-    },
-  },
-  methods: {
-    updateSubcategories() {
-      this.selectedSubcategory = '';
     },
   },
 };

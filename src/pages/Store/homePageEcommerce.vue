@@ -8,12 +8,14 @@
     </div>
     <digital_product_view/>
     <productCard/>
+    <users_profile_component/>
 
 
     <!-- Resto de los componentes -->
     <SingleProduct />
     <SingleDigitalProduct />
   
+    
     <AddDigitalProduct/>
     <AddProduct/>
     <DigitalCategoriesCreator/>

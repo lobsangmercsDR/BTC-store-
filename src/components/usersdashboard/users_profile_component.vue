@@ -59,6 +59,9 @@
           <template v-if="selectedOption === 'sells_orders'">
             <sell_orders/>
           </template>
+          <template v-if="selectedOption === 'buy_categories'">
+            <buy_categories/>
+          </template>
   
           <!-- Agrega más opciones de panel aquí -->
   
@@ -74,6 +77,7 @@ import rechar from '../payments/rechar.vue';
 import profile_modification from './profile_modification.vue';
 import orders from './orders.vue';
 import sell_orders from './sell_orders.vue';
+import buy_categories from './buy_categories.vue';
   
   export default {
     data() {
@@ -90,6 +94,7 @@ import sell_orders from './sell_orders.vue';
         profile_modification,
         orders,
         sell_orders,
+        buy_categories,
     },
   };
   </script>
