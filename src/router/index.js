@@ -35,11 +35,7 @@ import Wallet from '../pages/Dashboard/wallet_cripto/Wallet.vue'
           path: '/home',
           component:home
         },
-        {
-          name: 'profile',
-          path: '/profile',
-          component:profile
-        },
+       
         {
           name: 'products_fis',
           path: '/products_fis',
@@ -127,7 +123,12 @@ import Wallet from '../pages/Dashboard/wallet_cripto/Wallet.vue'
       path: '/homePageEcommerce',
       name: 'homePageEcommerce',
       component: homePageEcommerce
-    }
+    },
+    {
+      name: 'profile',
+      path: '/profile',
+      component:profile
+    },
 
    
    

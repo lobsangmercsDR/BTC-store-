@@ -62,6 +62,15 @@
           <template v-if="selectedOption === 'buy_categories'">
             <buy_categories/>
           </template>
+          <template v-if="selectedOption === 'checker_panel'">
+            <user_checker/>
+          </template>
+          <template v-if="selectedOption === 'p_product_add'">
+            <AddProduct/>
+          </template>
+          <template v-if="selectedOption === 'd_product_add'">
+            <AddDigitalProduct/>
+          </template>
   
           <!-- Agrega más opciones de panel aquí -->
   
@@ -78,6 +87,7 @@ import profile_modification from './profile_modification.vue';
 import orders from './orders.vue';
 import sell_orders from './sell_orders.vue';
 import buy_categories from './buy_categories.vue';
+import user_checker from './user_checker.vue';
   
   export default {
     data() {
@@ -95,6 +105,7 @@ import buy_categories from './buy_categories.vue';
         orders,
         sell_orders,
         buy_categories,
+        user_checker,
     },
   };
   </script>

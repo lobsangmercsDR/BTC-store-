@@ -94,11 +94,12 @@
 
 <script>
 import axios from "axios";
+import Cookies from 'js-cookie';
 
 export default {
   data() {
     return {
-      username: "JohnDoe",
+      username: "", // Empty string as default value for username
       balance: 5, // Example: initial balance of 5 BTC
       balanceInUSD: 0,
       pendingBalance: 0, 
@@ -172,11 +173,13 @@ export default {
     },
   },
   async mounted() {
+    this.username = Cookies.get('username') || '';
     await this.fetchBTCValue();
     this.qrCodeURL = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${this.walletAddress}`;
   },
 };
 </script>
+
 <style scoped>
 .table {
   border-collapse: collapse;
