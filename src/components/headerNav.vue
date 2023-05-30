@@ -84,6 +84,7 @@
 
 <script>
 import axios from 'axios';
+import { request } from 'http';
 import Cookies from 'js-cookie';
 
 export default {
@@ -104,6 +105,10 @@ export default {
     total() {
       return this.cart.reduce((sum, product) => sum + product.price, 0);
     },
+
+    created() {
+      this.getUserData()
+    }
   },
   methods: {
     toggleMenu() {
@@ -119,17 +124,15 @@ export default {
       this.cart = this.cart.filter((p) => p.id !== product.id);
     },
     async getUserData(id) {
-      try {
-        const response = await axios.get('http://127.0.0.1:8000/api/users/', {
+      console.log(id)
+       await axios.get('http://127.0.0.1:8000/api/users', {
           headers: {
             Authorization: `Token ${Cookies.get('token')}`,
           },
-        });
+        }).then(response => {console.log(response);})
+        .catch(error=> {console.log(error); })
         console.log(id),
         this.username = response.data.username;
-      } catch (error) {
-        console.log(error);
-      }
     },
   },
   mounted() {
