@@ -202,7 +202,7 @@
           }; // Almacenar los datos del registro exitoso
           this.registrationSuccess = true; // Mostrar el segundo modal
         } catch (error) {
-          this.error = error.response.data;
+          this.error = error;
           console.log(error);
         } finally {
           this.loading = false; // Ocultar el modal de carga
