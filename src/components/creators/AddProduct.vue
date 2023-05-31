@@ -49,7 +49,7 @@
         </div>
         <div>
           <label for="productSubcategories" class="text-lg font-semibold">Subcategorías del Producto:</label>
-          <select v-model="Indsubcategory"  @change="ChangeSubCategory()" id="productSubcategories" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" required>
+          <select v-model="Indsubcategory"  @change="ChangeSubCategory" id="productSubcategories" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" required>
             <option v-for="subcategory in getSubcategories(Indcategory)" :key="subcategory.id" :value="subcategory" >{{ subcategory.nameSubCategory }}</option>
           </select>
         </div>
@@ -138,9 +138,7 @@ export default {
 
   methods: {
     ChangeSubCategory(event) {
-      console.log(event)
-      this.newProduct.subcategory_id = event.target.value
-      console.log(this.newProduct.subcategory_id)
+      this
     },
 
 
@@ -175,6 +173,7 @@ export default {
       console.log(ObjCopy)
       delete ObjCopy.priceBTC
       delete ObjCopy.image
+      ObjCopy.subcategory_id = this.Indsubcategory.id
       console.log(this.newProduct)
       console.log(ObjCopy)
       let properties = Object.keys(ObjCopy)
