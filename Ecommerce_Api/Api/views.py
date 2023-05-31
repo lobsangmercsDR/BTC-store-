@@ -8,6 +8,7 @@ from django.http.response import JsonResponse
 from .authentications import IsAdmin, IsSeller, IsChecker, IsBuyer, IsGroupAccepted, AllowAny
 from rest_framework.decorators import api_view
 from rest_framework.authentication import TokenAuthentication
+import requests as Rq
 from rest_framework.authtoken.views import  ObtainAuthToken
 from rest_framework.authtoken.models import  Token
 from django.contrib.auth.models import Group
@@ -117,6 +118,7 @@ class ProductView(viewsets.ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return JsonResponse(serializer.data,status=200)
+
 
     # POST a new product (Taking Seller id)
     def post_product(self,request):
@@ -329,6 +331,8 @@ class UserView(viewsets.ModelViewSet):
         else:
             permission_classes = self.permission_classes
         return [permission() for permission in permission_classes]
+
+
 
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated,IsGroupAccepted]
