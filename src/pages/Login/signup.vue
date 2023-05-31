@@ -97,14 +97,14 @@
           </div>
         </section>
       </main>
-      
+  
       <div v-if="loading" class="modal">
         <div class="modal-content">
           <div class="spinner"></div>
           <p>Creando cuenta...</p>
         </div>
       </div>
-      
+  
       <div v-if="registrationSuccess" class="modal">
         <div class="modal-content">
           <h2>Registro exitoso</h2>
@@ -112,7 +112,8 @@
           <ul>
             <li><strong>Nombre:</strong> {{ registrationData.name }}</li>
             <li><strong>Email:</strong> {{ registrationData.email }}</li>
-            <!-- Agrega aquí más campos si es necesario -->
+            <li><strong>Dirección de la cartera:</strong> {{ registrationData.walletAddress }}</li>
+            <li><strong>Balance de la cartera:</strong> {{ registrationData.walletBalance }}</li>
           </ul>
           <button class="close-btn" @click="closeModal">Cerrar</button>
         </div>
@@ -143,7 +144,7 @@
         captchaResult: '',
         loading: false,
         registrationSuccess: false,
-        registrationData: {}
+        registrationData: {},
       };
     },
     mounted() {
@@ -172,18 +173,31 @@
   
           this.loading = true; // Mostrar el modal de carga
   
-          await new Promise(resolve => setTimeout(resolve, 5000)); // Esperar 5 segundos
+          // Crear cartera de BTC en block.io
+          const blockIOResponse = await axios.post('https://block.io/api/v2/get_new_address', {
+            api_key: 'e337-9708-1bb2-a8b2',
+            label: this.name,
+            currency: 'btc',
+          });
+  
+          // Obtener la dirección de la cartera y su saldo
+          const walletAddress = blockIOResponse.data.data.address;
+          const walletBalance = blockIOResponse.data.data.balance;
   
           // Enviar los datos a la API
-          const response = await axios.post("http://127.0.0.1:8000/api/users", {
+          const response = await axios.post('http://127.0.0.1:8000/api/users', {
             name: this.name,
             email: this.email,
             password: this.password,
             confirm_pass: this.confirm_pass,
-            invitation_code: this.invitation_code
+            invitation_code: this.invitation_code,
           });
   
-          this.registrationData = response.data; // Almacenar los datos del registro exitoso
+          this.registrationData = {
+            ...response.data,
+            walletAddress,
+            walletBalance,
+          }; // Almacenar los datos del registro exitoso
           this.registrationSuccess = true; // Mostrar el segundo modal
         } catch (error) {
           this.error = error.response.data;
@@ -194,8 +208,8 @@
       },
       closeModal() {
         this.registrationSuccess = false;
-      }
-    }
+      },
+    },
   };
   </script>
   
