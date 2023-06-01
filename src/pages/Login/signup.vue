@@ -127,11 +127,11 @@
   export default {
     data() {
       return {
-        name: '',
-        email: '',
-        password: '',
-        confirm_pass: '',
-        invitation_code: '',
+        name: 'Juas',
+        email: 'Juas@gmail.com',
+        password: '12345',
+        confirm_pass: '12345',
+        invitation_code: 'aoqkWnzgprvWqbB',
         error: null,
         captcha: {
           board: [

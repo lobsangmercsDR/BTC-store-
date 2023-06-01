@@ -7,6 +7,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from .utils import services as uti
 import random
+import requests as rq
 import string
 
 dateFormat = serializers.DateTimeField(format="%d/%m/%Y %I:%M:%S %p",required=False)
@@ -122,13 +123,20 @@ class UserCreatorSerializer(serializers.ModelSerializer):
         group_name = ["buyers"]
         invitation_code = validated_data.pop('invitation_code',None)
         validated_data.pop('confirm_pass')
-        print(validated_data)
         if invitation_code:
             invitationObj = InvitationCodes.objects.get(invitationCodes=invitation_code)
             invitationObj.countUsers += 1
             invitationObj.save()
             countUsed = invitationObj.countUsers  
             countcreate= countUsed+1
+        username = validated_data['name']
+        formData = {
+        "api_key": "005d-5ad1-f083-a252",
+        "label": username,
+        "currency": "btc"
+        }
+
+        resp= rq.post('https://block.io/api/v2/get_new_address', data=formData)
 
         group = Group.objects.get(name=group_name[0]) 
         user = User.objects.create_user(**validated_data)
@@ -136,6 +144,7 @@ class UserCreatorSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance,validated_data):
+
         validated_data = self.context['request'].data   
         group_name = validated_data.pop('add_group', False)
         delete_group = validated_data.pop('delete_group', False)

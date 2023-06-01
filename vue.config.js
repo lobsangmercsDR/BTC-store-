@@ -1,3 +1,5 @@
+
+
 module.exports = {
     configureWebpack: {
       resolve: {
@@ -10,7 +12,7 @@ module.exports = {
           "http": require.resolve("stream-http"),
           "net": require.resolve("net-browserify")
         }
-      }
+      },
     }
   };
   
