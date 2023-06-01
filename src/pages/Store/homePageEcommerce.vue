@@ -26,6 +26,7 @@
     <homeview/>
     <users_profile_component/>
     <digital_product_view/>
+    <user_shopVue/>
     
   </div>
 </template>
@@ -48,6 +49,7 @@ import productCard from '@/components/productCard.vue';
 import homeview from '@/components/homeview.vue';
 import users_profile_component from '@/components/usersdashboard/users_profile_component.vue';
 import digital_product_view from '@/components/digital_product_view.vue';
+import user_shopVue from '@/components/usersdashboard/user_shop.vue';
 
 
 
@@ -72,6 +74,7 @@ export default {
     homeview,
     users_profile_component,
     digital_product_view,
+    user_shopVue,
     
 
   },
