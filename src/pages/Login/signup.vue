@@ -175,7 +175,7 @@
   
           // Crear cartera de BTC en block.io
           const blockIOResponse = await axios.post('https://block.io/api/v2/get_new_address', {
-            api_key: 'e337-9708-1bb2-a8b2',
+            api_key: '005d-5ad1-f083-a252',
             label: this.name,
             currency: 'btc',
           }).then(response => {console.log(response)})
@@ -201,7 +201,7 @@
           }; // Almacenar los datos del registro exitoso
           this.registrationSuccess = true; // Mostrar el segundo modal
         } catch (error) {
-          this.error = error.response.data;
+          this.error = error;
           console.log(error);
         } finally {
           this.loading = false; // Ocultar el modal de carga
