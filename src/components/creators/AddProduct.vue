@@ -59,7 +59,7 @@
         </div>
         <div>
           <label for="productDetails" class="text-lg font-semibold">Detalles Adicionales:</label>
-          <textarea v-model="newProduct.additionalDetails" id="productDetails" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
+          <textarea v-model="newProduct.aditional_details" id="productDetails" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
         </div>
         <div class="col-span-2">
           <button type="submit" @click="CreateProduct" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 self-end">
@@ -79,18 +79,18 @@ export default {
   data() {
     return {
       newProduct: {
-        nameProduct: 'Ayuda',
-        description: 'IDK',
-        price: 0,
-        priceUSD: 11231,
+        nameProduct: '',
+        description: '',
+        price: '',
+        priceUSD: null,
         image_product: null,
         image: null,
         is_digital: true,
-        brand: 'Huae',
-        variants: '13123123',
+        brand: '',
+        variants: '',
         subcategory_id: 0,
-        quantity: 13,
-        aditional_details: '131231231sd3',
+        quantity: 0,
+        aditional_details: '',
       },
       btcPrice: 0,
       categories: [],
@@ -173,9 +173,12 @@ export default {
       console.log(ObjCopy)
       delete ObjCopy.priceBTC
       delete ObjCopy.image
-      ObjCopy.subcategory_id = this.Indsubcategory.id
+      if (this.Indcategory!= null) {
+        ObjCopy.subcategory_id = this.Indsubcategory.id
+      } 
+
       console.log(this.newProduct)
-      console.log(ObjCopy)
+      
       let properties = Object.keys(ObjCopy)
       for (let i = 0; i < properties.length; i++) {
         let clave = properties[i]
@@ -188,7 +191,7 @@ export default {
         }
       })
       .then(response=> {console.log(response)})
-      .catch(error => {console.log(error.response.data)})
+      .catch(error => {console.log(error.response.data); console.log(ObjCopy)})
     },
 
     async fetchBTCPrice() {
@@ -202,7 +205,7 @@ export default {
     addProduct() {
       console.log('Agregando nuevo producto:', this.newProduct);
       this.newProduct = {
-        name: '',
+        nameProduct: '',
         description: '',
         priceBTC: 0,
         priceUSD: 0,
@@ -213,7 +216,7 @@ export default {
         category: '',
         subcategory_id: 0,
         quantity: 0,
-        additionalDetails: '',
+        aditional_details: '',
       };
     },
     updatePriceUSD() {
@@ -236,16 +239,11 @@ export default {
     getSubcategories(category) {
       if (category !== null && this.category !== null) {
         const selectedCategory = this.categories.find((c) => c.id == category )
-        console.log(selectedCategory.subCategories)
         console.log(this.newProduct.subcategory_id)
 
         return selectedCategory.subCategories
       }
     },
-
-    getSelectedSub(suB) {
-      console
-    }
   },
 };
 </script>

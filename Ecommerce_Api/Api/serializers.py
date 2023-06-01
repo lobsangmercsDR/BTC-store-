@@ -286,6 +286,7 @@ class ProductSerializer(serializers.ModelSerializer):
                     'description',
                     'category',
                     'subcategory_id',
+                    'aditional_details',
                     'priceProduct'
                 ]
 
