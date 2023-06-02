@@ -59,7 +59,7 @@
         </div>
         <div>
           <label for="productDetails" class="text-lg font-semibold">Detalles Adicionales:</label>
-          <textarea v-model="newProduct.additionalDetails" id="productDetails" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
+          <textarea v-model="newProduct.aditional_details" id="productDetails" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
         </div>
         <div class="col-span-2">
           <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 self-end">
@@ -78,17 +78,18 @@ export default {
   data() {
     return {
       newProduct: {
-        name: '',
-        description: '',
-        priceBTC: 0,
-        priceUSD: 0,
-        image: '',
-        brand: '',
-        variants: '',
-        category: '',
-        subcategory: '',
-        quantity: 0,
-        additionalDetails: '',
+        nameProduct: 'Ayuda',
+        description: 'IDK',
+        price: 0,
+        priceUSD: 11231,
+        image_product: null,
+        image: null,
+        is_digital: true,
+        brand: 'Huae',
+        variants: '13123123',
+        subcategory_id: 0,
+        quantity: 13,
+        aditional_details: '131231231sd3',
       },
       btcPrice: 0,
       categories: [
@@ -124,6 +125,60 @@ export default {
     this.fetchBTCPrice();
   },
   methods: {
+    ChangeSubCategory(event) {
+      this
+    },
+
+
+    async fetchProducts() {
+      await axios.get('http://127.0.0.1:8000/api/productos', {
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      })
+      .then(response => {})
+      .catch(error => {console.log(error)})
+    },
+
+    async fetchCategoriesForCreate() {
+      await axios.get("http://127.0.0.1:8000/api/categorias", {
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      })
+      .then(response => {this.categories = response.data})
+      .catch(error => {console.log(error.response.data)})
+    },
+    
+
+    async CreateProduct() {
+      const formData= new FormData();
+      const ObjCopy = Object.assign({}, this.newProduct)
+
+      delete ObjCopy.subcategory
+      delete ObjCopy.priceUSD 
+      ObjCopy.priceProduct = ObjCopy.priceBTC
+      console.log(ObjCopy)
+      delete ObjCopy.priceBTC
+      delete ObjCopy.image
+      ObjCopy.subcategory_id = this.Indsubcategory.id
+      console.log(this.newProduct)
+      console.log(ObjCopy)
+      let properties = Object.keys(ObjCopy)
+      for (let i = 0; i < properties.length; i++) {
+        let clave = properties[i]
+        let Obj = ObjCopy[clave]
+        formData.append(clave, Obj)
+      }
+      await axios.post('http://127.0.0.1:8000/api/productos',formData,{
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      })
+      .then(response=> {console.log(response)})
+      .catch(error => {console.log(error.response.data)})
+    },
+
     async fetchBTCPrice() {
       try {
         const response = await axios.get('https://api.coinbase.com/v2/prices/spot?currency=USD');
@@ -135,7 +190,7 @@ export default {
     addProduct() {
       console.log('Agregando nuevo producto:', this.newProduct);
       this.newProduct = {
-        name: '',
+        nameProduct: '',
         description: '',
         priceBTC: 0,
         priceUSD: 0,
@@ -146,7 +201,7 @@ export default {
         category: '',
         subcategory: '',
         quantity: 0,
-        additionalDetails: '',
+        aditional_details: '',
       };
     },
     updatePriceUSD() {
@@ -166,8 +221,13 @@ export default {
       reader.readAsDataURL(file);
     },
     getSubcategories(category) {
-      const selectedCategory = this.categories.find((c) => c.name === category);
-      return selectedCategory ? selectedCategory.subcategories : [];
+      if (category !== null && this.category !== null) {
+        const selectedCategory = this.categories.find((c) => c.id == category )
+        console.log(selectedCategory.subCategories)
+        console.log(this.newProduct.subcategory_id)
+
+        return selectedCategory.subCategories
+      }
     },
   },
 };

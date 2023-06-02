@@ -5,7 +5,7 @@
         <div class="w-full md:w-1/2">
           <div class="bg-gray-200 rounded-lg h-[250px] md:h-[500px]">
             <h3 class="text-xl font-semibold mb-2 text-left">Preview:</h3>
-            <p class="text-gray-600 text-lg text-left">{{ product.additionalDetails }}</p>
+            <p class="text-gray-600 text-lg text-left">{{ product.additional_details }}</p>
             <p v-if="!hasPurchased" class="text-red-500 text-sm mt-2">For complete view buy the product</p>
           </div>
           <div class="flex items-center mb-2">
