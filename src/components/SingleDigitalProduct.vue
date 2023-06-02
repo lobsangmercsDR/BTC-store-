@@ -24,6 +24,10 @@
               <span class="text-lg">{{ product.brand }}</span>
             </div>
             <div class="flex items-center mb-2">
+              <span class="text-gray-600 text-lg mr-2 font-semibold"></span>
+              <span class="text-lg">{{ product.brand }}</span>
+            </div>
+            <div class="flex items-center mb-2">
               <span class="text-gray-600 text-lg mr-2 font-semibold">Fecha de Publicacion:</span>
               <span class="text-lg">{{ product.release_data }}</span>
             </div>
@@ -210,7 +214,7 @@ export default {
       showSuccessModal: false,
       showDeclinedModal: false,
       showCheckerModal: false,
-      needChecker: true,
+      needChecker: false,
       checkerInput: "",
       addChecker: false,
       orderNumber: "",

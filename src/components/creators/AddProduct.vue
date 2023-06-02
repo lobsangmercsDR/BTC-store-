@@ -223,10 +223,10 @@ export default {
     getSubcategories(category) {
       if (category !== null && this.category !== null) {
         const selectedCategory = this.categories.find((c) => c.id == category )
-        console.log(selectedCategory.subCategories)
+        console.log(selectedCategory)
         console.log(this.newProduct.subcategory_id)
 
-        return selectedCategory.subCategories
+        return selectedCategory
       }
     },
   },

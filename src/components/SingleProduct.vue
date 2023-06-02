@@ -40,6 +40,10 @@
             <span class="text-lg">{{ product.brand }}</span>
           </div>
           <div class="flex items-center mb-4">
+            <span class="text-gray-600 text-lg mr-2 font-semibold">Zona de entrega:</span>
+            <span class="text-lg">{{ product.brand }}</span>
+          </div>
+          <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Likes:</span>
             <span class="text-lg">{{ product.likes }}</span>
             <button @click="incrementLikes" class="text-green-500 hover:text-green-600 focus:outline-none"
