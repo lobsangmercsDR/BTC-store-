@@ -1,6 +1,8 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import Swiper from 'swiper';
+import 'vue-material-design-icons/styles.css';
+
 
 // Importa los estilos de Swiper
 import 'swiper/swiper-bundle.css';
