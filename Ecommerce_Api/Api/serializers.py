@@ -261,8 +261,10 @@ class ProductSerializer(serializers.ModelSerializer):
     seller = UserNestedSerializer(read_only=True)
     category = CategoryNestedSerializer(read_only=True)
     subcategory_id = serializers.IntegerField(required=True, write_only=True)
+    description = serializers.CharField(required=True)
     price = serializers.SerializerMethodField()
     priceProduct = serializers.DecimalField(max_digits=10,decimal_places=2,write_only=True)
+    image_product = serializers.ImageField(required=True)
 
     def get_price(self, obj):
         print(obj.priceProduct)
@@ -290,11 +292,32 @@ class ProductSerializer(serializers.ModelSerializer):
                     'priceProduct'
                 ]
 
-    def validate_subCategory_id(self, value):
-        subObj = SubCategory.objects.get(id=value)
+
+    # def validate_description(self, value):
+    #     print(value,22)
+    #     if value=='':
+    #         raise serializers.ValidationError("Debe ingresar una descripcion valida del producto")
+    #     return value
+
+    def validate_subcategory_id(self, value):
+        print(value)
+        if value == 0: 
+            raise serializers.ValidationError("No se proporcionó ninguna subcategoría")
+        subObj = SubCategory.objects.filter(id=value).first()
         if subObj == None:
             raise serializers.ValidationError("La sub categoria planteada no existe")
         return value
+
+    def validate_quantity(self, value): 
+        if value==0:
+            raise serializers.ValidationError("El numero no puede ser 0")
+        return value
+    
+    def validate_priceProduct(self, value):
+        if value==0:
+            raise serializers.ValidationError("Ingrese un valor valido")
+
+    
 
     def create(self, validated_data):
         request = self.context.get('request')
@@ -316,8 +339,6 @@ class ProductSerializer(serializers.ModelSerializer):
             valid_fields = set(self.fields.keys())
             input_fields = set(data.keys())
             userValidation= self.context.get('userPermision') 
-            print(valid_fields)
-            print(input_fields)
             
             if 'id' in data:
                 raise serializers.ValidationError({"Parametro no autorizado":['id']})
@@ -328,7 +349,6 @@ class ProductSerializer(serializers.ModelSerializer):
             if not input_fields.issubset(valid_fields):
                 invalid_fields = input_fields - valid_fields
                 INVList = list(invalid_fields)
-                print(INVList)
                 raise serializers.ValidationError({"Parametros Invalidos":INVList})
             return super().to_internal_value(data)
 
