@@ -2,7 +2,7 @@
   <div class="container">
     <div class="bg-white rounded-lg shadow-md p-8" style="max-width: 1100px; max-height: 900px;">
       <h2 class="text-3xl font-semibold mb-4">Agregar Nuevo Producto</h2>
-      <form class="grid grid-cols-2 gap-4" @submit.prevent="handle">
+      <form class="grid grid-cols-2 gap-4" @submit.prevent>
         <div>
           <label for="productName" class="text-lg font-semibold">Nombre del Producto:</label>
           <input v-model="newProduct.nameProduct" id="productName" type="text" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" :class="{'errorInput': error && error.hasOwnProperty('nameProduct')}">
@@ -148,17 +148,18 @@ export default {
     async CreateProduct() {
       const formData= new FormData();
       const ObjCopy = Object.assign({}, this.newProduct)
-
+      console.log(this.newProduct)
       delete ObjCopy.subcategory
       delete ObjCopy.priceUSD 
-      console.log(ObjCopy)
+      ObjCopy.image_product = this.image_product
       ObjCopy.priceProduct = ObjCopy.priceBTC
-      if (ObjCopy.image_product == null) {
-        delete ObjCopy.image_product
-      }
+      ObjCopy.is_digital= false
+      // if (ObjCopy.image_product == null) {
+      //   delete ObjCopy.image_product
+      // }
       delete ObjCopy.priceBTC
       delete ObjCopy.image
-      console.log(ObjCopy)
+      console.log(ObjCopy.priceProduct)
 
       let properties = Object.keys(ObjCopy)
       for (let i = 0; i < properties.length; i++) {
@@ -200,6 +201,9 @@ export default {
     },
     handleImageUpload(event) {
       const file = event.target.files[0];
+
+      this.image_product = file;
+      console.log(this.image_product)
       const reader = new FileReader();
       reader.onload = () => {
         this.newProduct.image = reader.result;
@@ -212,6 +216,7 @@ export default {
         const selectedCategory = this.categories.find((c) => c.id == category)
         return selectedCategory.subCategories
       }
+    
     },
   },
 };

@@ -316,13 +316,14 @@ class ProductSerializer(serializers.ModelSerializer):
     def validate_priceProduct(self, value):
         if value==0:
             raise serializers.ValidationError("Ingrese un valor valido")
+        return value
 
     
 
     def create(self, validated_data):
         request = self.context.get('request')
         category_id = validated_data.pop('subcategory_id', None)
-        print(category_id,293)
+        print(validated_data)
         price = validated_data.pop('priceProduct', None)
         seller = User.objects.get(id=request.user.id)
         subCategory = SubCategory.objects.get(id=category_id)
