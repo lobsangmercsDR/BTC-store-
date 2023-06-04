@@ -127,11 +127,11 @@
   export default {
     data() {
       return {
-        name: 'Juas',
-        email: 'Juas@gmail.com',
-        password: '12345',
-        confirm_pass: '12345',
-        invitation_code: 'aoqkWnzgprvWqbB',
+        name: '',
+        email: '',
+        password: '',
+        confirm_pass: '',
+        invitation_code: '',
         error: null,
         captcha: {
           board: [
@@ -171,19 +171,8 @@
             return;
           }
   
-          this.loading = true; // Mostrar el modal de carga
+          this.loading = true; 
   
-          // Crear cartera de BTC en block.io
-          const blockIOResponse = await axios.post('https://block.io/api/v2/get_new_address', {
-            api_key: '005d-5ad1-f083-a252',
-            label: this.name,
-            currency: 'btc',
-          }).then(response => {console.log(response)})
-          .catch(error => {console.log(error)})
-  
-          // Obtener la dirección de la cartera y su saldo
-          const walletAddress = blockIOResponse.data.data.address;
-          const walletBalance = blockIOResponse.data.data.balance;
   
           // Enviar los datos a la API
           const response = await axios.post('http://127.0.0.1:8000/api/users', {

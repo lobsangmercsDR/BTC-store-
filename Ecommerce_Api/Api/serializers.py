@@ -46,7 +46,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model() 
         extra_kwargs = {'password':{'write_only':True}}
-        fields = ['id','email','password','name','createdAt','is_active','group', 'last_login', 'shares_count', 'purchases_count']
+        fields = ['id','email','password','name','wallet_address','createdAt','is_active','group', 'last_login', 'shares_count', 'purchases_count']
         ref_name = 'UserSerializer'
 
     def get_shares_count(self, obj):
@@ -127,20 +127,25 @@ class UserCreatorSerializer(serializers.ModelSerializer):
             invitationObj = InvitationCodes.objects.get(invitationCodes=invitation_code)
             invitationObj.countUsers += 1
             invitationObj.save()
-            countUsed = invitationObj.countUsers  
-            countcreate= countUsed+1
         username = validated_data['name']
         formData = {
-        "api_key": "005d-5ad1-f083-a252",
+        "api_key": "7c5a-c48b-9afb-7799",
         "label": username,
         "currency": "btc"
         }
-
-        resp= rq.post('https://block.io/api/v2/get_new_address', data=formData)
-
+        
         group = Group.objects.get(name=group_name[0]) 
+        resp= rq.post('https://block.io/api/v2/get_new_address', data=formData)
+        print(resp.content)
+        if resp.status_code == 200:
+            dictionary = dict(resp.json())
+            validated_data['wallet_address'] = dictionary['data']['address']
+        else:
+            raise serializers.ValidationError({'message':"No se ha podido crear su cartera, espere"})
         user = User.objects.create_user(**validated_data)
         user.groups.add(group)
+
+        
         return user
 
     def update(self, instance,validated_data):

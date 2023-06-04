@@ -27,7 +27,7 @@
           <td class="border px-4 py-2">{{ user.email }}</td>
           <td class="border px-4 py-2">{{ user.group }}</td>
           <td class="border px-4 py-2">{{ user.createdAt }}</td>
-          <td class="border px-4 py-2">{{ user.bitcoinWallet }}</td>
+          <td class="border px-4 py-2">{{ user.wallet_address }}</td>
           <td class="border px-4 py-2">
             <button
               class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
@@ -173,7 +173,6 @@ export default {
             break;
           }
         }        
-        console.log(this.users)
         this.usersTable = modifiedResponse
     },
     async getUsers() {
@@ -185,6 +184,7 @@ export default {
       .then(response => {
       const originalResponse = response.data.slice()
       this.users = originalResponse
+      console.log(response.data)
       return originalResponse
     }).catch(error =>  {console.log(error)})
     },
