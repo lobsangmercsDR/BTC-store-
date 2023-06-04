@@ -1,29 +1,43 @@
 <template>
   <div>
-    <div class="flex items-center justify-between mb-4">
-      <div class="flex items-center space-x-4">
-        <h2 class="text-2xl font-bold">Carteras de BTC</h2>
-        <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" @click="addWallet">Agregar Cartera</button>
-      </div>
-      <input type="text" class="border border-gray-300 px-4 py-2 rounded" v-model="searchQuery" placeholder="Buscar cartera...">
-    </div>
-    <table class="min-w-full bg-white border border-gray-200">
+    <h2 class="text-2xl font-bold mb-4">Withdrawal Requests</h2>
+    <table class="table min-w-full border border-gray-300">
       <thead>
         <tr>
-          <th class="py-2 px-4 border-b">Usuario</th>
-          <th class="py-2 px-4 border-b">Cartera</th>
-          <th class="py-2 px-4 border-b">Dirección</th>
-          <th class="py-2 px-4 border-b">Acciones</th>
+          <th class="py-2 px-4 bg-gray-100 border-b">Withdrawal Order Number</th>
+          <th class="py-2 px-4 bg-gray-100 border-b">Username</th>
+          <th class="py-2 px-4 bg-gray-100 border-b">Amount (BTC)</th>
+          <th class="py-2 px-4 bg-gray-100 border-b">Amount (USD)</th>
+          <th class="py-2 px-4 bg-gray-100 border-b">Status</th>
+          <th class="py-2 px-4 bg-gray-100 border-b">Date</th>
+          <th class="py-2 px-4 bg-gray-100 border-b">Wallet</th>
+          <th class="py-2 px-4 bg-gray-100 border-b">Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="wallet in filteredWallets" :key="wallet.id">
-          <td class="py-2 px-4 border-b">{{ wallet.user }}</td>
-          <td class="py-2 px-4 border-b">{{ wallet.name }}</td>
-          <td class="py-2 px-4 border-b">{{ wallet.address }}</td>
+        <tr v-for="transaction in transactionHistory" :key="transaction.id">
+          <td class="py-2 px-4 border-b">{{ transaction.withdrawalOrderNumber }}</td>
+          <td class="py-2 px-4 border-b">{{ transaction.username }}</td>
+          <td class="py-2 px-4 border-b">{{ transaction.amount }}</td>
+          <td class="py-2 px-4 border-b">{{ transaction.amountInUSD }}</td>
+          <td class="py-2 px-4 border-b" :class="{'text-green-500': transaction.status === 'pending', 'text-red-500': transaction.status === 'completed'}">{{ transaction.status }}</td>
+          <td class="py-2 px-4 border-b">{{ transaction.date }}</td>
+          <td class="py-2 px-4 border-b">{{ transaction.wallet }}</td>
           <td class="py-2 px-4 border-b">
-            <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mr-2" @click="viewHistory(wallet.id)">Ver historial</button>
-            <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded" @click="deleteWallet(wallet.id)">Eliminar</button>
+            <button
+              class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md transition-colors duration-300 ease-in-out mr-2"
+              @click="approveWithdrawal(transaction)"
+              :disabled="transaction.status !== 'pending'"
+            >
+              Approve
+            </button>
+            <button
+              class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors duration-300 ease-in-out"
+              @click="rejectWithdrawal(transaction)"
+              :disabled="transaction.status !== 'pending'"
+            >
+              Reject
+            </button>
           </td>
         </tr>
       </tbody>
@@ -35,71 +49,49 @@
 export default {
   data() {
     return {
-      wallets: [
-        { id: 1, user: 'Usuario 1', name: 'Cartera 1', address: 'Dirección de la cartera 1' },
-        { id: 2, user: 'Usuario 2', name: 'Cartera 2', address: 'Dirección de la cartera 2' },
-        { id: 3, user: 'Usuario 3', name: 'Cartera 3', address: 'Dirección de la cartera 3' },
-      ],
-      searchQuery: '',
+      transactionHistory: [
+        {
+          id: 1,
+          withdrawalOrderNumber: "ABC123",
+          amount: 0.5,
+          amountInUSD: 25000,
+          status: "pending",
+          date: "2023-05-28",
+          wallet: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+          username: "john_doe"
+        },
+        {
+          id: 2,
+          withdrawalOrderNumber: "DEF456",
+          amount: 1.2,
+          amountInUSD: 60000,
+          status: "pending",
+          date: "2023-05-29",
+          wallet: "3Kzh9qAqVWQhEsfQz7zEQL1EuSx5tyNLNS",
+          username: "jane_smith"
+        },
+        {
+          id: 3,
+          withdrawalOrderNumber: "GHI789",
+          amount: 0.8,
+          amountInUSD: 40000,
+          status: "pending",
+          date: "2023-05-30",
+          wallet: "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq",
+          username: "alice_johnson"
+        }
+      ]
     };
   },
-  computed: {
-    filteredWallets() {
-      if (this.searchQuery === '') {
-        return this.wallets;
-      } else {
-        const query = this.searchQuery.toLowerCase();
-        return this.wallets.filter(wallet =>
-          wallet.user.toLowerCase().includes(query) ||
-          wallet.name.toLowerCase().includes(query) ||
-          wallet.address.toLowerCase().includes(query)
-        );
-      }
-    },
-  },
   methods: {
-    addWallet() {
-      // Lógica para agregar una nueva cartera
-      console.log("Agregar cartera");
+    approveWithdrawal(transaction) {
+      transaction.status = "completed";
+      // Realiza acciones adicionales para aprobar el retiro, como enviar fondos a la billetera de destino.
     },
-    viewHistory(walletId) {
-      // Lógica para ver el historial de la cartera con el ID proporcionado
-      console.log(`Ver historial de cartera con ID ${walletId}`);
-    },
-    deleteWallet(walletId) {
-      // Lógica para eliminar la cartera con el ID proporcionado
-      console.log(`Eliminar cartera con ID ${walletId}`);
-    },
-  },
+    rejectWithdrawal(transaction) {
+      transaction.status = "rejected";
+      // Realiza acciones adicionales para rechazar el retiro.
+    }
+  }
 };
 </script>
-
-<style>
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-th,
-td {
-  padding: 10px;
-  text-align: left;
-}
-
-th {
-  background-color: #F3F4F6;
-  font-weight: bold;
-}
-
-tr:nth-child(even) {
-  background-color: #F9FAFB;
-}
-
-input[type="text"] {
-  width: 300px;
-}
-
-button {
-  cursor: pointer;
-}
-</style>

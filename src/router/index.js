@@ -21,6 +21,7 @@ import inventory_general from '../pages/Dashboard/Products and categories/invent
 import user_control from '../pages/Dashboard/users_control/user_control.vue'
 import invitation_code_manager from '../pages/Dashboard/users_control/invitation_code_manager.vue'
 import Wallet from '../pages/Dashboard/wallet_cripto/Wallet.vue'
+import deposit_coins from '../pages/Dashboard/wallet_cripto/deposit_coins.vue'
 
 
   const routes = [
@@ -71,6 +72,11 @@ import Wallet from '../pages/Dashboard/wallet_cripto/Wallet.vue'
           path: '/Wallet',
           component:Wallet
         },
+        {
+          name: 'Wallet',
+          path: '/Wallet',
+          component:Wallet
+        },
 
 
 
@@ -90,10 +96,10 @@ import Wallet from '../pages/Dashboard/wallet_cripto/Wallet.vue'
           component:CriptoView
         },
         {
-          name: 'users',
-          path: '/users',
-          component:users
-        }
+          name: 'deposit_coins',
+          path: '/deposit_coins',
+          component:deposit_coins
+        },
         
       ]
       

@@ -1,0 +1,88 @@
+Date : 2023-06-04 17:07:46
+Directory : c:\Users\lobs\Desktop\test\AlanStore
+Total : 39 files,  3192 codes, 16 comments, 474 blanks, all 3682 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| Vue        |         21 |      2,382 |         10 |        424 |      2,816 |
+| JSON       |          2 |        567 |          0 |          0 |        567 |
+| Python     |         10 |        213 |          6 |         40 |        259 |
+| JavaScript |          5 |         28 |          0 |          7 |         35 |
+| HTML       |          1 |          2 |          0 |          3 |          5 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                                  | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                                     |         39 |      3,192 |         16 |        474 |      3,682 |
+| . (Files)                                                                                                                             |          4 |        580 |          0 |          5 |        585 |
+| Ecommerce_Api                                                                                                                         |         10 |        213 |          6 |         40 |        259 |
+| Ecommerce_Api\Api                                                                                                                     |         10 |        213 |          6 |         40 |        259 |
+| Ecommerce_Api\Api (Files)                                                                                                             |          4 |         57 |          0 |          4 |         61 |
+| Ecommerce_Api\Api\migrations                                                                                                          |          6 |        156 |          6 |         36 |        198 |
+| src                                                                                                                                   |         24 |      2,400 |         10 |        429 |      2,839 |
+| src (Files)                                                                                                                           |          2 |         12 |          0 |          4 |         16 |
+| src\components                                                                                                                        |         17 |      2,233 |         10 |        404 |      2,647 |
+| src\components (Files)                                                                                                                |          4 |      1,075 |          5 |        290 |      1,370 |
+| src\components\admintoolscomponentes                                                                                                  |          4 |        236 |          0 |         38 |        274 |
+| src\components\creators                                                                                                               |          1 |         53 |          0 |          8 |         61 |
+| src\components\payments                                                                                                               |          2 |         17 |          0 |          1 |         18 |
+| src\components\usersdashboard                                                                                                         |          6 |        852 |          5 |         67 |        924 |
+| src\pages                                                                                                                             |          4 |        149 |          0 |         20 |        169 |
+| src\pages\Dashboard                                                                                                                   |          2 |         17 |          0 |          7 |         24 |
+| src\pages\Dashboard (Files)                                                                                                           |          1 |          1 |          0 |          0 |          1 |
+| src\pages\Dashboard\wallet_cripto                                                                                                     |          1 |         16 |          0 |          7 |         23 |
+| src\pages\Login                                                                                                                       |          1 |        128 |          0 |         12 |        140 |
+| src\pages\Store                                                                                                                       |          1 |          4 |          0 |          1 |          5 |
+| src\router                                                                                                                            |          1 |          6 |          0 |          1 |          7 |
+| utils                                                                                                                                 |          1 |         -1 |          0 |          0 |         -1 |
++---------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                                                                              | language   | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| c:\Users\lobs\Desktop\test\AlanStore\Ecommerce_Api\Api\migrations\0026_subcategory_maxpricebtc_subcategory_minpricebtc_and_more.py    | Python     |         30 |          1 |          6 |         37 |
+| c:\Users\lobs\Desktop\test\AlanStore\Ecommerce_Api\Api\migrations\0027_product_description_product_image_product_and_more.py          | Python     |         28 |          1 |          6 |         35 |
+| c:\Users\lobs\Desktop\test\AlanStore\Ecommerce_Api\Api\migrations\0028_product_subcategory_and_more.py                                | Python     |         24 |          1 |          6 |         31 |
+| c:\Users\lobs\Desktop\test\AlanStore\Ecommerce_Api\Api\migrations\0029_product_aditional_details_product_brand_and_more.py            | Python     |         28 |          1 |          6 |         35 |
+| c:\Users\lobs\Desktop\test\AlanStore\Ecommerce_Api\Api\migrations\0030_product_variants_alter_invitationcodes_expire_date_and_more.py | Python     |         23 |          1 |          6 |         30 |
+| c:\Users\lobs\Desktop\test\AlanStore\Ecommerce_Api\Api\migrations\0031_product_quantity_alter_invitationcodes_expire_date_and_more.py | Python     |         23 |          1 |          6 |         30 |
+| c:\Users\lobs\Desktop\test\AlanStore\Ecommerce_Api\Api\models.py                                                                      | Python     |          9 |          0 |          0 |          9 |
+| c:\Users\lobs\Desktop\test\AlanStore\Ecommerce_Api\Api\serializers.py                                                                 | Python     |         19 |          0 |         -1 |         18 |
+| c:\Users\lobs\Desktop\test\AlanStore\Ecommerce_Api\Api\urls.py                                                                        | Python     |          1 |          0 |          0 |          1 |
+| c:\Users\lobs\Desktop\test\AlanStore\Ecommerce_Api\Api\views.py                                                                       | Python     |         28 |          0 |          5 |         33 |
+| c:\Users\lobs\Desktop\test\AlanStore\index.html                                                                                       | HTML       |          2 |          0 |          3 |          5 |
+| c:\Users\lobs\Desktop\test\AlanStore\package-lock.json                                                                                | JSON       |        555 |          0 |          0 |        555 |
+| c:\Users\lobs\Desktop\test\AlanStore\package.json                                                                                     | JSON       |         12 |          0 |          0 |         12 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\components\SingleDigitalProduct.vue                                                          | Vue        |        953 |          0 |        279 |      1,232 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\components\SingleProduct.vue                                                                 | Vue        |          5 |          0 |         -2 |          3 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\components\admintoolscomponentes\DigitalCategoriesCreator.vue                                | Vue        |         22 |          0 |         15 |         37 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\components\admintoolscomponentes\deposit_view.vue                                            | Vue        |        192 |          0 |         28 |        220 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\components\admintoolscomponentes\usermanages.vue                                             | Vue        |          1 |          0 |          0 |          1 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\components\admintoolscomponentes\wallet.vue                                                  | Vue        |         21 |          0 |         -5 |         16 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\components\creators\AddProduct.vue                                                           | Vue        |         53 |          0 |          8 |         61 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\components\headerNav.vue                                                                     | Vue        |        119 |          5 |         13 |        137 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\components\homeview.vue                                                                      | Vue        |         -2 |          0 |          0 |         -2 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\components\payments\inventory.vue                                                            | Vue        |         22 |          0 |          1 |         23 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\components\payments\rechar.vue                                                               | Vue        |         -5 |          0 |          0 |         -5 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\components\usersdashboard\buy_categories.vue                                                 | Vue        |        293 |          0 |         33 |        326 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\components\usersdashboard\orders.vue                                                         | Vue        |         23 |          0 |          4 |         27 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\components\usersdashboard\sell_orders.vue                                                    | Vue        |         83 |          0 |          3 |         86 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\components\usersdashboard\user_checker.vue                                                   | Vue        |        216 |          0 |         16 |        232 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\components\usersdashboard\user_shop.vue                                                      | Vue        |        221 |          5 |         11 |        237 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\components\usersdashboard\users_profile_component.vue                                        | Vue        |         16 |          0 |          0 |         16 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\main.js                                                                                      | JavaScript |          1 |          0 |          1 |          2 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\mdi.js                                                                                       | JavaScript |         11 |          0 |          3 |         14 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\pages\Dashboard\profile.vue                                                                  | Vue        |          1 |          0 |          0 |          1 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\pages\Dashboard\wallet_cripto\deposit_coins.vue                                              | Vue        |         16 |          0 |          7 |         23 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\pages\Login\signup.vue                                                                       | Vue        |        128 |          0 |         12 |        140 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\pages\Store\homePageEcommerce.vue                                                            | Vue        |          4 |          0 |          1 |          5 |
+| c:\Users\lobs\Desktop\test\AlanStore\src\router\index.js                                                                              | JavaScript |          6 |          0 |          1 |          7 |
+| c:\Users\lobs\Desktop\test\AlanStore\utils\auth.js                                                                                    | JavaScript |         -1 |          0 |          0 |         -1 |
+| c:\Users\lobs\Desktop\test\AlanStore\vue.config.js                                                                                    | JavaScript |         11 |          0 |          2 |         13 |
+| Total                                                                                                                                 |            |      3,192 |         16 |        474 |      3,682 |
++---------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

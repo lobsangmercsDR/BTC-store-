@@ -4,90 +4,76 @@
       <h2 class="text-lg font-semibold">Mis órdenes</h2>
     </div>
     <div class="p-4">
-      <div v-if="physicalOrders.length === 0 && digitalOrders.length === 0" class="text-gray-600">
+      <div v-if="orders.length === 0" class="text-gray-600">
         No hay órdenes disponibles.
       </div>
-
-      <div v-if="physicalOrders.length > 0">
-        <h3 @click="toggleOrderSection('physical')" class="text-lg font-semibold my-2 cursor-pointer">
-          Órdenes de productos físicos
-          <span v-if="isOrderSectionOpen('physical')" class="text-sm ml-2">[-]</span>
+      <div v-for="(orderList, orderType) in ordersByType" :key="orderType">
+        <h3 @click="toggleOrderSection(orderType)" class="text-lg font-semibold mt-4 cursor-pointer">
+          Órdenes de productos {{ orderType === 'physical' ? 'físicos' : 'digitales' }}
+          <span v-if="isOrderSectionOpen(orderType)" class="text-sm ml-2">[-]</span>
           <span v-else class="text-sm ml-2">[+]</span>
         </h3>
-        <table class="table-auto w-full" v-show="isOrderSectionOpen('physical')">
+        <table v-show="isOrderSectionOpen(orderType)" class="table-auto w-full text-left">
           <thead>
             <tr>
-              <th class="px-4 py-2">Orden</th>
+              <th class="px-4 py-2">ID de orden</th>
               <th class="px-4 py-2">Fecha</th>
               <th class="px-4 py-2">Estado</th>
-              <th class="px-4 py-2">Total</th>
               <th class="px-4 py-2">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="order in physicalOrders" :key="order.id" class="border-b">
-              <td class="px-4 py-2">{{ order.id }}</td>
-              <td class="px-4 py-2">{{ order.date }}</td>
-              <td class="px-4 py-2">{{ order.status }}</td>
-              <td class="px-4 py-2">${{ calculateTotalPrice(order.products) }}</td>
-              <td class="px-4 py-2">
-                <button @click="toggleOrderDetails(order)">Detalles</button>
-                <button @click="reportProblem(order)">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                  </svg>
-                </button>
+            <tr v-for="order in orderList" :key="order.id" class="cursor-pointer">
+              <td class="border px-4 py-2">{{ order.id }}</td>
+              <td class="border px-4 py-2">{{ order.date }}</td>
+              <td class="border px-4 py-2">{{ order.status }}</td>
+              <td class="border px-4 py-2">
+                <button @click.stop="openReportModal(order)" class="px-2 py-1 bg-red-500 text-white rounded">Reportar problema</button>
+                <button @click.stop="openDetailsModal(order)" class="px-2 py-1 bg-blue-500 text-white rounded ml-2">Ver detalles</button>
               </td>
             </tr>
           </tbody>
         </table>
-        <div v-if="order && order.showDetails">
-          <ul>
-            <li v-for="product in order.products" :key="product.id">{{ product.name }} - {{ product.price }}</li>
-          </ul>
-        </div>
-      </div>
-
-      <div v-if="digitalOrders.length > 0">
-        <h3 @click="toggleOrderSection('digital')" class="text-lg font-semibold my-2 cursor-pointer">
-          Órdenes de productos digitales
-          <span v-if="isOrderSectionOpen('digital')" class="text-sm ml-2">[-]</span>
-          <span v-else class="text-sm ml-2">[+]</span>
-        </h3>
-        <table class="table-auto w-full" v-show="isOrderSectionOpen('digital')">
-          <thead>
-            <tr>
-              <th class="px-4 py-2">Orden</th>
-              <th class="px-4 py-2">Fecha</th>
-              <th class="px-4 py-2">Estado</th>
-              <th class="px-4 py-2">Total</th>
-              <th class="px-4 py-2">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="order in digitalOrders" :key="order.id" class="border-b">
-              <td class="px-4 py-2">{{ order.id }}</td>
-              <td class="px-4 py-2">{{ order.date }}</td>
-              <td class="px-4 py-2">Completado</td>
-              <td class="px-4 py-2">${{ calculateTotalPrice(order.products) }}</td>
-              <td class="px-4 py-2">
-                <button @click="toggleOrderDetails(order)">Detalles</button>
-                <button @click="reportProblem(order)">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                  </svg>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div v-if="order && order.showDetails">
-          <ul>
-            <li v-for="product in order.products" :key="product.id">{{ product.name }} - {{ product.price }}</li>
-          </ul>
-        </div>
       </div>
     </div>
+    <transition name="modal">
+      <div class="fixed z-10 inset-0 overflow-y-auto" v-if="detailsModalOpen">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+          <div class="fixed inset-0 transition-opacity">
+            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+          </div>
+          <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+          <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+              <h3 class="text-lg leading-6 font-medium text-gray-900">Detalles de la orden</h3>
+              <p>{{ selectedOrder.details }}</p>
+            </div>
+            <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <button @click.stop="closeDetailsModal" type="button" class="px-4 py-2 bg-blue-500 text-white rounded">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+    <transition name="modal">
+      <div class="fixed z-10 inset-0 overflow-y-auto" v-if="reportModalOpen">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+          <div class="fixed inset-0 transition-opacity">
+            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+          </div>
+          <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+          <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+              <h3 class="text-lg leading-6 font-medium text-gray-900">Reportar problema</h3>
+              <p>{{ selectedOrder.type === 'physical' ? 'Quejas físicas' : 'Quejas virtuales' }}</p>
+            </div>
+            <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <button @click.stop="closeReportModal" type="button" class="px-4 py-2 bg-red-500 text-white rounded">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -95,103 +81,88 @@
 export default {
   data() {
     return {
-      physicalOrders: [
+      orders: [
         {
-          id: 1,
-          date: "2023-05-31",
-          status: "Entregado",
-          products: [
-            { id: 1, name: "Producto 1", price: "$10.00" },
-            { id: 2, name: "Producto 2", price: "$15.00" },
-          ],
-          showDetails: false,
+          id: '1',
+          type: 'physical',
+          date: '2023-05-01',
+          status: 'Entregado',
+          details: 'Detalles de la orden física 1'
         },
-        // ... otras órdenes físicas ...
-      ],
-      digitalOrders: [
         {
-          id: 2,
-          date: "2023-05-30",
-          status: "Completado",
-          products: [
-            { id: 3, name: "Producto 3", price: "$20.00" },
-            { id: 4, name: "Producto 4", price: "$25.00" },
-          ],
-          showDetails: false,
+          id: '2',
+          type: 'virtual',
+          date: '2023-05-02',
+          status: 'Descargado',
+          details: 'Detalles de la orden virtual 2'
         },
-        // ... otras órdenes digitales ...
+        // Más órdenes...
       ],
-      openOrderSections: [],
-      order: null,
+      orderSections: {
+        physical: true,
+        virtual: true,
+      },
+      detailsModalOpen: false,
+      reportModalOpen: false,
+      selectedOrder: null,
     };
   },
+  computed: {
+    ordersByType() {
+      return {
+        physical: this.orders.filter((order) => order.type === 'physical'),
+        virtual: this.orders.filter((order) => order.type === 'virtual'),
+      };
+    },
+  },
   methods: {
-    toggleOrderDetails(order) {
-      this.order = order;
-      this.order.showDetails = !this.order.showDetails;
+    toggleOrderSection(orderType) {
+      this.orderSections[orderType] = !this.orderSections[orderType];
     },
-    toggleOrderSection(section) {
-      if (this.isOrderSectionOpen(section)) {
-        this.openOrderSections = this.openOrderSections.filter((s) => s !== section);
-      } else {
-        this.openOrderSections.push(section);
-      }
+    isOrderSectionOpen(orderType) {
+      return this.orderSections[orderType];
     },
-    isOrderSectionOpen(section) {
-      return this.openOrderSections.includes(section);
+    openDetailsModal(order) {
+      this.selectedOrder = order;
+      this.detailsModalOpen = true;
     },
-    calculateTotalPrice(products) {
-      return products.reduce((total, product) => total + parseFloat(product.price.replace("$", "")), 0).toFixed(2);
+    closeDetailsModal() {
+      this.selectedOrder = null;
+      this.detailsModalOpen = false;
     },
-    reportProblem(order) {
-      alert(`Reportando problema para la orden ${order.id}`);
+    openReportModal(order) {
+      this.selectedOrder = order;
+      this.reportModalOpen = true;
+    },
+    closeReportModal() {
+      this.selectedOrder = null;
+      this.reportModalOpen = false;
     },
   },
 };
 </script>
 
+
 <style scoped>
 .table-auto {
-  width: auto;
-}
-
-h3 {
-  cursor: pointer;
-}
-
-ul {
-  list-style-type: disc;
-  margin-left: 20px;
-}
-
-/* Estilos adicionales para la tabla */
-table {
-  border-collapse: collapse;
   width: 100%;
+  max-width: 100%;
+  margin-bottom: 1rem;
+  border-collapse: collapse;
 }
 
-th,
-td {
-  text-align: left;
-  padding: 8px;
+.table-auto th,
+.table-auto td {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6;
 }
 
-th {
-  background-color: #f2f2f2;
+.table-auto thead th {
+  border-bottom: 2px solid #dee2e6;
 }
 
-button {
-  background-color: #3182ce;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-button svg {
-  width: 16px;
-  height: 16px;
-  margin-right: 4px;
+.table-auto tbody+tbody {
+  border-top: 2px solid #dee2e6;
 }
 </style>
