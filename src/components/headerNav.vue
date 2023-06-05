@@ -1,11 +1,11 @@
 <template>
   <div>
-    <nav class="navbar bg-blue-500 text-white fixed w-full">
+    <nav class="navbar bg-orange-500 text-white fixed w-full">
       <div class="flex items-center justify-between p-6">
         <div class="flex items-center">
           <!-- Logo del sitio -->
           <div v-if="logoImage">
-            <img :src="logoImage" alt="logo" class="h-10 w-10 mr-2"/>
+            <img :src="logoImage" alt="logo" class="h-10 w-10 mr-2" />
           </div>
           <div v-else>
             <p class="font-semibold text-xl mr-2">Logo</p>
@@ -13,23 +13,18 @@
 
           <!-- Buscador -->
           <div class="relative mr-6 flex w-550px border rounded-lg overflow-hidden">
-            <select class="bg-white h-12 px-5 rounded-l-lg text-sm focus:outline-none"
-                    v-model="selectedCategory">
-              <option disabled value="">Selecciona una categoría</option>
-              <option v-for="category in categories" :key="category.value" :value="category.value">
-                {{ category.name }}
-              </option>
-            </select>
-            <input class="bg-white h-12 px-5 rounded-r-lg text-sm focus:outline-none flex-grow"
-                   type="search" name="search" v-model="searchText" placeholder="Buscar...">
+            <Dropdown v-model="selectedCategory" :options="categories" option-label="name" option-value="value"
+              placeholder="Selecciona una categoría" class="h-12 rounded -l-lg text-sm focus:outline-none"></Dropdown>
+            <InputText v-model="searchText" class="h-12  rounded-r-lg text-sm focus:outline-none flex-grow"
+              placeholder="Buscar..."></InputText>
           </div>
 
           <!-- Menú -->
           <div class="flex items-center mr-6">
-            <a href="#" class="mr-6">Home</a>
-            <a href="#" class="mr-6">Become Seller</a>
-            <a href="#" class="mr-6">Categorías</a>
-            <a href="#" class="mr-6">FAQ</a>
+            <Button label="Home" class="mr-6 p-button-text"></Button>
+            <Button label="Become Seller" class="mr-6 p-button-text"></Button>
+            <Button label="Categorías" class="mr-6 p-button-text"></Button>
+            <Button label="FAQ" class="mr-6 p-button-text"></Button>
           </div>
         </div>
 
@@ -37,187 +32,157 @@
         <div class="flex items-center relative">
           <!-- Icono de carrito de compras -->
           <div class="relative flex items-center">
-            <button @click="toggleCart" class="relative mr-6">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.9 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293-.707M17 16a2 2 0 112-2 2 2 0 01-2 2zm-8 0a2 2 0 112-2 2 2 0 01-2 2z" />
-              </svg>
+            <Button @click="toggleCart" class="relative mr-6 p-button">
+              <i class="pi pi-shopping-cart text-white-500 h-100 w-100 cart-icon"></i>
               <span class="ml-1 text-sm font-medium" v-show="cartOpen">
-                {{ getTotalItems() }}
-                <span class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-blue-400 opacity-75"></span>
+                <span class="cart-total text-white">
+                  Cantidad total:{{ getTotalItems() }}||
+                  <span class="cart-total-price">Total del carrito:{{ getTotalPrice() }}</span>
+                </span>
               </span>
-            </button>
-            
+            </Button>
             <!-- Desplegable del carrito -->
-            <transition name="fade">
-              <div v-show="cartOpen" class="cart">
-                <div class="w-80 bg-white rounded-lg shadow-xl overflow-hidden">
-                  <div class="flex items-center justify-between p-4 text-sm font-semibold text-gray-900 bg-blue-500">
-                    <span>Carrito de Compras</span>
-                    <button @click="closeCart" class="text-white">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-
-                  <!-- Productos físicos -->
-                  <div class="px-4 py-2 text-sm font-semibold text-gray-900 bg-gray-100">
-                    Productos físicos (Total: {{ totalPhysical }})
-                  </div>
-                  <ul class="px-4 py-2 text-black">
-                    <li v-for="product in physicalProducts" :key="product.id">
-                      {{ product.name }} ({{ product.quantity }} x {{ product.price }})
-                      <button @click="decreaseQuantity(product, 'physical')" class="ml-2 text-red-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                        </svg>
-                      </button>
-                      <button @click="removeProduct(product, 'physical')" class="ml-2 text-red-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    </li>
-                  </ul>
-
-                  <!-- Productos digitales -->
-                  <div class="px-4 py-2 text-sm font-semibold text-gray-900 bg-gray-100">
-                    Productos digitales (Total: {{ totalDigital }})
-                  </div>
-                  <ul class="px-4 py-2 text-black">
-                    <li v-for="product in digitalProducts" :key="product.id">
-                      {{ product.name }} ({{ product.quantity }} x {{ product.price }})
-                      <button @click="decreaseQuantity(product, 'digital')" class="ml-2 text-red-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                        </svg>
-                      </button>
-                      <button @click="removeProduct(product, 'digital')" class="ml-2 text-red-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    </li>
-                  </ul>
+            <div v-show="cartOpen" class="cart">
+              <div class="w-80 bg-white rounded-lg shadow-xl overflow-hidden">
+                <div class="flex items-center justify-between p-4 text-sm font-semibold text-gray-900 bg-orange-500">
+                  <span>Carrito de Compras</span>
+                  <Button @click="closeCart" class="text-white">
+                    <i class="pi pi-times-circle h-6 w-6"></i>
+                  </Button>
+                </div>
+                <!-- Productos físicos -->
+                <div class="px-4 py-2 text-sm font-semibold text-gray-900 bg-gray-100">
+                  Productos físicos (Total: {{ totalPhysical }})
+                </div>
+                <ul class="px-4 py-2 text-black">
+                  <li v-for="product in physicalProducts" :key="product.id">
+                    {{ product.name }} ({{ product.quantity }} x {{ product.price }})
+                    <Button @click="decreaseQuantity(product, 'physical')" class="ml-2 p-button-danger p-button-rounded"
+                      icon="pi pi-minus"></Button>
+                    <Button @click="increaseQuantity(product, 'physical')" class="ml-2 p-button-success p-button-rounded"
+                      icon="pi pi-plus"></Button>
+                  </li>
+                </ul>
+                <!-- Productos digitales -->
+                <div class="px-4 py-2 text-sm font-semibold text-gray-900 bg-gray-100">
+                  Productos digitales (Total: {{ totalDigital }})
+                </div>
+                <ul class="px-4 py-2 text-black">
+                  <li v-for="product in digitalProducts" :key="product.id">
+                    {{ product.name }} ({{ product.quantity }} x {{ product.price }})
+                    <Button @click="decreaseQuantity(product, 'digital')" class="ml-2 p-button-danger p-button-rounded"
+                      icon="pi pi-minus"></Button>
+                    <Button @click="increaseQuantity(product, 'digital')" class="ml-2 p-button-success p-button-rounded"
+                      icon="pi pi-plus"></Button>
+                  </li>
+                </ul>
+                <!-- Botón de pago -->
+                <div class="flex items-center justify-end px-4 py-2 bg-gray-100">
+                  <Button @click="pay" class="p-button-success" label="Pagar"></Button>
                 </div>
               </div>
-            </transition>
+            </div>
           </div>
 
           <!-- Icono de usuario -->
           <div class="relative flex items-center">
-            <button @click="toggleUserMenu" class="flex items-center ml-4">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span class="ml-2 text-white">{{ username }}</span>
-            </button>
-
+            <Button @click="toggleUserMenu" class="flex items-center ml-4 p-button-text">
+              <i class="pi pi-user text-white h-100 w-100"></i>
+              <span class="ml-2 text-white">{{ username }}|</span>
+              <span class="ml-2 text-white">Balance: 00</span>
+            </Button>
             <!-- Desplegable del usuario -->
-            <transition name="fade">
-              <div v-show="userMenuOpen" class="user-menu">
-                <div class="w-40 bg-white rounded-lg shadow-xl" style="z-index: 9999;">
-                  <ul class="py-2">
-                    <li>
-                      <a href="#" class="text-black">Profile</a>
-                    </li>
-                    <li>
-                      <a href="#" class="text-black">Cerrar sesión</a>
-                    </li>
-                  </ul>
+            <div v-show="userMenuOpen" class="user-menu">
+              <div class="w-80 bg-white rounded-lg shadow-xl overflow-hidden">
+                <div class="flex items-center justify-between p-4 text-sm font-semibold text-gray-900 bg-orange-500">
+                  <span>Mi perfil</span>
+                  <Button @click="closeUserMenu" class="text-white">
+                    <i class="pi pi-times-circle h-6 w-6"></i>
+                  </Button>
                 </div>
+                <ul class="px-4 py-2 text-black">
+                  <li v-for="option in userOptions" :key="option.id">
+                    <Button @click="handleUserOption(option)" class="p-button-text" label="{{ option.label }}"></Button>
+                  </li>
+                </ul>
               </div>
-            </transition>
+            </div>
+            
           </div>
         </div>
       </div>
     </nav>
-
-    <!-- Contenido adicional -->
-    <div class="mt-20">
-      <!-- Agrega aquí el contenido adicional de tu página -->
-      <!-- Ejemplo de contenido adicional -->
-      <div class="p-6">
-        <h1 class="text-3xl font-semibold mb-4">Bienvenido a mi sitio web</h1>
-        <p>Este es un ejemplo de contenido adicional en tu página.</p>
-        <p>Puedes agregar más elementos HTML y estilos según tus necesidades.</p>
-      </div>
-    </div>
   </div>
 </template>
 
 <script>
+import Button from 'primevue/button';
+import Dropdown from 'primevue/dropdown';
+import InputText from 'primevue/inputtext';
+
 export default {
+  components: {
+    Button,
+    Dropdown,
+    InputText
+  },
   data() {
     return {
-      logoImage: null,
-      username: 'Usuario',
+      logoImage: '',
+      categories: [],
+      selectedCategory: null,
       searchText: '',
-      selectedCategory: '',
-      categories: [
-        { value: 'category1', name: 'Categoría 1' },
-        { value: 'category2', name: 'Categoría 2' },
-        // Agrega más categorías aquí
-      ],
       cartOpen: false,
-      physicalProducts: [
-        { id: 'p1', name: 'Producto físico 1', quantity: 2, price: 100 },
-        { id: 'p2', name: 'Producto físico 2', quantity: 3, price: 200 },
-        // Agrega más productos físicos aquí
-      ],
-      digitalProducts: [
-        { id: 'd1', name: 'Producto digital 1', quantity: 1, price: 300 },
-        { id: 'd2', name: 'Producto digital 2', quantity: 4, price: 400 },
-        // Agrega más productos digitales aquí
-      ],
-      userMenuOpen: false
-    }
-  },
-  computed: {
-    totalPhysical() {
-      return this.physicalProducts.reduce((total, product) => total + product.quantity * product.price, 0);
-    },
-    totalDigital() {
-      return this.digitalProducts.reduce((total, product) => total + product.quantity * product.price, 0);
-    }
+      userMenuOpen: false,
+      username: 'John Doe',
+      physicalProducts: [],
+      digitalProducts: [],
+      userOptions: [
+      { id: 1, label: 'Mi perfil' },
+      { id: 2, label: 'Mi tienda' },
+      { id: 3, label: 'Cerrar sesión' }
+
+
+      ]
+    };
   },
   methods: {
-    decreaseQuantity(product, type) {
-      if (product.quantity > 1) {
-        product.quantity--;
-      }
-    },
-    removeProduct(product, type) {
-      const productList = type === 'physical' ? this.physicalProducts : this.digitalProducts;
-      const index = productList.findIndex(p => p.id === product.id);
-      if (index !== -1) {
-        productList.splice(index, 1);
-      }
-    },
-    getTotalItems() {
-      let totalItems = 0;
-      for (const product of this.physicalProducts) {
-        totalItems += product.quantity;
-      }
-      for (const product of this.digitalProducts) {
-        totalItems += product.quantity;
-      }
-      return totalItems;
-    },
     toggleCart() {
       this.cartOpen = !this.cartOpen;
+      if (this.userMenuOpen) this.userMenuOpen = false;
     },
     closeCart() {
       this.cartOpen = false;
     },
     toggleUserMenu() {
       this.userMenuOpen = !this.userMenuOpen;
+      if (this.cartOpen) this.cartOpen = false;
+    },
+    closeUserMenu() {
+      this.userMenuOpen = false;
+    },
+    handleUserOption(option) {
+      console.log(option);
+    },
+    decreaseQuantity(product, type) {
+      // Decrease quantity
+    },
+    increaseQuantity(product, type) {
+      // Increase quantity
+    },
+    pay() {
+      // Payment process
+    },
+    getTotalItems() {
+      // Calculate total items
+    },
+    getTotalPrice() {
+      // Calculate total price
     }
   }
-}
+};
 </script>
+
 
 <style>
 .navbar {
@@ -225,8 +190,8 @@ export default {
   top: 0;
   left: 0;
   right: 0;
-  height: 100px;
-  background-color: #3B82F6;
+  height: 80px;
+  background-color: #f66305;
   color: #FFFFFF;
   z-index: 9999;
 }
@@ -235,30 +200,29 @@ export default {
 .user-menu {
   position: absolute;
   top: 100%;
-  left: -100%;
-
-  width: 100%;
-  max-width: 550px;
-  z-index: 9999;
+  right: 0;
+  transition: all 0.3s ease-in-out;
+  z-index: 9998;
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s;
-  transform: translateX(100%);
+.pi-shopping-cart {
+  color: white !important;
+  outline: none;
+  /* Remover el contorno azul */
+  box-shadow: none;
+  /* Remover el contorno sombreado */
 }
 
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-  transform: translateX(100%);
+.cart-icon {
+  outline: none; /* Remover el contorno azul */
+  box-shadow: none; /* Remover el contorno sombreado */
 }
 
-.mt-20 {
-  margin-top: 64px;
+.search-bar {
+  width: 5000px !important;
 }
 
-.w-550px {
-  width: 550px;
+.button {
+  background-color: #f66305 !important;
 }
 </style>

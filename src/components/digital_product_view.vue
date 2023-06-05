@@ -1,48 +1,52 @@
 <template>
   <div class="wrapper">
     <div class="search-bar">
-      <input
-        class="search-input"
-        type="text"
-        placeholder="Buscar productos..."
-        v-model="searchQuery"
-      />
-      <button class="search-button" @click="filterData">Buscar</button>
+      <InputText v-model="searchQuery" placeholder="Buscar productos..." />
+      <Button class="p-button-rounded p-button-info search-button" @click="filterData">
+        <i class="pi pi-search"></i>
+        Buscar
+      </Button>
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Productos</th>
-          <th>Productos Restantes</th>
-          <th>Precio en BTC</th>
-          <th>Equivalente en Dólares</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(item, index) in filteredData" :key="index">
-          <td>{{ item.product }}</td>
-          <td>{{ item.remaining }}</td>
-          <td>{{ item.priceBTC }}</td>
-          <td>{{ item.equivalentUSD }}</td>
-          <td>
-            <button class="button-buy" @click="buyProduct(index)">Ver producto</button>
-          </td>
-        </tr>
-        <tr v-if="filteredData.length === 0 && searchQuery !== ''">
-          <td colspan="5" class="no-results">No se encontró el producto.</td>
-        </tr>
-      </tbody>
-    </table>
+    <DataTable :value="pagedData" :rows="pageSize" :paginator="true" :currentPage="currentPage" @onPage="handlePageChange"
+      class="p-datatable-striped">
+      <Column field="product" header="Productos"></Column>
+      <Column field="remaining" header="Productos Restantes"></Column>
+      <Column field="priceBTC" header="Precio en BTC"></Column>
+      <Column field="equivalentUSD" header="Equivalente en Dólares"></Column>
+      <Column header="Acciones">
+        <template #body="rowData">
+          <Button class="p-button-rounded p-button-success p-button-sm" @click="buyProduct(rowData)">
+            <i class="pi pi-shopping-cart"></i>
+            Ver producto
+          </Button>
+        </template>
+      </Column>
+    </DataTable>
     <div class="pagination">
-      <button @click="handlePrevPage" :disabled="currentPage === 1" class="pagination-button">Anterior</button>
-      <button @click="handleNextPage" :disabled="currentPage * pageSize >= filteredData.length" class="pagination-button">Siguiente</button>
+      <Button @click="handlePrevPage" :disabled="currentPage === 1" class="p-button-rounded p-button-secondary p-button-sm pagination-button">
+        Anterior
+      </Button>
+      <Button @click="handleNextPage" :disabled="currentPage * pageSize >= filteredData.length" class="p-button-rounded p-button-secondary p-button-sm pagination-button">
+        Siguiente
+      </Button>
     </div>
   </div>
 </template>
 
 <script>
+import { ref, computed } from 'vue';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import InputText from 'primevue/inputtext';
+import Button from 'primevue/button';
+
 export default {
+  components: {
+    DataTable,
+    Column,
+    InputText,
+    Button,
+  },
   data() {
     return {
       searchQuery: '',
@@ -51,46 +55,45 @@ export default {
           product: 'Producto 1',
           remaining: 10,
           priceBTC: 0.001,
-          equivalentUSD: 50
+          equivalentUSD: 50,
         },
         {
           product: 'Producto 2',
           remaining: 5,
           priceBTC: 0.002,
-          equivalentUSD: 100
+          equivalentUSD: 100,
         },
         {
           product: 'Producto 3',
           remaining: 8,
           priceBTC: 0.003,
-          equivalentUSD: 150
+          equivalentUSD: 150,
         },
         // Agregar más datos...
       ],
       filteredData: [],
       pageSize: 15,
-      currentPage: 1
-    }
+      currentPage: 1,
+    };
   },
   computed: {
     pagedData() {
       const start = (this.currentPage - 1) * this.pageSize;
       const end = start + this.pageSize;
       return this.filteredData.slice(start, end);
-    }
+    },
   },
   created() {
     this.filteredData = this.tableData;
   },
   methods: {
-    buyProduct(index) {
-      const realIndex = (this.currentPage - 1) * this.pageSize + index;
-      this.filteredData[realIndex].remaining--;
-      alert('Compraste ' + this.filteredData[realIndex].product);
+    buyProduct(rowData) {
+      rowData.remaining--;
+      alert('Compraste ' + rowData.product);
     },
     filterData() {
       this.currentPage = 1; // Restablecer a la primera página
-      this.filteredData = this.tableData.filter(row =>
+      this.filteredData = this.tableData.filter((row) =>
         row.product.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     },
@@ -103,9 +106,12 @@ export default {
       if (this.currentPage * this.pageSize < this.filteredData.length) {
         this.currentPage++;
       }
-    }
-  }
-}
+    },
+    handlePageChange(event) {
+      this.currentPage = event.page + 1;
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -136,33 +142,6 @@ export default {
 .search-button {
   margin-left: 10px;
   padding: 8px 16px;
-  background-color: #f66305;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.search-button:hover {
-  background-color: #ab16be;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-table th,
-table td {
-  padding: 8px;
-  border-bottom: 1px solid #ddd;
-}
-
-.no-results {
-  text-align: center;
-  color: #f66305;
-  font-weight: bold;
 }
 
 .pagination {
@@ -173,15 +152,40 @@ table td {
 .pagination-button {
   margin-left: 5px;
   padding: 8px 12px;
-  background-color: #f66305;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
-.pagination-button:hover {
+.p-datatable-striped .p-datatable-tbody > tr:nth-child(odd) {
+  background-color: #f6f6f6;
+}
+
+.p-button-rounded {
+  border-radius: 20px;
+}
+
+.p-button-info {
+  background-color: #f66305;
+  color: #fff;
+}
+
+.p-button-info:hover {
   background-color: #ab16be;
+}
+
+.p-button-success {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.p-button-success:hover {
+  background-color: #45a049;
+}
+
+.p-button-secondary {
+  background-color: #ccc;
+  color: #fff;
+}
+
+.p-button-secondary:hover {
+  background-color: #999;
 }
 </style>
