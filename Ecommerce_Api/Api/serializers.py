@@ -268,7 +268,7 @@ class ProductSerializer(serializers.ModelSerializer):
     description = serializers.CharField(required=True)
     price = serializers.SerializerMethodField()
     priceProduct = serializers.DecimalField(max_digits=10,decimal_places=2,write_only=True)
-    image_product = serializers.ImageField(required=True)
+    image_product = serializers.ImageField(required=False)
     subCategory = serializers.SerializerMethodField()
 
     def get_price(self, obj):
