@@ -43,12 +43,12 @@
         <tr v-for="product in filteredProducts" :key="product.id">
           <td class="border px-4 py-2">{{ product.id }}</td>
           <td class="border px-4 py-2">{{ product.nameProduct }}</td>
-          <td class="border px-4 py-2">{{ product.categories }}</td>
-          <td class="border px-4 py-2">{{ product.category }}</td>     
+          <td class="border px-4 py-2">{{ product.subCategory.category }}</td>
+          <td class="border px-4 py-2">{{ product.subCategory.nameSub }}</td>     
           <td class="border px-4 py-2">{{ product.quantity }}</td>
           <td class="border px-4 py-2">{{ product.description }}</td>
           <td class="border px-4 py-2">{{ product.price }}</td>
-          <td class="border px-4 py-2">{{ product.name }}</td>
+          <td class="border px-4 py-2">{{ product.seller.name }}</td>
           <td class="border px-4 py-2">
             <button @click="openEditModal(product)" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
               Editar
@@ -159,6 +159,7 @@ export default {
             Authorization: `Token ${Cookies.get('token')}`
           }
         });
+        console.log(response.data)
         this.products = response.data;
       } catch (error) {
         console.error('Error al obtener los productos:', error);

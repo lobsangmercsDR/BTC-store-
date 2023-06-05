@@ -265,15 +265,22 @@ class CategoryNestedSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     seller = UserNestedSerializer(read_only=True)
     category = CategoryNestedSerializer(read_only=True)
-    subcategory_id = serializers.IntegerField(required=True, write_only=True)
     description = serializers.CharField(required=True)
     price = serializers.SerializerMethodField()
     priceProduct = serializers.DecimalField(max_digits=10,decimal_places=2,write_only=True)
     image_product = serializers.ImageField(required=True)
+    subCategory = serializers.SerializerMethodField()
 
     def get_price(self, obj):
         print(obj.priceProduct)
-        return f"{obj.priceProduct} USD"
+        return f"{obj.priceProduct}"
+
+    def get_subCategory(self, obj):
+        result =  {
+            "nameSub":obj.subCategory.nameSubCategory if obj.subCategory != None else None,
+            "category":obj.subCategory.category.nameCategory if obj.subCategory != None  and obj.subCategory.category != None else None
+        }
+        return result
 
     class Meta:
         model = Product
@@ -292,7 +299,7 @@ class ProductSerializer(serializers.ModelSerializer):
                     'quantity',
                     'description',
                     'category',
-                    'subcategory_id',
+                    'subCategory',
                     'aditional_details',
                     'priceProduct'
                 ]

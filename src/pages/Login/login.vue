@@ -120,7 +120,6 @@ export default {
                     password: this.password
                 })
                 Cookies.set('token', response.data.token, {expires: 1, secure:true, sameSite: 'strict'}, null, null, true)
-                console.log(Cookies.get('token'))
                 this.$router.push('/')
             }
             catch(error) {
