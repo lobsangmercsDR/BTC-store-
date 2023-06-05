@@ -254,9 +254,7 @@ export default {
   const newProduct = {
     nameProduct: this.editedProduct.nameProduct,
     description: this.editedProduct.description,
-    priceBTC: this.editedProduct.priceBTC,
-    priceUSD: this.editedProduct.priceUSD,
-    image: this.editedProduct.image,
+    priceProduct: this.editedProduct.priceUSD,
     brand: this.editedProduct.brand,
     variants: this.editedProduct.variants,
     category: this.editedProduct.category,
@@ -274,7 +272,7 @@ axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
     })
     .then(response => {
       // Agregar el nuevo producto a la lista
-      this.products.push(response.data);
+      this.fetchProducts();
 
       // Restaurar los campos de edición a sus valores predeterminados
       this.editedProduct = {
@@ -294,7 +292,7 @@ axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
       };
     })
     .catch(error => {
-      console.error('Error al guardar el nuevo producto:', error);
+      console.error( error.response.data);
     })
     .finally(() => {
       this.closeEditModal();
