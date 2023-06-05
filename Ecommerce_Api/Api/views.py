@@ -134,7 +134,7 @@ class ProductView(viewsets.ModelViewSet):
     # PUT a product created by a seller
     def update_product(self, request,*args, **kwargs):
         instance = self.get_object()
-        userPerm = uti.hasOrNotPermission(self, request,self.__class__, authClass=[IsSeller,IsAdmin,IsChecker,IsBuyer],oneObj=True, obj=instance)
+        userPerm = uti.hasOrNotPermission(self, request,self, authClass=[IsSeller,IsAdmin,IsChecker,IsBuyer],oneObj=True, obj=instance)
         print(userPerm)
         if not any(val is True for val in userPerm.values() if val != "IsSeller" or "IsBuyer"):  
             return JsonResponse({'success':False, 'message':'No ha vendido este producto'}, status=404)

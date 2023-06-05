@@ -101,7 +101,7 @@
             <button @click="closeEditModal" class="bg-gray-500 hover:bg-gray-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
               Cancelar
             </button>
-            <button type="submit" class="ml-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button @click="updateExistingProduct" class="ml-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
               Guardar Cambios
             </button>
             <button @click="saveAsNewProduct" class="ml-2 bg-green-500 hover:bg-green-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500">
@@ -219,11 +219,9 @@ export default {
 
     updateExistingProduct() {
       const updatedProduct = {
-        id: this.editedProduct.id,
         nameProduct: this.editedProduct.nameProduct,
         description: this.editedProduct.description,
-        priceBTC: this.editedProduct.priceBTC,
-        priceUSD: this.editedProduct.priceUSD,
+        priceProduct: this.editedProduct.priceUSD,
         image: this.editedProduct.image,
         brand: this.editedProduct.brand,
         variants: this.editedProduct.variants,
@@ -236,17 +234,13 @@ export default {
       console.log(updatedProduct);
 
       // Lógica para enviar los cambios del producto existente al servidor
-      axios.put(`http://127.0.0.1:8000/api/productos/${updatedProduct.id}`, updatedProduct, {
+      axios.put(`http://127.0.0.1:8000/api/productos/${this.editedProduct.id}`, updatedProduct, {
         headers: {
           Authorization: `Token ${Cookies.get('token')}`
         }
       })
       .then(response => {
-        // Actualizar los productos con los cambios realizados
-        const updatedIndex = this.products.findIndex(product => product.id === updatedProduct.id);
-        if (updatedIndex !== -1) {
-          this.products.splice(updatedIndex, 1, response.data);
-        }
+        this.fetchProducts();
       })
       .catch(error => {
         console.error('Error al actualizar el producto:', error);
