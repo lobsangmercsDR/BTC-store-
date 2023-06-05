@@ -16,11 +16,14 @@ class IsAdmin(BaseAuthentication):
     def has_object_permission(self, request, view,obj):
         user =request.user
         print(user.groups.values_list('name',flat=True))
-        print(view.__class__.__name__)
         if user.groups.filter(name="administrator").exists() or user.is_superuser:
-            print("233")
-            if view.__class__.__name__== 'ProductsView':
-                if 'administrator' in obj.seller.groups.values_list('name',flat=True) or obj.seller.is_superuser:
+            print(view.__class__.__name__)
+
+            if view.__class__.__name__== 'ProductView':
+                print("aja")
+                if obj.seller.is_superuser:
+                    return True
+                if 'administrator' in obj.seller.groups.values_list('name',flat=True):
                     if request.user.id == obj.seller.id:
                         return True
                     else:
