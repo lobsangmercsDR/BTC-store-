@@ -8,14 +8,14 @@
         <label for="categoryFilter" class="text-lg font-semibold">Categoría:</label>
         <select v-model="selectedCategory" id="categoryFilter" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg">
           <option value="">Todas las Categorías</option>
-          <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.nameCategory }}</option>
+          <option v-for="category in categories" :key="category.id" :value="category.nameCategory">{{ category.nameCategory }}</option>
         </select>
       </div>
       <div class="ml-4">
         <label for="subcategoryFilter" class="text-lg font-semibold">Subcategoría:</label>
         <select v-model="selectedSubcategory" id="subcategoryFilter" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg">
           <option value="">Todas las Subcategorías</option>
-          <option v-for="subcategory in getSubcategories(selectedCategory)" :key="subcategory.id" :value="subcategory.id">{{ subcategory.nameSubCategory }}</option>
+          <option v-for="subcategory in getSubcategories(selectedCategory)" :key="subcategory.id" :value="subcategory.nameCategory">{{ subcategory.nameSubCategory }}</option>
         </select>
       </div>
       <div class="ml-auto">
@@ -113,6 +113,7 @@
 <script>
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { filter } from 'lodash';
 
 export default {
   data() {
@@ -300,7 +301,7 @@ axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
 
     getSubcategories(category) {
       if (category !== '') {
-        const selectedCategory = this.categories.find((c) => c.id === category);
+        const selectedCategory = this.categories.find((c) => c.nameCategory === category);
         return selectedCategory.subCategories;
       }
       return [];
@@ -310,15 +311,16 @@ axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
   computed: {
     filteredProducts() {
       let filtered = this.products;
-
       // Filtrar por categoría
       if (this.selectedCategory !== '') {
-        filtered = filtered.filter((product) => product.category === this.selectedCategory);
+
+        filtered = filtered.filter((product) => product.subCategory.category === this.selectedCategory);
+        console.log(filtered)
       }
 
       // Filtrar por subcategoría
       if (this.selectedSubcategory !== '') {
-        filtered = filtered.filter((product) => product.subcategory === this.selectedSubcategory);
+        filtered = filtered.filter((product) => product.subCategory.nameSubCategory === this.selectedSubcategory);
       }
 
       // Filtrar por término de búsqueda
