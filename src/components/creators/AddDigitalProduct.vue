@@ -9,35 +9,16 @@
         </div>
 
         <div>
-          <label for="productImage" class="text-lg font-semibold">Imagen del Producto:</label>
-          <input type="file" accept="image/*" @change="handleImageUpload" required>
-        </div>
-
-        <div>
-          <label for="productPriceUSD" class="text-lg font-semibold">Precio del Producto (USD):</label>
+          <label for="productPriceUSD" class="text-lg font-semibold">Precio del Producto:</label>
           <div class="flex items-center">
-            <input v-model="newProduct.priceUSD" id="productPriceUSD" type="number" step="0.01" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20" min="0" required @input="updatePriceBTC">
-            <p class="text-gray-500 text-sm ml-2">Precio actual del BTC: {{ btcPrice.toFixed(8) }} BTC</p>
+            <input v-model="newProduct.price_PD" id="productPriceUSD" type="number" step="0.01" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20" min="0" required @input="updatePriceBTC">
           </div>
         </div>
 
         <div>
-          <label for="productPriceBTC" class="text-lg font-semibold">Precio del Producto (BTC):</label>
-          <div class="flex items-center">
-            <input v-model="newProduct.priceBTC" id="productPriceBTC" type="number" step="0.001" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20" min="0" required @input="updatePriceUSD">
-            <p class="text-gray-500 text-sm ml-2">Precio actual del BTC: {{ btcPrice.toFixed(2) }} USD</p>
-          </div>
-        </div>
-
-        <div v-if="newProduct.image">
-          <label class="text-lg font-semibold">Vista Previa de la Imagen:</label>
-          <img :src="newProduct.image" class="w-40 h-auto mt-2 rounded-lg">
-        </div>
-
-        <div>
-          <label for="productCategories" class="text-lg font-semibold">Categorías del Producto:</label>
-          <select v-model="newProduct.categories" id="productCategories" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" multiple required>
-            <option v-for="category in categories" :key="category.id" :value="category">{{ category.name }}</option>
+          <label for="productCategories" class="text-lg font-semibold">Subcategorías del Producto:</label>
+          <select v-model="subCategories" id="productCategories" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" multiple required>
+            <option v-for="subCategory in subCategories" :key="subCategory.id" :value="subCategory.id">{{ subCategory.namesubCategory }}</option>
           </select>
         </div>
 
@@ -94,14 +75,6 @@ export default {
         quantity: 0,
       },
       btcPrice: 0,
-      categories: [
-        {
-          id: 1,
-          name: 'Credit/Debit Cards',
-          subcategories: ['Visa', 'Mastercard', 'American Express'],
-        },
-        // Resto de las categorías existentes
-      ],
       hasPurchased: false,
     };
   },

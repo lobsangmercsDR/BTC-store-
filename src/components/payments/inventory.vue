@@ -228,7 +228,6 @@ export default {
         aditional_details: this.editedProduct.aditional_details,
         username: this.editedProduct.username,
       };
-      console.log(updatedProduct);
 
       // Lógica para enviar los cambios del producto existente al servidor
       axios.put(`http://127.0.0.1:8000/api/productos/${this.editedProduct.id}`, updatedProduct, {
@@ -261,7 +260,6 @@ export default {
     aditional_details: this.editedProduct.aditional_details,
     username: this.editedProduct.username
   };
-  console.log(newProduct)
 
   // Lógica para guardar los cambios como un nuevo producto
 axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
@@ -339,6 +337,3 @@ axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
 };
 </script>
 
-<style>
-/* Estilos del componente */
-</style>
