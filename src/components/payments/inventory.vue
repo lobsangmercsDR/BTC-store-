@@ -77,12 +77,8 @@
               <textarea v-model="editedProduct.description" id="editProductDescription" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="4"></textarea>
             </div>
             <div>
-              <label for="editProductPriceBTC" class="text-lg font-semibold">Precio del Producto (BTC):</label>
-              <input v-model="editedProduct.priceBTC" id="editProductPriceBTC" type="number" step="0.001" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20" min="0">
-            </div>
-            <div>
-              <label for="editProductPriceUSD" class="text-lg font-semibold">Precio del Producto (USD):</label>
-              <input v-model="editedProduct.priceUSD" id="editProductPriceUSD" type="number" step="0.01" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20" min="0" required>
+              <label for="editProductPriceUSD" class="text-lg font-semibold">Precio del Producto</label>
+              <input v-model="editedProduct.priceProduct" id="editProductPriceUSD" type="number" step="0.01" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20" min="0" required>
             </div>
             <div>
               <label for="editProductBrand" class="text-lg font-semibold">Marca del Producto:</label>
@@ -132,17 +128,17 @@ export default {
         id: null,
         nameProduct: '',
         description: '',
-        priceBTC: 0,
-        priceUSD: 0,
+        price: 0,
         image: null,
         brand: '',
         variants: '',
         category: '',
-        subcategory: '',
+        subCategory: '',
         quantity: 0,
         aditional_details: '',
         username: ''
-      }
+      },
+      selectedProduct: null
     };
   },
 
@@ -184,18 +180,18 @@ export default {
         id: product.id,
         nameProduct: product.nameProduct,
         description: product.description,
-        priceBTC: product.priceBTC,
-        priceUSD: product.priceUSD,
+        priceProduct: product.price,
         image: product.image,
         brand: product.brand,
         variants: product.variants,
         category: product.category,
-        subcategory: product.subcategory,
+        subCategory: product.subCategory,
         quantity: product.quantity,
         aditional_details: product.aditional_details,
         username: product.username
       };
       this.isEditModalOpen = true;
+      this.selectedProduct = product.subCategory
     },
 
     closeEditModal() {
@@ -221,7 +217,7 @@ export default {
       const updatedProduct = {
         nameProduct: this.editedProduct.nameProduct,
         description: this.editedProduct.description,
-        priceProduct: this.editedProduct.priceUSD,
+        priceProduct: this.editedProduct.priceProduct,
         image: this.editedProduct.image,
         brand: this.editedProduct.brand,
         variants: this.editedProduct.variants,
@@ -251,18 +247,20 @@ export default {
     },
 
     saveAsNewProduct() {
+      console.log(this.selectedProduct)
   const newProduct = {
     nameProduct: this.editedProduct.nameProduct,
     description: this.editedProduct.description,
-    priceProduct: this.editedProduct.priceUSD,
+    priceProduct: this.editedProduct.priceProduct,
     brand: this.editedProduct.brand,
     variants: this.editedProduct.variants,
     category: this.editedProduct.category,
-    subcategory: this.editedProduct.subcategory,
+    subCategory: this.selectedProduct.id,
     quantity: this.editedProduct.quantity,
     aditional_details: this.editedProduct.aditional_details,
     username: this.editedProduct.username
   };
+  console.log(newProduct)
 
   // Lógica para guardar los cambios como un nuevo producto
 axios.post('http://127.0.0.1:8000/api/productos', newProduct, {

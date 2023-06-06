@@ -125,6 +125,7 @@ class ProductView(viewsets.ModelViewSet):
         userPerm = uti.hasOrNotPermission(self, request,self.__class__, authClass=[IsSeller,IsChecker,IsBuyer,IsAdmin])
         if not userPerm["IsSeller"] and not userPerm["IsAdmin"]:
             return JsonResponse({"message":"No tiene permiso para realizar esta accion"}, status=403)
+        print(request.data)
         serializer = ProductSerializer(data=request.data, context={'request':request, 'userPermision':userPerm})
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
