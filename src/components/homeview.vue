@@ -26,21 +26,32 @@
                 <button class="table-button" @click="openModal1(product)">Ver Más</button>
             </div>
         </div>
-        <div class="div2 grid-limitada">
+        <div class="div2 grid-limitada" style="width:840px;">
             <!-- Table 2 -->
-            <h1>Últimos productos digitales Vendidos</h1>
+            <h1>Methods</h1>
             <div class="component-container component-container-color2">
-                <table class="table text-gray-400 border-separate space-y-4 text-sm">
-                    <thead class="bg-gray-800 text-gray-500">
+                
+                <div v-for="(product,index) in displayedProductsTable1_5" :key="index" class="method-item"> 
+                    <img :src="'https://picsum.photos/150/150?random=' + index" alt="Product Image" class="product-table-img">
+                    <!-- <div class="description">
+                    <span>{{ product.name }}</span>
+                    <p>{{ product.price }}</p>
+                    <p> {{ product.quantityAvailable }}</p>
+                    <p> {{ product.datePublished }}</p>   
+                    <p>{{ product.user }}</p>
+                    </div> -->
+                </div>
+                <!-- <table class="table text-gray-400 border-separate space-y-4 text-sm">
+                     <thead class="bg-gray-800 text-gray-500">
                         <tr>
                             <th class="p-2">Producto</th>
                             <th class="p-2">Cantidad Disponibles</th>
                             <th class="p-2">Fecha de Publicación</th>
                             <th class="p-2">Precio</th>
                         </tr>
-                    </thead>
+                    </thead> 
                     <tbody>
-                        <tr v-for="(product, index) in displayedProductsTable2" :key="index"
+                        <tr v-for="(product, index) in displayedProductsTable1_5" :key="index"
                             class="bg-gray-200 text-gray-700">
                             <td class="p-2">{{ product.name }}</td>
                             <td class="p-2">{{ product.quantityAvailable }}</td>
@@ -49,7 +60,7 @@
 
                         </tr>
                     </tbody>
-                </table>
+                </table> -->
                 <button class="table-button" @click="openModal2(product)">Ver Más</button>
             </div>
         </div>
@@ -87,38 +98,22 @@
         </div>
 
 
-
-
-
-
-
-
-
-        <div class="div3">
-            <h1>Ultimos productos Fisicos agregados</h1>
-
-            <!-- Slider -->
-            <div class="slider-container hidden md:block">
-                <agile :options="sliderOptions" @afterChange="handleAfterChange" ref="agile">
-                    <div v-for="(product, index) in productsSlider" :key="index" class="slider-item">
-                        <div class="product-info">
-                            <div class="product-image">
-                                <img :src="'https://picsum.photos/150/150?random=' + index" alt="Product Image">
-                            </div>
-                            <h4 class="product-name">{{ product.name }}</h4>
-                            <p class="product-price">$ {{ product.price }}</p>
-                            <p>Subido por:</p>
-                            <button class="product-button" @click="goToProduct(product.id)">Go to Product</button>
-                        </div>
-                    </div>
-                </agile>
-            </div>
-        </div>
-        <div class="div4">
-            <h1>Ultimos Productos Fisicos vendidos</h1>
-
-            <div class="slider-container hidden md:block">
-                <agile :options="sliderOptions1" @afterChange="handleAfterChange" ref="agile">
+    </div>
+    <div class="div4">
+            <section id="header_icons">
+                <h1 style="flex-grow: 1;">Ultimos Productos Fisicos vendidos</h1>
+                <md-icon class="arrow-icon" @click="previousSlide">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                    </svg>
+                </md-icon>
+                <md-icon>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                </md-icon>
+            </section>
+            <div class="slider-container hidden md:block" id="slideshow" >
                     <div v-for="(product, index) in productsSlider" :key="index" class="slider-item">
                         <div class="product-info">
                             <div class="product-image">
@@ -130,38 +125,8 @@
                             <button class="product-button" @click="goToProduct(product.id)">Go to Product</button>
                         </div>
                     </div>
-                </agile>
             </div>
         </div>
-        <div class="div5">
-            <div class="component-container component-container-color1">
-                <div class="news-section">
-                    <h2 class="news-section-title"><i class="fas fa-newspaper"></i> Noticias y Actualizaciones</h2>
-                    <div class="news-item">
-                        <h3 class="news-title"><i class="fas fa-bullhorn"></i> Título de la Noticia 1</h3>
-                        <p class="news-description">Descripción de la Noticia 1</p>
-                    </div>
-                    <div class="news-item">
-                        <h3 class="news-title"><i class="fas fa-bullhorn"></i> Título de la Noticia 2</h3>
-                        <p class="news-description">Descripción de la Noticia 2</p>
-                    </div>
-                    <div class="news-item">
-                        <h3 class="news-title"><i class="fas fa-bullhorn"></i> Título de la Noticia 3</h3>
-                        <p class="news-description">Descripción de la Noticia 3</p>
-                    </div>
-                    <div class="news-item">
-                        <h3 class="news-title"><i class="fas fa-bullhorn"></i> Título de la Noticia 4</h3>
-                        <p class="news-description">Descripción de la Noticia 4</p>
-                    </div>
-                    <div class="news-item">
-                        <h3 class="news-title"><i class="fas fa-bullhorn"></i> Título de la Noticia 5</h3>
-                        <p class="news-description">Descripción de la Noticia 5</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
 
 
 
@@ -226,19 +191,14 @@
 </template>
   
 <script>
-import { VueAgile } from 'vue-agile'
 
 
 export default {
-    components: {
-        'agile': VueAgile,
-    },
     data() {
         return {
             showModal1: false,
             showModal2: false,
-
-
+            currentSlide:0,
 
             sliderOptions: {
                 infinite: true,
@@ -252,11 +212,20 @@ export default {
             sliderOptions1: {
                 infinite: true,
                 slidesToShow: 4,
-                slidesToScroll: -1,
-                autoplay: true,
+                slidesToScroll: 4,
+                autoplay: false,
                 autoplaySpeed: 3000,
                 dots: true,
                 initialSlide: 0,
+                responsive: [{
+                    breakpoint:809,
+                    settings: {
+                        infinite: true,
+                        slidesToShow: 5,
+                        slidesToScroll: 4,
+
+                    }
+            }]
             },
             productsTable1: [
                 // Aquí van los datos de la tabla 1
@@ -284,11 +253,20 @@ export default {
             ],
             productsTable2: [
                 // Aquí van los datos de la tabla 2
-                { name: "Producto A", quantityAvailable: 20, datePublished: "2023-05-15", price: 200 },
-                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80 },
-                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80 },
-                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80 },
-                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80 },
+                { name: "Producto A", quantityAvailable: 20, datePublished: "2023-05-15", price: 200, user:"Admin" },
+                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin" },
+                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin" },
+                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin" },
+                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin" },
+                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin" },
+                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin" },
+                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin" },
+                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin"},
+                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin"},
+                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80 , user:"Admin"},
+                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin" },
+                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80 , user:"Admin"},
+                
                 // Agrega más productos según tus necesidades
             ],
             productsSlider: [
@@ -307,10 +285,13 @@ export default {
     },
     computed: {
         displayedProductsTable1() {
-            return this.productsTable1.slice(0, 3);
+            return this.productsTable1.slice(0, 12);
         },
         displayedProductsTable2() {
-            return this.productsTable2.slice(0, 3);
+            return this.productsTable2.slice(0, 12);
+        },
+        displayedProductsTable1_5() {
+            return this.productsTable2.slice(0, 5);
         },
 
         totalPages() {
@@ -322,7 +303,8 @@ export default {
             this.$router.push({ name: 'Product', params: { id: productId } })
         },
         handleAfterChange(currentSlide) {
-            if (currentSlide === this.productsSlider.length - 1) {
+            console.log(currentSlide)
+            if (currentSlide === this.productsSlider.length - 5) {
                 this.$refs.agile.goTo(0)
             }
         },
@@ -350,16 +332,22 @@ export default {
   
 <style>
 .parent {
-    margin: 0;
+    margin-top: 85px;
     padding: 0;
-    display: grid;
+    display: flex;
+    justify-content: space-between;
+    /* display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(0, 1fr);
     grid-auto-rows: minmax(1, 1fr);
     grid-column-gap: 30px;
-    grid-row-gap: 0px;
+    grid-row-gap: 0px; */
     align-items: start;
     
+}
+
+#header_icons {
+    display: flex;
 }
 
 .div1 {
@@ -380,6 +368,9 @@ export default {
     grid-area: 2 / 2 / 3 / 5;
     align-self: start;
     overflow: hidden;
+    max-width: 1365px;
+    margin: auto;
+    margin-top: 45px;
 }
 
 .div5 {
@@ -466,6 +457,13 @@ export default {
 .slider-container {
     height: 100%;
     overflow: hidden;
+    margin: auto;
+    max-width: 1365px;
+    display: flex;
+}
+
+#slideshow {
+    display: flex;
 }
 
 .slider-items-wrapper {
@@ -478,7 +476,7 @@ export default {
 
 .slider-item {
     height: 320px;
-    width: 180px;
+    width: 254px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -492,6 +490,31 @@ export default {
     overflow: hidden;
     box-sizing: border-box;
     flex-shrink: 0;
+}
+
+
+.method-item {
+    height: 110px;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f8f8;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 15px;
+    transition: transform 0.3s ease;
+    overflow: hidden;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    justify-content: space-between;
+}
+
+.product-table-img {
+    border-radius: 15px;
+    width: 160px;
+    height: 100px;
 }
 
 .slider-item:hover {
@@ -590,10 +613,6 @@ export default {
 
 
 
-.grid-limitada {
-  max-height: 400px; /* Ajusta el valor según tus necesidades */
-  overflow: auto; /* Opcional: agrega scroll si el contenido desborda */
-}
 
 
 

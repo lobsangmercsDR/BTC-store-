@@ -17,7 +17,7 @@ from datetime import datetime, timedelta
 from .utils import services as uti
 from django.core import serializers
 from django.http import HttpResponse
-from .models import Product,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
+from .models import ProductFisic,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
 from .serializers import (TransactsSerializer, 
                           CategorySerializer,
                           CategoryWithoutProductsSerializer, 
@@ -86,7 +86,7 @@ def validate_group(user, groups):
 
 
 class ProductView(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
+    queryset = ProductFisic.objects.all()
     serializer_class = ProductSerializer
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [IsAuthenticated,IsGroupAccepted]
@@ -103,7 +103,7 @@ class ProductView(viewsets.ModelViewSet):
             'dateReleased__gte': start_time if last_products =='true' and not user_products == 'true' else None,
             'is_digital': True if digital == 'true' else None,
         }
-        products = Product.objects.all()
+        products = ProductFisic.objects.all()
         for key, value in filters.items():
             if value is not None:
                 products = products.filter(Q(**{key: value}))

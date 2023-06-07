@@ -261,6 +261,7 @@ export default {
       }
     },
     nextPage() {
+      console.log(this.currentPage)
       if (this.currentPage < this.totalPages) {
         this.currentPage++;
       }

@@ -2,7 +2,7 @@
     <div class="mx-auto max-w-500 w-full px-4 overflow-x-auto">
       <div class="border-collapse border-gray-300 rounded-lg overflow-hidden bg-blue-900 text-white">
         <div class="py-2 text-center">
-          <h2 class="text-lg font-medium">Noticias</h2>
+          <h2 class="text-lg font-medium">s</h2>
         </div>
         <div v-for="(noticia, index) in noticias" :key="index"
           :class="index % 2 === 0 ? 'bg-white hover:bg-gray-200' : 'bg-gray-50 hover:bg-gray-200'">

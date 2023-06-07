@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 
 from rest_framework import serializers,exceptions
-from .models import Category, Product,Transacts,User,InvitationCodes,RoleRequests, SubCategory
+from .models import Category, ProductFisic,Transacts,User,InvitationCodes,RoleRequests, SubCategory
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
@@ -284,14 +284,13 @@ class ProductSerializer(serializers.ModelSerializer):
         return result
 
     class Meta:
-        model = Product
+        model = ProductFisic
         fields = [
                     'id',
                     'nameProduct',
                     'price',
                     'image_product',
                     'dateReleased',
-                    'is_digital',
                     'active',
                     'brand',
                     'aditional_details',
@@ -373,7 +372,7 @@ class TransactProductNestedSerializer(serializers.ModelSerializer):
     seller = UserNestedSerializer(source='seller_id')
 
     class Meta:
-        model = Product
+        model = ProductFisic
         fields = ['id','nameProduct','priceProduct','dateReleased','active', 'seller']
 
 class TransactsSerializer(serializers.ModelSerializer):

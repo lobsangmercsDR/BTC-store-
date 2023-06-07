@@ -45,7 +45,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def shares_count(self):
-        return self.product_set.count()
+        return self.productfisic_set.count()
 
 class Category(models.Model):
     nameCategory = models.CharField(max_length=50)
