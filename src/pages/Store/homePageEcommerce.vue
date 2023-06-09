@@ -2,32 +2,32 @@
   <div class="bg-light-gray homepage-container">
     <TopBar />
     <div>
-      <homeview/>
+      <homeview />
       <div class="espacio"></div>
-      
+
     </div>
-    <digital_product_view/>
-    <productCard/>
-    <users_profile_component/>
+    <!-- <digital_product_view />
+    <productCard />
+    <users_profile_component />
 
 
-    <!-- Resto de los componentes -->
+
     <SingleProduct />
     <SingleDigitalProduct />
-  
-    
-    <AddDigitalProduct/>
-    <AddProduct/>
-    <DigitalCategoriesCreator/>
-    <invitationcodetool/>
-    <usermanages/>
-    <rechar/>
-    <inventory/>
-    <homeview/>
-    <users_profile_component/>
-    <digital_product_view/>
-    <user_shopVue/>
-    
+
+
+    <AddDigitalProduct />
+    <AddProduct />
+    <DigitalCategoriesCreator />
+    <invitationcodetool />
+    <usermanages />
+    <rechar />
+    <inventory />
+    <homeview />
+    <users_profile_component />
+    <digital_product_view />
+    <user_shopVue /> -->
+
   </div>
 </template>
 
@@ -75,7 +75,7 @@ export default {
     users_profile_component,
     digital_product_view,
     user_shopVue,
-    
+
 
   },
   data() {
@@ -117,31 +117,39 @@ export default {
 .div6 {
   display: none;
 }
+
 .bg-light-gray {
   background-color: #fff;
 }
 
 .homepage-container {
-  max-width: 1000%; /* Ajusta el ancho máximo del contenedor según tus necesidades */
-  margin: 0 auto; /* Centra el contenedor horizontalmente */
-  padding: 20px; /* Agrega un espacio de relleno alrededor del contenedor */
+  width: 1900px;
+  /* Ajusta el ancho máximo del contenedor según tus necesidades */
+  margin: 0 auto;
+  /* Centra el contenedor horizontalmente */
+  padding: 20px;
+  /* Agrega un espacio de relleno alrededor del contenedor */
 }
 
 .grid-container {
   display: grid;
-  grid-template-columns: minmax(0,2fr);/* Crea 3 columnas de tamaño igual */
-  grid-gap: 20px; /* Espacio entre las celdas */
+  grid-template-columns: minmax(0, 2fr);
+  /* Crea 3 columnas de tamaño igual */
+  grid-gap: 20px;
+  /* Espacio entre las celdas */
   max-width: 5000px;
   margin: auto;
-  
+
 }
 
 .table-container {
-  grid-column: span 2; /* Ocupa 2 columnas */
+  grid-column: span 2;
+  /* Ocupa 2 columnas */
 }
 
 .newsbox-container {
-  grid-column: span 1; /* Ocupa 1 columna */
+  grid-column: span 1;
+  /* Ocupa 1 columna */
 }
 
 .table-fixed {
@@ -149,8 +157,8 @@ export default {
 }
 
 .espacio {
-  height: 20px; /* Ajusta la altura del espacio según tus necesidades */
+  height: 20px;
+  /* Ajusta la altura del espacio según tus necesidades */
 }
 
-/* Estilos adicionales según sea necesario para los componentes */
-</style>
+/* Estilos adicionales según sea necesario para los componentes */</style>

@@ -17,9 +17,10 @@ from datetime import datetime, timedelta
 from .utils import services as uti
 from django.core import serializers
 from django.http import HttpResponse
-from .models import ProductFisic,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
+from .models import ProductFisic,ProductDigit,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
 from .serializers import (TransactsSerializer, 
                           CategorySerializer,
+                          ProductDigitSerializer,
                           CategoryWithoutProductsSerializer, 
                           ProductSerializer,
                           UserSerializer,
@@ -153,6 +154,21 @@ class ProductView(viewsets.ModelViewSet):
             return JsonResponse({"message":"No tiene acceso a esta funcionalidad o producto"}, status=403)
         self.perform_destroy(instance)
         return JsonResponse({"Success":True, "message":"El producto fue borrado correctamente"}, status=200)
+
+class ProductsDigitView(viewsets.ModelViewSet):
+    serializers_class = ProductDigitSerializer
+    authentication_classes= []
+
+    # GET all digital products
+    def get_digit_products(self, request):
+        digitProducts = list(ProductDigit.objects.all())
+        print(digitProducts[1].name_PD)
+        
+        serializer = ProductDigitSerializer(data=digitProducts, many=True)
+        print(serializer.is_valid())
+        print(serializer.errors)
+        return JsonResponse({}, status=200, safe=False)
+
 
 class CategoryView(viewsets.ModelViewSet):
     queryset = Category.objects.all()

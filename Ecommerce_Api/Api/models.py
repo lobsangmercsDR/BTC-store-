@@ -73,13 +73,15 @@ class ProductFisic(models.Model):
 class ProductDigit(models.Model):
     name_PD = models.CharField(max_length=50)
     price_PD = models.DecimalField(max_digits=10,decimal_places=2)
+    dateCreated_PD = models.DateField(auto_now_add=True)
     subCategory_PD = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True)
     text_preview_PD = models.CharField(max_length=200)
     quantity_PD = models.IntegerField(default=0)
 
 class Transacts(models.Model):
     dateTransact = models.DateTimeField(auto_now_add=True)
-    product = models.ForeignKey(ProductFisic, on_delete=models.CASCADE,  default=1)
+    productFisic = models.ForeignKey(ProductFisic, on_delete=models.CASCADE,  default=None, null=True)
+    productDigit = models.ForeignKey(ProductDigit, on_delete=models.CASCADE, default=None, null=True)
     buyers = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
 
 class InvitationCodes(models.Model):

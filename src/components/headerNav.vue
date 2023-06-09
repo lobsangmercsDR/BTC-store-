@@ -21,10 +21,10 @@
 
           <!-- Menú -->
           <div class="flex items-center mr-6">
-            <Button label="Home" class="mr-6 p-button-text"></Button>
-            <Button label="Become Seller" class="mr-6 p-button-text"></Button>
-            <Button label="Categorías" class="mr-6 p-button-text"></Button>
-            <Button label="FAQ" class="mr-6 p-button-text"></Button>
+            <Button label="Home" class="mr-6 p-button-text" style="color: white !important;"></Button>
+            <Button label="Become Seller" class="mr-6 p-button-text" style="color: white !important;"></Button>
+            <Button label="Categorías" class="mr-6 p-button-text" style="color: white !important;"></Button>
+            <Button label="FAQ" class="mr-6 p-button-text" style="color: white !important;"></Button>
           </div>
         </div>
 
@@ -57,7 +57,7 @@
                 <ul class="px-4 py-2 text-black">
                   <li v-for="product in physicalProducts" :key="product.id">
                     {{ product.name }} ({{ product.quantity }} x {{ product.price }})
-                    <Button @click="decreaseQuantity(product, 'physical')" class="ml-2 p-button-danger p-button-rounded"
+                    <Button  @click="decreaseQuantity(product, 'physical')" 
                       icon="pi pi-minus"></Button>
                     <Button @click="increaseQuantity(product, 'physical')" class="ml-2 p-button-success p-button-rounded"
                       icon="pi pi-plus"></Button>
@@ -223,6 +223,6 @@ export default {
 }
 
 .button {
-  background-color: #f66305 !important;
+  background-color: #d9d9d9 !important;
 }
 </style>

@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 
 from rest_framework import serializers,exceptions
-from .models import Category, ProductFisic,Transacts,User,InvitationCodes,RoleRequests, SubCategory
+from .models import Category, ProductFisic, ProductDigit, Transacts,User,InvitationCodes,RoleRequests, SubCategory
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
@@ -11,6 +11,12 @@ import requests as rq
 import string
 
 dateFormat = serializers.DateTimeField(format="%d/%m/%Y %I:%M:%S %p",required=False)
+
+class ProductDigitSerializer(serializers.Serializer):
+    class Meta:
+        model = ProductDigit
+        fields = ['id', 'name_PD', 'price_PD', 'dateCreated_PD', 'quantity_PD']
+
 
 class GroupsSerializer(serializers.Serializer): 
 

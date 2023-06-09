@@ -5,7 +5,10 @@
             <h1>Últimos productos digitales agregados</h1>
             <div class="component-container component-container-color1">
                 <table class="table text-gray-400 border-separate space-y-4 text-sm">
-                    <thead class="bg-gray-800 text-gray-500">
+                    <thead class="" style="
+                        background: #c65a03;
+                        color: #fff;
+                    ">
                         <tr>
                             <th class="p-2">Producto</th>
                             <th class="p-2">Cantidad Comprada</th>
@@ -23,7 +26,18 @@
                         </tr>
                     </tbody>
                 </table>
-                <button class="table-button" @click="openModal1(product)">Ver Más</button>
+                <section class="nav-arrows">
+            <md-icon class="arrow-icon" @click="previousSlide">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                    </svg>
+                </md-icon>
+                <md-icon>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+            </md-icon>
+        </section>
             </div>
         </div>
         <div class="div2 grid-limitada" style="width:840px;">
@@ -61,7 +75,18 @@
                         </tr>
                     </tbody>
                 </table> -->
-                <button class="table-button" @click="openModal2(product)">Ver Más</button>
+                <section class="nav-arrows">
+            <md-icon class="arrow-icon" @click="previousSlide">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                    </svg>
+                </md-icon>
+                <md-icon>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+            </md-icon>
+        </section>
             </div>
         </div>
 
@@ -74,7 +99,10 @@
             <h1>Últimos productos digitales Vendidos</h1>
             <div class="component-container component-container-color2">
                 <table class="table text-gray-400 border-separate space-y-4 text-sm">
-                    <thead class="bg-gray-800 text-gray-500">
+                    <thead class="" style="
+                        background: rgb(122 0 160);
+                        color: #fff;
+                    ">
                         <tr>
                             <th class="p-2">Producto</th>
                             <th class="p-2">Cantidad Disponibles</th>
@@ -93,7 +121,18 @@
                         </tr>
                     </tbody>
                 </table>
-                <button class="table-button" @click="openModal2(product)">Ver Más</button>
+                <section class="nav-arrows">
+            <md-icon class="arrow-icon" @click="previousSlide">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                    </svg>
+                </md-icon>
+                <md-icon>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+            </md-icon>
+        </section>
             </div>
         </div>
 
@@ -126,7 +165,7 @@
                         </div>
                     </div>
             </div>
-        </div>
+    </div>
 
 
 
@@ -134,8 +173,8 @@
 
 
 
-
-    <!-- Modal 1 -->
+<!-- 
+  
     <div v-if="showModal1" class="modal">
         <div class="modal-content">
             <span class="close-button" @click="closeModal1">&times;</span>
@@ -162,7 +201,7 @@
         </div>
     </div>
 
-    <!-- Modal 2 -->
+
     <div v-if="showModal2" class="modal">
         <div class="modal-content">
             <span class="close-button" @click="closeModal2">&times;</span>
@@ -187,7 +226,7 @@
             </table>
             <button class="modal-close" @click="closeModal2">Cerrar</button>
         </div>
-    </div>
+    </div> -->
 </template>
   
 <script>
@@ -275,11 +314,11 @@ export default {
                 { id: 1, name: 'Product Slider 1', price: '250', image: 'product1.jpg' },
                 { id: 1, name: 'Product Slider 1', price: '250', image: 'product1.jpg' },
                 { id: 1, name: 'Product Slider 1', price: '250', image: 'product1.jpg' },
-                { id: 2, name: 'Product Slider 2', price: '180', image: 'product2.jpg' },
-                { id: 3, name: 'Product Slider 3', price: '120', image: 'product3.jpg' },
-                { id: 4, name: 'Product Slider 4', price: '300', image: 'product4.jpg' },
-                { id: 5, name: 'Product Slider 5', price: '220', image: 'product5.jpg' },
-                { id: 6, name: 'Product Slider 6', price: '150', image: 'product6.jpg' },
+                // { id: 2, name: 'Product Slider 2', price: '180', image: 'product2.jpg' },
+                // { id: 3, name: 'Product Slider 3', price: '120', image: 'product3.jpg' },
+                // { id: 4, name: 'Product Slider 4', price: '300', image: 'product4.jpg' },
+                // { id: 5, name: 'Product Slider 5', price: '220', image: 'product5.jpg' },
+                // { id: 6, name: 'Product Slider 6', price: '150', image: 'product6.jpg' },
             ],
         }
     },
@@ -336,6 +375,7 @@ export default {
     padding: 0;
     display: flex;
     justify-content: space-between;
+    gap: 40px;
     /* display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(0, 1fr);
@@ -348,14 +388,6 @@ export default {
 
 #header_icons {
     display: flex;
-}
-
-.div1 {
-    grid-area: 1 / 1 / 2 /1;
-}
-
-.div2 {
-    grid-area: 2 / 1 / 3 / 2;
 }
 
 .div3 {
@@ -402,6 +434,11 @@ export default {
   .div5 {
     grid-area: 5 / 1 / 9 / 3;
   }
+}
+
+.nav-arrows {
+    display: flex;
+    justify-content: center;
 }
 
 /* Estilos para tabletas */
