@@ -6,5 +6,7 @@ class ApiConfig(AppConfig):
     name = 'Api'
 
     def ready(self):
+        from .models import ProductDigit
         from .groups import create_groups
         create_groups()
+

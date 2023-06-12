@@ -7,32 +7,33 @@
                 <table class="table text-gray-400 border-separate space-y-4 text-sm">
                     <thead class="" style="
                         background: #c65a03;
-                        color: #fff;
-                    ">
+                        color: #fff;">
                         <tr>
                             <th class="p-2">Producto</th>
-                            <th class="p-2">Cantidad Comprada</th>
+                            <th class="p-2">Cantidad Agregada</th>
                             <th class="p-2">Fecha de Compra</th>
                             <th class="p-2">Precio</th>
+                            <th class="p-2">Tienda</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(product, index) in displayedProductsTable1" :key="index"
+                        <tr v-for="(product, index) in productsAdded" :key="index"
                             class="bg-gray-200 text-gray-700">
-                            <td class="p-2">{{ product.name }}</td>
-                            <td class="p-2">{{ product.quantitySold }}</td>
-                            <td class="p-2">{{ product.dateSold }}</td>
+                            <td class="w-1/4 p-2">{{ product.name }}</td>
+                            <td class="p-2" style="width: 20px;">{{ product.quantity }}</td>
+                            <td class="p-2">{{ product.dateCreated }}</td>
                             <td class="p-2">{{ product.price }}</td>
+                            <td class="w-1/4 p-2">{{ product.store_id.nameStore }}</td>
                         </tr>
                     </tbody>
                 </table>
                 <section class="nav-arrows">
-            <md-icon class="arrow-icon" @click="previousSlide">
+            <md-icon class="arrow-icon" name="previous-arrow" @click="changePage">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                     </svg>
                 </md-icon>
-                <md-icon>
+                <md-icon @click="changePage" name="next-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                     </svg>
@@ -45,7 +46,7 @@
             <h1>Methods</h1>
             <div class="component-container component-container-color2">
                 
-                <div v-for="(product,index) in displayedProductsTable1_5" :key="index" class="method-item"> 
+                <div v-for="(product,index) in displayedProductsTable1_5()" :key="index" class="method-item"> 
                     <img :src="'https://picsum.photos/150/150?random=' + index" alt="Product Image" class="product-table-img">
                     <!-- <div class="description">
                     <span>{{ product.name }}</span>
@@ -101,8 +102,7 @@
                 <table class="table text-gray-400 border-separate space-y-4 text-sm">
                     <thead class="" style="
                         background: rgb(122 0 160);
-                        color: #fff;
-                    ">
+                        color: #fff;">
                         <tr>
                             <th class="p-2">Producto</th>
                             <th class="p-2">Cantidad Disponibles</th>
@@ -112,9 +112,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(product, index) in displayedProductsTable2" :key="index"
+                        <tr v-for="(product, index) in displayedProductsTable2()" :key="index"
                             class="bg-gray-200 text-gray-700">
-                            <td class="p-2">{{ product.name }}</td>
+                            <td class="p-2">{{ product.name }}</td> 
                             <td class="p-2">{{ product.quantityAvailable }}</td>
                             <td class="p-2">{{ product.datePublished }}</td>
                             <td class="p-2">{{ product.price }}</td>
@@ -230,6 +230,8 @@
 </template>
   
 <script>
+import axios from 'axios';
+
 
 
 export default {
@@ -238,6 +240,7 @@ export default {
             showModal1: false,
             showModal2: false,
             currentSlide:0,
+            productsAdded: [],
 
             sliderOptions: {
                 infinite: true,
@@ -266,30 +269,7 @@ export default {
                     }
             }]
             },
-            productsTable1: [
-                // Aquí van los datos de la tabla 1
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                { name: "Producto 2", quantitySold: 5, dateSold: "2023-05-18", price: 50 },
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                { name: "Producto 1", quantitySold: 10, dateSold: "2023-05-20", price: 100 },
-                // Agrega más productos según tus necesidades
-            ],
+
             productsTable2: [
                 // Aquí van los datos de la tabla 2
                 { name: "Producto A", quantityAvailable: 20, datePublished: "2023-05-15", price: 200, user:"Admin" },
@@ -322,22 +302,34 @@ export default {
             ],
         }
     },
-    computed: {
-        displayedProductsTable1() {
-            return this.productsTable1.slice(0, 12);
+    created() {
+        this.getLast24HProducts();
+        this.displayedProductsTable2();
+        this.displayedProductsTable1_5();
+    },
+    methods: {
+        async getLast24HProducts() {
+            await axios.get("http://127.0.0.1:8000/api/productos/digit")
+            .then(response => {
+                this.productsAdded = response.data.data
+                console.log(this.productsAdded)
+            })
+            .catch(error => {
+                console.log(error.response.data)
+            })
+        },
+
+        async changePage(event) {
+            console.log(event.currentTarget.getAttribute('name'))
         },
         displayedProductsTable2() {
+            console.log(this.productsTable2)
             return this.productsTable2.slice(0, 12);
         },
         displayedProductsTable1_5() {
             return this.productsTable2.slice(0, 5);
         },
 
-        totalPages() {
-            return Math.ceil(this.productsTable2.length / this.productsPerPage);
-        },
-    },
-    methods: {
         goToProduct(productId) {
             this.$router.push({ name: 'Product', params: { id: productId } })
         },
@@ -382,7 +374,7 @@ export default {
     grid-auto-rows: minmax(1, 1fr);
     grid-column-gap: 30px;
     grid-row-gap: 0px; */
-    align-items: start;
+    align-items: flex-start;
     
 }
 

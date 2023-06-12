@@ -56,6 +56,14 @@ class SubCategory(models.Model):
     maxPriceBTC = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
+class Stores(models.Model):
+    nameStore = models.CharField(max_length=50)
+    seller = models.OneToOneField(User, on_delete= models.CASCADE)
+
+    @property
+    def product_count(self):
+        return self.productfisic_set.count() + self.productdigit_set.count()
+
 class ProductFisic(models.Model):
     nameProduct = models.CharField(max_length=50)
     image_product = models.ImageField(upload_to='images/', default=None)
@@ -69,14 +77,19 @@ class ProductFisic(models.Model):
     quantity = models.IntegerField(default=0)
     subCategory = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True)
     seller = models.ForeignKey(User, on_delete=models.CASCADE)
+    store = models.ForeignKey(Stores, on_delete=models.CASCADE)
+
+
 
 class ProductDigit(models.Model):
-    name_PD = models.CharField(max_length=50)
-    price_PD = models.DecimalField(max_digits=10,decimal_places=2)
-    dateCreated_PD = models.DateField(auto_now_add=True)
-    subCategory_PD = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True)
-    text_preview_PD = models.CharField(max_length=200)
-    quantity_PD = models.IntegerField(default=0)
+    name = models.CharField(max_length=50)
+    price = models.DecimalField(max_digits=10,decimal_places=2)
+    dateCreated = models.DateTimeField(auto_now_add=True)
+    subCategory = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True)
+    text_preview = models.CharField(max_length=200)
+    quantity= models.IntegerField(default=1)
+    store = models.ForeignKey(Stores, on_delete=models.CASCADE)
+
 
 class Transacts(models.Model):
     dateTransact = models.DateTimeField(auto_now_add=True)

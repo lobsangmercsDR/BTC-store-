@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 
 from rest_framework import serializers,exceptions
-from .models import Category, ProductFisic, ProductDigit, Transacts,User,InvitationCodes,RoleRequests, SubCategory
+from .models import Category, ProductFisic, ProductDigit, Transacts,User,InvitationCodes,RoleRequests, SubCategory, Stores
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
@@ -12,14 +12,33 @@ import string
 
 dateFormat = serializers.DateTimeField(format="%d/%m/%Y %I:%M:%S %p",required=False)
 
-class ProductDigitSerializer(serializers.Serializer):
+class StoreSerializer(serializers.ModelSerializer):
+    product_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Stores
+        fields = ['id', 'nameStore','seller','product_count']
+    
+    def get_product_count(self, obj):
+        count = obj.product_count 
+
+
+class ProductDigitSerializer(serializers.ModelSerializer):
+    dateCreated = serializers.DateTimeField(format="%d/%m/%Y %I:%M %p")
+
     class Meta:
         model = ProductDigit
-        fields = ['id', 'name_PD', 'price_PD', 'dateCreated_PD', 'quantity_PD']
+        fields = ['id', 'name', 'price', 'quantity', 'dateCreated','store_id']
+
+    def to_representation(self, instance):
+        store = Stores.objects.get(id=instance['store_id'])
+        serializer = StoreSerializer(store)
+        instance['store_id'] = serializer.data 
+        return super().to_representation(instance)
+
 
 
 class GroupsSerializer(serializers.Serializer): 
-
     class Meta:
         model = Group
         fields = ['id','name','users_count']
@@ -36,6 +55,7 @@ class GroupsSerializer(serializers.Serializer):
         count = obj.user_set.count()
         return count
      
+
 class UserNestedSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -166,7 +186,7 @@ class UserCreatorSerializer(serializers.ModelSerializer):
             instance.groups.set([])
             return super().update(instance, validated_data)
         if change_group:
-            try:
+            try:    
                 group = Group.objects.get(name=change_group)
             except Group.DoesNotExist:
                 not_found_groups.append(change_group)

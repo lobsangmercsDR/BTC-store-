@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from django.http import response
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator
 from rest_framework import viewsets,permissions, authentication,mixins, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
@@ -30,6 +31,7 @@ from .serializers import (TransactsSerializer,
                           RoleRequestsSerializer,
                           AuthenticationSerializer,
                           GroupsSerializer,
+                          StoreSerializer,
                           SubCategorySerializer)
 
 def format_data(data=None, nameClass=None, code=200):
@@ -155,19 +157,22 @@ class ProductView(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         return JsonResponse({"Success":True, "message":"El producto fue borrado correctamente"}, status=200)
 
+
 class ProductsDigitView(viewsets.ModelViewSet):
-    serializers_class = ProductDigitSerializer
-    authentication_classes= []
+    queryset = ProductDigit.objects.all()
+    serializer_class = ProductDigitSerializer
+    pagination_class = Paginator
 
     # GET all digital products
     def get_digit_products(self, request):
-        digitProducts = list(ProductDigit.objects.all())
-        print(digitProducts[1].name_PD)
-        
-        serializer = ProductDigitSerializer(data=digitProducts, many=True)
-        print(serializer.is_valid())
-        print(serializer.errors)
-        return JsonResponse({}, status=200, safe=False)
+        digitProducts = ProductDigit.objects.values().order_by('-dateCreated')
+        paginator = self.pagination_class(digitProducts, per_page=12)
+        page_number= request.GET.get('page',1)
+        if int(page_number) > paginator.num_pages:
+            return JsonResponse({"error":"No hay mas paginas"}, status=404)
+        paginated_data = paginator.get_page(page_number)
+        serializer = ProductDigitSerializer(paginated_data, many=True)
+        return JsonResponse({'available_pages':paginator.num_pages-int(page_number),'page':int(page_number),'data':serializer.data}, status=200, safe=False)
 
 
 class CategoryView(viewsets.ModelViewSet):
@@ -179,6 +184,7 @@ class CategoryView(viewsets.ModelViewSet):
     #GET all Categories
     def nested_list_categories(self, request):
         categories = Category.objects.all()
+        print(categories)
         serializer = CategorySerializer(categories, many=True)
         return JsonResponse(serializer.data, status=200, safe=False)   
 

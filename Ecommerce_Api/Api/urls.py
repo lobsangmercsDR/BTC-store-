@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import ProductView, ProductsDigitView,CategoryView,TransactsView,UserView, AuthenticationView, GroupsView, LogoutView, InvitationCodeView, RoleRequestsView
+from .views import  ProductView, ProductsDigitView,CategoryView,TransactsView,UserView, AuthenticationView, GroupsView, LogoutView, InvitationCodeView, RoleRequestsView
 
 urlpatterns = [
     path('productos/digit', ProductsDigitView.as_view({'get':'get_digit_products'}, name="Digital_Products")),
+    # path('productos/stores', StoresView.as_view({'get':'get_digit_products'}, name="Digital_Products")),
     path('productos',ProductView.as_view({'get':'nested_list_products','post':'post_product'}), name='listOfProducts' ),
     path('productos/<int:pk>',ProductView.as_view({'get':'get_product', 'delete':'delete_product','put':'update_product'}), name='listOfProducts' ),
     path('categorias', CategoryView.as_view({'get':'nested_list_categories', 'post':'post_category'}), name='list_of_categories'),
