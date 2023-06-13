@@ -241,6 +241,10 @@ export default {
             showModal2: false,
             currentSlide:0,
             productsAdded: [],
+            pageInfo: {
+                actualPage: 1,
+                available_page:0
+            },
 
             sliderOptions: {
                 infinite: true,
@@ -304,15 +308,19 @@ export default {
     },
     created() {
         this.getLast24HProducts();
+        setInterval(() => {
+            this.getLast24HProducts()
+        }, 2000);
         this.displayedProductsTable2();
         this.displayedProductsTable1_5();
     },
     methods: {
-        async getLast24HProducts() {
-            await axios.get("http://127.0.0.1:8000/api/productos/digit")
+        async getLast24HProducts(page=1) {
+            await axios.get(`http://127.0.0.1:8000/api/productos/digit?page=${page}`)
             .then(response => {
                 this.productsAdded = response.data.data
-                console.log(this.productsAdded)
+                this.pageInfo.available_page = response.data.available_pages;
+                this.pageInfo.actualPage = response.data.page;
             })
             .catch(error => {
                 console.log(error.response.data)
@@ -320,10 +328,38 @@ export default {
         },
 
         async changePage(event) {
-            console.log(event.currentTarget.getAttribute('name'))
+            const direction_arrow = event.currentTarget.getAttribute('name')
+            if (direction_arrow == "previous-arrow") {
+                if (this.pageInfo.actualPage == 1) {
+                    console.log("222");
+                }
+                console.log(this.pageInfo.actualPage); 
+                let page = this.pageInfo.actualPage -1
+                if(page > 0) {
+                    this.getLast24HProducts(page)
+                }
+                // if (page == 0) {
+                //         event.target.style.color = "#c2c2c2"
+                //     }
+                //     else {
+                //         event.target.style.color = "#ffff"
+                //         validator = true 
+                //     }
+
+
+            } else {
+                let page = this.pageInfo.actualPage + 1
+                let validator = true
+                if (validator == true) {
+                    this.getLast24HProducts(page)
+                    if (page == 2) {
+                        event.target.style.color = "#ffff"
+                    }
+                }
+            }
         },
         displayedProductsTable2() {
-            console.log(this.productsTable2)
+
             return this.productsTable2.slice(0, 12);
         },
         displayedProductsTable1_5() {
