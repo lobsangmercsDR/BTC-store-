@@ -20,7 +20,7 @@
                         <tr v-for="(product, index) in productsAdded" :key="index"
                             class="bg-gray-200 text-gray-700">
                             <td class="w-1/4 p-2">{{ product.name }}</td>
-                            <td class="p-2" style="width: 20px;">{{ product.quantity }}</td>
+                            <td class="p-2" style="width: 20px;">{{ product.orgQuantity }}</td>
                             <td class="p-2">{{ product.dateCreated }}</td>
                             <td class="p-2">{{ product.price }}</td>
                             <td class="w-1/4 p-2">{{ product.store_id.nameStore }}</td>
@@ -28,12 +28,12 @@
                     </tbody>
                 </table>
                 <section class="nav-arrows">
-            <md-icon class="arrow-icon" name="previous-arrow" @click="changePage">
+            <md-icon class="arrow-icon" :style="{color:previousArrowColor}" name="previous-arrow" @click="changePage">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                     </svg>
                 </md-icon>
-                <md-icon @click="changePage" name="next-arrow">
+                <md-icon class="arrow-icon" @click="changePage" :style="{color: nextArrowColor}" name="next-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                     </svg>
@@ -309,11 +309,32 @@ export default {
     created() {
         this.getLast24HProducts();
         setInterval(() => {
-            this.getLast24HProducts()
+            this.getLast24HProducts(this.pageInfo.actualPage) 
         }, 2000);
         this.displayedProductsTable2();
         this.displayedProductsTable1_5();
     },
+    computed: {
+        previousArrowColor() {
+            const page = this.pageInfo.actualPage;
+            if (page === 1) {
+                return '#c2c2c2'; 
+            } else {
+                return ''; 
+            }
+        },
+        nextArrowColor() {
+            const pageNext = this.pageInfo.available_page
+            console.log(pageNext);
+            if (pageNext == 0) {
+                return '#c2c2c2'
+            } else {
+                return ''
+            }
+        }
+    },
+
+
     methods: {
         async getLast24HProducts(page=1) {
             await axios.get(`http://127.0.0.1:8000/api/productos/digit?page=${page}`)
@@ -330,14 +351,23 @@ export default {
         async changePage(event) {
             const direction_arrow = event.currentTarget.getAttribute('name')
             if (direction_arrow == "previous-arrow") {
-                if (this.pageInfo.actualPage == 1) {
-                    console.log("222");
+                let page = this.pageInfo.actualPage
+                if(page > 1) {
+                    this.getLast24HProducts(page-1)
                 }
-                console.log(this.pageInfo.actualPage); 
-                let page = this.pageInfo.actualPage -1
-                if(page > 0) {
-                    this.getLast24HProducts(page)
-                }
+                // if (this.pageInfo.actualPage == 1) {
+                //     console.log("222");
+                // }
+                // console.log(this.pageInfo.actualPage); 
+
+                // let avgPage = this.pageInfo.available_page
+                // console.log(page);
+
+                // if (page == 2) {
+                //     event.target.style.color = "#c2c2c2" 
+                // } else { 
+                    
+                // }
                 // if (page == 0) {
                 //         event.target.style.color = "#c2c2c2"
                 //     }
@@ -352,9 +382,6 @@ export default {
                 let validator = true
                 if (validator == true) {
                     this.getLast24HProducts(page)
-                    if (page == 2) {
-                        event.target.style.color = "#ffff"
-                    }
                 }
             }
         },
@@ -404,19 +431,19 @@ export default {
     display: flex;
     justify-content: space-between;
     gap: 40px;
-    /* display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(0, 1fr);
-    grid-auto-rows: minmax(1, 1fr);
-    grid-column-gap: 30px;
-    grid-row-gap: 0px; */
     align-items: flex-start;
     
+}
+
+.nav-arrows:hover {
+    cursor: pointer;
 }
 
 #header_icons {
     display: flex;
 }
+
+
 
 .div3 {
     grid-area: 1 / 2 / 3 / 5;
@@ -467,6 +494,7 @@ export default {
 .nav-arrows {
     display: flex;
     justify-content: center;
+    margin-top: auto;
 }
 
 /* Estilos para tabletas */
@@ -506,17 +534,24 @@ export default {
     padding: 5px;
     border-radius: 8px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+
 }
 
 .component-container-color1 {
     background-color: #f66305;
     color: white;
     height: 100%;
+    min-height: 970px; 
+    min-width: 500px;
 }
 
 .component-container-color2 {
     background-color: #ab16be;
     color: white;
+    min-height: 970px; 
+    min-width: 500px;
 }
 
 .slider-container {

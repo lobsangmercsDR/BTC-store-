@@ -87,7 +87,8 @@ class ProductDigit(models.Model):
     dateCreated = models.DateTimeField(auto_now_add=True)
     subCategory = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True)
     text_preview = models.CharField(max_length=200)
-    quantity= models.IntegerField(default=1)
+    orgQuantity= models.IntegerField(default=1)
+    actQuantity = models.IntegerField(default=1)
     store = models.ForeignKey(Stores, on_delete=models.CASCADE)
 
 
