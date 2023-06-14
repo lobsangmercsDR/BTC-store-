@@ -28,12 +28,12 @@
                     </tbody>
                 </table>
                 <section class="nav-arrows">
-            <md-icon class="arrow-icon" :style="{color:previousArrowColor}" name="previous-arrow" @click="changePage">
+            <md-icon class="arrow-icon" :style="{color:previousArrowColor}" name="previous-arrow" @click="changePageAP">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                     </svg>
                 </md-icon>
-                <md-icon class="arrow-icon" @click="changePage" :style="{color: nextArrowColor}" name="next-arrow">
+                <md-icon class="arrow-icon" @click="changePageAP" :style="{color: nextArrowColor}" name="next-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                     </svg>
@@ -48,13 +48,14 @@
                 
                 <div v-for="(product,index) in displayedProductsTable1_5()" :key="index" class="method-item"> 
                     <img :src="'https://picsum.photos/150/150?random=' + index" alt="Product Image" class="product-table-img">
-                    <!-- <div class="description">
-                    <span>{{ product.name }}</span>
-                    <p>{{ product.price }}</p>
-                    <p> {{ product.quantityAvailable }}</p>
-                    <p> {{ product.datePublished }}</p>   
-                    <p>{{ product.user }}</p>
-                    </div> -->
+                    <div class="description">
+                        <div class="FRow">
+                        <div class="title3 title">Producto 1</div>
+                        <div class="price">2000</div>
+                        </div>
+                    </div>
+                    <div class="quantity"><span>Servicio excelente</span></div>
+                        <div class="details"><p class="quant-num">129</p><p>disponibles</p> </div>
                 </div>
                 <!-- <table class="table text-gray-400 border-separate space-y-4 text-sm">
                      <thead class="bg-gray-800 text-gray-500">
@@ -112,22 +113,22 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(product, index) in displayedProductsTable2()" :key="index"
+                        <tr v-for="(product, index) in transactsMaked.data" :key="index"
                             class="bg-gray-200 text-gray-700">
-                            <td class="p-2">{{ product.name }}</td> 
-                            <td class="p-2">{{ product.quantityAvailable }}</td>
-                            <td class="p-2">{{ product.datePublished }}</td>
-                            <td class="p-2">{{ product.price }}</td>
+                            <td class="p-2">{{ product.productDigit.name }}</td> 
+                            <td class="p-2">{{ product.productDigit.actQuantity }}</td>
+                            <td class="p-2">{{ product.dateTransact }}</td>
+                            <td class="p-2">{{ product.productDigit.price }}</td>
                         </tr>
                     </tbody>
                 </table>
                 <section class="nav-arrows">
-            <md-icon class="arrow-icon" @click="previousSlide">
+            <md-icon class="arrow-icon" @click="changePageSP" :style="{color:previousArrowColorSP}" name="previous-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                     </svg>
                 </md-icon>
-                <md-icon>
+                <md-icon class="nav-arrows" @click="changePageSP" :style="{color:nextArrowColorSP}" name="next-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                     </svg>
@@ -241,9 +242,14 @@ export default {
             showModal2: false,
             currentSlide:0,
             productsAdded: [],
+            transactsMaked: [],
             pageInfo: {
                 actualPage: 1,
                 available_page:0
+            },
+            pageInfoSP: {
+                actualPage: 1, 
+                available_page: 0
             },
 
             sliderOptions: {
@@ -275,42 +281,30 @@ export default {
             },
 
             productsTable2: [
-                // Aquí van los datos de la tabla 2
-                { name: "Producto A", quantityAvailable: 20, datePublished: "2023-05-15", price: 200, user:"Admin" },
-                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin" },
-                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin" },
-                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin" },
-                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin" },
-                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin" },
-                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin" },
-                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin" },
-                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin"},
-                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin"},
-                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80 , user:"Admin"},
-                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80, user:"Admin" },
-                { name: "Producto B", quantityAvailable: 8, datePublished: "2023-05-12", price: 80 , user:"Admin"},
-                
-                // Agrega más productos según tus necesidades
+                1,
+                2,
+                3,
+                4,
+                4,
+                3,
+                3,
+                3,
             ],
             productsSlider: [
-                { id: 1, name: 'Product Slider 1', price: '250', image: 'product1.jpg' },
-                { id: 1, name: 'Product Slider 1', price: '250', image: 'product1.jpg' },
-                { id: 1, name: 'Product Slider 1', price: '250', image: 'product1.jpg' },
-                { id: 1, name: 'Product Slider 1', price: '250', image: 'product1.jpg' },
-                { id: 1, name: 'Product Slider 1', price: '250', image: 'product1.jpg' },
-                // { id: 2, name: 'Product Slider 2', price: '180', image: 'product2.jpg' },
-                // { id: 3, name: 'Product Slider 3', price: '120', image: 'product3.jpg' },
-                // { id: 4, name: 'Product Slider 4', price: '300', image: 'product4.jpg' },
-                // { id: 5, name: 'Product Slider 5', price: '220', image: 'product5.jpg' },
-                // { id: 6, name: 'Product Slider 6', price: '150', image: 'product6.jpg' },
-            ],
+                1,
+                2,
+                3,
+                4,
+                4
+            ]
         }
     },
     created() {
         this.getLast24HProducts();
-        setInterval(() => {
-            this.getLast24HProducts(this.pageInfo.actualPage) 
-        }, 2000);
+        // setInterval(() => {
+        //     this.getLast24HProducts(this.pageInfo.actualPage) 
+        // }, 2000);
+        this.getLast24HTransacts();
         this.displayedProductsTable2();
         this.displayedProductsTable1_5();
     },
@@ -325,6 +319,24 @@ export default {
         },
         nextArrowColor() {
             const pageNext = this.pageInfo.available_page
+            console.log(pageNext);
+            if (pageNext == 0) {
+                return '#c2c2c2'
+            } else {
+                return ''
+            }
+        },
+        previousArrowColorSP() {
+            const page = this.pageInfoSP.actualPage;
+            console.log(page);
+            if (page === 1) {
+                return '#c2c2c2'; 
+            } else {
+                return ''; 
+            }
+        },
+        nextArrowColorSP() {
+            const pageNext = this.pageInfoSP.available_page
             console.log(pageNext);
             if (pageNext == 0) {
                 return '#c2c2c2'
@@ -348,35 +360,26 @@ export default {
             })
         },
 
-        async changePage(event) {
+        async getLast24HTransacts(page=1) { 
+            await axios.get(`http://127.0.0.1:8000/api/transacts?page=${page}`)
+            .then(response => {
+                this.transactsMaked = response.data
+                this.pageInfoSP.available_page = response.data.available_pages;
+                this.pageInfoSP.actualPage = response.data.actual_page;
+
+            })
+            .catch(error => {
+                console.log(error.response.data)
+            })
+        },
+
+        async changePageAP(event) {
             const direction_arrow = event.currentTarget.getAttribute('name')
             if (direction_arrow == "previous-arrow") {
                 let page = this.pageInfo.actualPage
                 if(page > 1) {
                     this.getLast24HProducts(page-1)
                 }
-                // if (this.pageInfo.actualPage == 1) {
-                //     console.log("222");
-                // }
-                // console.log(this.pageInfo.actualPage); 
-
-                // let avgPage = this.pageInfo.available_page
-                // console.log(page);
-
-                // if (page == 2) {
-                //     event.target.style.color = "#c2c2c2" 
-                // } else { 
-                    
-                // }
-                // if (page == 0) {
-                //         event.target.style.color = "#c2c2c2"
-                //     }
-                //     else {
-                //         event.target.style.color = "#ffff"
-                //         validator = true 
-                //     }
-
-
             } else {
                 let page = this.pageInfo.actualPage + 1
                 let validator = true
@@ -385,12 +388,37 @@ export default {
                 }
             }
         },
+
+        async changePageSP(event) {
+            const direction_arrow = event.currentTarget.getAttribute('name')
+            console.log(direction_arrow);
+            console.log(this.pageInfoSP.actualPage, this.pageInfoSP.available_page);
+            if (direction_arrow == "previous-arrow") {
+                let page = this.pageInfoSP.actualPage
+                if(page > 1) {
+                    this.getLast24HTransacts(page-1)
+                }
+            } else {
+
+                if(this.pageInfoSP.available_page != 0) {
+
+                
+                let page = this.pageInfoSP.actualPage + 1
+
+                let validator = true
+                if (validator == true) {
+                    this.getLast24HTransacts(page)
+                }
+            }
+            }
+
+        },
         displayedProductsTable2() {
 
             return this.productsTable2.slice(0, 12);
         },
         displayedProductsTable1_5() {
-            return this.productsTable2.slice(0, 5);
+            return this.productsTable2.slice(0, 6);
         },
 
         goToProduct(productId) {
@@ -435,6 +463,12 @@ export default {
     
 }
 
+.div4{
+    max-width: 1330px;
+    margin: auto;
+    margin-top: 30px;
+}
+
 .nav-arrows:hover {
     cursor: pointer;
 }
@@ -444,52 +478,7 @@ export default {
 }
 
 
-
-.div3 {
-    grid-area: 1 / 2 / 3 / 5;
-    align-self: start;
-    overflow: hidden;
-}
-
-.div4 {
-    grid-area: 2 / 2 / 3 / 5;
-    align-self: start;
-    overflow: hidden;
-    max-width: 1365px;
-    margin: auto;
-    margin-top: 45px;
-}
-
-.div5 {
-    grid-area: 1 / 5 / 4 / 6;
-}
-
 /* Estilos para dispositivos móviles */
-@media (max-width: 768px) {
-  .parent {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(8, 1fr);
-    grid-column-gap: 10px;
-    grid-row-gap: 20px;
-  }
-
-  .div1 {
-    grid-area: 1 / 1 / 3 / 3;
-  }
-
-  .div2 {
-    grid-area: 3 / 1 / 5 / 3;
-  }
-
-  .div3,
-  .div4 {
-    grid-area: auto;
-  }
-
-  .div5 {
-    grid-area: 5 / 1 / 9 / 3;
-  }
-}
 
 .nav-arrows {
     display: flex;
@@ -497,6 +486,37 @@ export default {
     margin-top: auto;
 }
 
+.description {
+display: flex;
+margin: 0px 25px;
+text-align: left;
+}
+
+.description .title3 {
+   justify-content: flex-start;
+
+}
+
+.quantity {
+    word-wrap: break-word;
+    width: 190px;
+    margin: 10px;
+}
+
+.details {
+    flex-grow: 1;
+}
+
+
+.FRow {
+justify-content: flex-start;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0 !important;
+}
 /* Estilos para tabletas */
 @media (min-width: 769px) and (max-width: 1024px) {
   .parent {
@@ -510,6 +530,8 @@ export default {
     display: none;
   }
 }
+
+
 
   .div1 {
     grid-area: 1 / 1 / 3 / 2;
@@ -537,6 +559,13 @@ export default {
     display: flex;
     flex-direction: column;
 
+}
+
+.quant-num {
+    font-size: 40px;
+    font-weight: bold;
+    padding: 0;
+    margin: -10px
 }
 
 .component-container-color1 {
@@ -608,8 +637,9 @@ export default {
     overflow: hidden;
     box-sizing: border-box;
     flex-shrink: 0;
-    justify-content: space-between;
+    justify-content: flex-start;
 }
+
 
 .product-table-img {
     border-radius: 15px;

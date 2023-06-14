@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import  ProductView, ProductsDigitView,CategoryView,TransactsView,UserView, AuthenticationView, GroupsView, LogoutView, InvitationCodeView, RoleRequestsView
+from .views import  ProductView, ProductsDigitView,CategoryView,TransactsView,UserView, AuthenticationView, GroupsView, LogoutView, InvitationCodeView, RoleRequestsView,Img_view
 
 urlpatterns = [
+    path('images/<str:image_name>', Img_view.as_view({'get':'get_file_img'}), name="IMG_GET"),
     path('productos/digit', ProductsDigitView.as_view({'get':'get_digit_products'}, name="Digital_Products")),
     # path('productos/stores', StoresView.as_view({'get':'get_digit_products'}, name="Digital_Products")),
     path('productos',ProductView.as_view({'get':'nested_list_products','post':'post_product'}), name='listOfProducts' ),

@@ -94,9 +94,11 @@ class ProductDigit(models.Model):
 
 class Transacts(models.Model):
     dateTransact = models.DateTimeField(auto_now_add=True)
-    productFisic = models.ForeignKey(ProductFisic, on_delete=models.CASCADE,  default=None, null=True)
-    productDigit = models.ForeignKey(ProductDigit, on_delete=models.CASCADE, default=None, null=True)
+    productFisic = models.ForeignKey(ProductFisic, on_delete=models.SET_NULL, default=None, null=True)
+    productDigit = models.ForeignKey(ProductDigit, on_delete=models.SET_NULL, default=None, null=True)
+    quantity_asked = models.IntegerField(default=1)
     buyers = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+
 
 class InvitationCodes(models.Model):
     invitationCodes = models.CharField(max_length=15,default=uti.generate_invitation_code())

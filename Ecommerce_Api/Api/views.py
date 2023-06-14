@@ -14,7 +14,9 @@ from rest_framework.authtoken.views import  ObtainAuthToken
 from rest_framework.authtoken.models import  Token
 from django.contrib.auth.models import Group
 from django.db.models import Q
+from django.http import FileResponse
 from datetime import datetime, timedelta
+import os
 from .utils import services as uti
 from django.core import serializers
 from django.http import HttpResponse
@@ -87,12 +89,23 @@ def validate_group(user, groups):
     else:
         return True
 
+class Img_view(viewsets.ModelViewSet):
+    # queryset = ProductFisic.objects.all()
+    # serializer_class = ProductSerializer
+    def get_file_img(self, request, image_name):
+        print(request.data)
+        complete_path = os.path.join(r'C:\Users\alan8\OneDrive\Documentos\Frontend\Vue\AlanStore\Ecommerce_Api\images', image_name)
+        if os.path.exists(complete_path):
+            return FileResponse(open(complete_path,'rb'),content_type='image/jpeg')
+        else:
+            return JsonResponse({'error':'No se encuentra la imagen'})
+
 
 class ProductView(viewsets.ModelViewSet):
     queryset = ProductFisic.objects.all()
     serializer_class = ProductSerializer
-    authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [IsAuthenticated,IsGroupAccepted]
+    # authentication_classes = [authentication.TokenAuthentication]
+    # permission_classes = [IsAuthenticated,IsGroupAccepted]
 
     # GET all Products (with restrictions for sellers)
     def nested_list_products(self, request):
@@ -385,16 +398,24 @@ class AuthenticationView(ObtainAuthToken):
 class TransactsView(viewsets.ModelViewSet):
     queryset = Transacts.objects.all()
     serializer_class = TransactsSerializer
-    permission_classes = [IsAuthenticated, IsGroupAccepted]
+    
 
     def get_all_transacts(self, request):
-        userPermision = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin])
-        if not userPermision['IsAdmin']:
-            transacts = Transacts.objects.filter(buyers_id=request.user.id)
-        else:
-            transacts = Transacts.objects.all()
-        serializer= TransactsSerializer(transacts, many=True)   
-        dicc = serializer.data
+        # userPermision = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin])
+        # if not userPermision['IsAdmin']:
+        transacts = Transacts.objects.all()
+  
+        paginator = Paginator(transacts, per_page=12)
+        page_number= request.GET.get('page',1)
+        if int(page_number) > paginator.num_pages:
+            return JsonResponse({"error":"No hay mas paginas"}, status=404)
+        paginated_data = paginator.get_page(page_number) 
+        serializer= TransactsSerializer(paginated_data, many=True) 
+        dicc = {
+            "actual_page": int(page_number),
+            "available_pages":  paginator.num_pages - int(page_number),
+            "data": serializer.data
+        }
         return JsonResponse(dicc, status=200, safe=False)
 
     def post_transact(self, request):

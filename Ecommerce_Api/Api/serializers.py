@@ -30,11 +30,12 @@ class ProductDigitSerializer(serializers.ModelSerializer):
         model = ProductDigit
         fields = ['id', 'name', 'price', 'orgQuantity','actQuantity', 'dateCreated','store_id']
 
-    def to_representation(self, instance):
-        store = Stores.objects.get(id=instance['store_id'])
-        serializer = StoreSerializer(store)
-        instance['store_id'] = serializer.data 
-        return super().to_representation(instance)
+    # def to_representation(self, instance):
+    #     print(instance)
+    #     store = Stores.objects.get(id=instance.store_id)
+    #     serializer = StoreSerializer(store)
+    #     instance['store_id'] = serializer.data 
+    #     return super().to_representation(instance)
 
 
 
@@ -402,25 +403,39 @@ class TransactProductNestedSerializer(serializers.ModelSerializer):
         fields = ['id','nameProduct','priceProduct','dateReleased','active', 'seller']
 
 class TransactsSerializer(serializers.ModelSerializer):
-    product_id = serializers.IntegerField(write_only=True)
-    product = TransactProductNestedSerializer(read_only=True)
+    productDigit_id = serializers.IntegerField(write_only=True)
+    quantity_asked = serializers.IntegerField(required=True)
+    productDigit = ProductDigitSerializer(read_only=True)
     buyers = UserNestedSerializer(read_only=True)
     dateTransact = serializers.DateTimeField(format="%m/%d/%Y %I:%M:%S %p", read_only=True)
     
     class Meta:
         model  = Transacts 
-        fields = ['id','dateTransact','product','buyers', 'product_id']
+        fields = ['id','dateTransact','quantity_asked','productDigit','buyers', 'productDigit_id']
 
     def create(self, validated_data):
         print(validated_data)
-        product_id = validated_data.pop('product_id', None)
+        product_id = validated_data.pop('productDigit_id', None)
+        quantity_asked = validated_data['quantity_asked'] 
+        
         request = self.context.get('request')
         buyer_id= request.user.id
         buyers = User.objects.get(id=buyer_id)
-        print(buyers)
-        products = Product.objects.get(id=product_id)
-        transact = Transacts.objects.create(product=products,buyers=buyers, **validated_data)
+        try:
+            products = ProductDigit.objects.get(id=product_id)
+        except:
+            raise serializers.ValidationError({"error":"Producto Inexistente"}) 
+
+        if(products.actQuantity == 0):
+            raise serializers.ValidationError({"error":"No quedan mas productos disponibles"})
+        products.actQuantity -= quantity_asked
+        if products.actQuantity < 0:
+            raise serializers.ValidationError({"error":"Pide mas de lo que hay"})
+        products.save() 
+        print(products)
+        transact = Transacts.objects.create(productDigit=products,buyers=buyers, **validated_data)
         return transact
+    
 
 class AuthenticationSerializer(serializers.Serializer):
     email= serializers.EmailField()
