@@ -10,6 +10,11 @@ from .utils import services as uti
 from django.utils.timezone import now, timedelta 
 
 
+def generate_file_path(instance, filename):
+    filename = uti.generate_invitation_code(6)
+    return f'images/{filename}.jpg'
+
+
 class UserManager(BaseUserManager):
     def create_user(self,email, password, **args):
         if not email:
@@ -66,7 +71,7 @@ class Stores(models.Model):
 
 class ProductFisic(models.Model):
     nameProduct = models.CharField(max_length=50)
-    image_product = models.ImageField(upload_to='images/', default=None)
+    image_product = models.ImageField(upload_to=generate_file_path, default=None)
     description = models.CharField(max_length=200, default="")
     priceProduct = models.DecimalField(max_digits=10, decimal_places=2)
     dateReleased = models.DateField(auto_now_add=True)

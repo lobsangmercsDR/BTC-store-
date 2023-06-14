@@ -93,8 +93,10 @@ class Img_view(viewsets.ModelViewSet):
     # queryset = ProductFisic.objects.all()
     # serializer_class = ProductSerializer
     def get_file_img(self, request, image_name):
-        print(request.data)
-        complete_path = os.path.join(r'C:\Users\alan8\OneDrive\Documentos\Frontend\Vue\AlanStore\Ecommerce_Api\images', image_name)
+        work_route=  r'C:\Users\TI\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
+        local_route= r'C:\Users\alan8\OneDrive\Documentos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
+        complete_path = os.path.join(work_route, image_name)
+        
         if os.path.exists(complete_path):
             return FileResponse(open(complete_path,'rb'),content_type='image/jpeg')
         else:
@@ -106,6 +108,7 @@ class ProductView(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     # authentication_classes = [authentication.TokenAuthentication]
     # permission_classes = [IsAuthenticated,IsGroupAccepted]
+    pagination_class = Paginator
 
     # GET all Products (with restrictions for sellers)
     def nested_list_products(self, request):
@@ -125,8 +128,18 @@ class ProductView(viewsets.ModelViewSet):
                 products = products.filter(Q(**{key: value}))
         if not products:
             return JsonResponse({"Message": "No se encontraron productos con los presentes requerimientos"})
-        serializer = ProductSerializer(products, many=True)
-        return JsonResponse(serializer.data, status=200, safe=False)
+        paginator = Paginator(products, per_page=5)
+        page_number= request.GET.get('page',1)
+        if int(page_number) > paginator.num_pages:
+            return JsonResponse({"error":"No hay mas paginas"}, status=404)
+        paginated_data = paginator.get_page(page_number) 
+        serializer= ProductSerializer(paginated_data, many=True) 
+        dicc = {
+            "actual_page": int(page_number),
+            "available_pages":  paginator.num_pages - int(page_number),
+            "data": serializer.data
+        }
+        return JsonResponse(dicc, status=200, safe=False)
 
     
     # GET just one product (Also with restricctions)

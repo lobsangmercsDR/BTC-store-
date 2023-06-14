@@ -1,5 +1,98 @@
 <template>
     <div class="parent">
+        <div class="div2">
+            <!-- Table 2 -->
+            <h1>Últimos productos digitales Vendidos</h1>
+            <div class="component-container component-container-color2">
+                <table class="table text-gray-400 border-separate space-y-4 text-sm">
+                    <thead class="" style="
+                        background: rgb(122 0 160);
+                        color: #fff;">
+                        <tr>
+                            <th class="p-2">Producto</th>
+                            <th class="p-2">Cantidad Disponibles</th>
+                            <th class="p-2">Fecha de Publicación</th>
+                            <th class="p-2">Precio</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(product, index) in transactsMaked.data" :key="index"
+                            class="bg-gray-200 text-gray-700">
+                            <td class="p-2">{{ product.productDigit.name }}</td> 
+                            <td class="p-2">{{ product.productDigit.actQuantity }}</td>
+                            <td class="p-2">{{ product.dateTransact }}</td>
+                            <td class="p-2">{{ product.productDigit.price }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <section class="nav-arrows">
+            <md-icon class="arrow-icon" @click="changePageSP" :style="{color:previousArrowColorSP}" name="previous-arrow">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                    </svg>
+                </md-icon>
+                <md-icon class="nav-arrows" @click="changePageSP" :style="{color:nextArrowColorSP}" name="next-arrow">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+            </md-icon>
+        </section>
+            </div>
+        </div>
+        <div class="div2 grid-limitada" style="width:840px;">
+            <!-- Table 2 -->
+            <h1>Methods</h1>
+            <div class="component-container component-container-color2">
+                
+                <div v-for="(product,index) in displayedProductsTable1_5()" :key="index" class="method-item"> 
+                    <img :src="'https://picsum.photos/150/150?random=' + index" alt="Product Image" class="product-table-img">
+                    <div class="description">
+                        <div class="FRow">
+                        <div class="title3 title">Producto 1</div>
+                        <div style="margin-top: -8px;">(2/3/2023)</div>
+                        <div class="quantity_buy"><b>No. de compras:</b> 5</div>
+                        <div class="price"><b>Precio:</b> 2000</div>
+                        <div class="tienda"><b>Tienda:</b> Juana</div>
+                        </div>
+                    </div>
+                    <div class="quantity"><span>La descripcion de este producto estara conectada con la Base de Datos y el servidor de la API</span></div>
+                        <div class="details"><button class="product-button">Comprar</button></div>
+                </div>
+                <!-- <table class="table text-gray-400 border-separate space-y-4 text-sm">
+                     <thead class="bg-gray-800 text-gray-500">
+                        <tr>
+                            <th class="p-2">Producto</th>
+                            <th class="p-2">Cantidad Disponibles</th>
+                            <th class="p-2">Fecha de Publicación</th>
+                            <th class="p-2">Precio</th>
+                        </tr>
+                    </thead> 
+                    <tbody>
+                        <tr v-for="(product, index) in displayedProductsTable1_5" :key="index"
+                            class="bg-gray-200 text-gray-700">
+                            <td class="p-2">{{ product.name }}</td>
+                            <td class="p-2">{{ product.quantityAvailable }}</td>
+                            <td class="p-2">{{ product.datePublished }}</td>
+                            <td class="p-2">{{ product.price }}</td>
+
+                        </tr>
+                    </tbody>
+                </table> -->
+                <section class="nav-arrows">
+            <md-icon class="arrow-icon" @click="previousSlide">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                    </svg>
+                </md-icon>
+                <md-icon>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+            </md-icon>
+        </section>
+            </div>
+        </div>
         <div class="div1 grid-limitada">
             <!-- Table 1 -->
             <h1>Últimos productos digitales agregados</h1>
@@ -41,128 +134,39 @@
         </section>
             </div>
         </div>
-        <div class="div2 grid-limitada" style="width:840px;">
-            <!-- Table 2 -->
-            <h1>Methods</h1>
-            <div class="component-container component-container-color2">
-                
-                <div v-for="(product,index) in displayedProductsTable1_5()" :key="index" class="method-item"> 
-                    <img :src="'https://picsum.photos/150/150?random=' + index" alt="Product Image" class="product-table-img">
-                    <div class="description">
-                        <div class="FRow">
-                        <div class="title3 title">Producto 1</div>
-                        <div class="price">2000</div>
-                        </div>
-                    </div>
-                    <div class="quantity"><span>Servicio excelente</span></div>
-                        <div class="details"><p class="quant-num">129</p><p>disponibles</p> </div>
-                </div>
-                <!-- <table class="table text-gray-400 border-separate space-y-4 text-sm">
-                     <thead class="bg-gray-800 text-gray-500">
-                        <tr>
-                            <th class="p-2">Producto</th>
-                            <th class="p-2">Cantidad Disponibles</th>
-                            <th class="p-2">Fecha de Publicación</th>
-                            <th class="p-2">Precio</th>
-                        </tr>
-                    </thead> 
-                    <tbody>
-                        <tr v-for="(product, index) in displayedProductsTable1_5" :key="index"
-                            class="bg-gray-200 text-gray-700">
-                            <td class="p-2">{{ product.name }}</td>
-                            <td class="p-2">{{ product.quantityAvailable }}</td>
-                            <td class="p-2">{{ product.datePublished }}</td>
-                            <td class="p-2">{{ product.price }}</td>
-
-                        </tr>
-                    </tbody>
-                </table> -->
-                <section class="nav-arrows">
-            <md-icon class="arrow-icon" @click="previousSlide">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-                    </svg>
-                </md-icon>
-                <md-icon>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                    </svg>
-            </md-icon>
-        </section>
-            </div>
-        </div>
 
 
 
 
 
-        <div class="div2">
-            <!-- Table 2 -->
-            <h1>Últimos productos digitales Vendidos</h1>
-            <div class="component-container component-container-color2">
-                <table class="table text-gray-400 border-separate space-y-4 text-sm">
-                    <thead class="" style="
-                        background: rgb(122 0 160);
-                        color: #fff;">
-                        <tr>
-                            <th class="p-2">Producto</th>
-                            <th class="p-2">Cantidad Disponibles</th>
-                            <th class="p-2">Fecha de Publicación</th>
-                            <th class="p-2">Precio</th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(product, index) in transactsMaked.data" :key="index"
-                            class="bg-gray-200 text-gray-700">
-                            <td class="p-2">{{ product.productDigit.name }}</td> 
-                            <td class="p-2">{{ product.productDigit.actQuantity }}</td>
-                            <td class="p-2">{{ product.dateTransact }}</td>
-                            <td class="p-2">{{ product.productDigit.price }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <section class="nav-arrows">
-            <md-icon class="arrow-icon" @click="changePageSP" :style="{color:previousArrowColorSP}" name="previous-arrow">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-                    </svg>
-                </md-icon>
-                <md-icon class="nav-arrows" @click="changePageSP" :style="{color:nextArrowColorSP}" name="next-arrow">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                    </svg>
-            </md-icon>
-        </section>
-            </div>
-        </div>
+        
 
 
     </div>
     <div class="div4">
             <section id="header_icons">
                 <h1 style="flex-grow: 1;">Ultimos Productos Fisicos vendidos</h1>
-                <md-icon class="arrow-icon" @click="previousSlide">
+                <md-icon class="arrow-icon" @click="changePageSlP" :style="{color: previousArrowColorSlP}" name="previous-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                     </svg>
                 </md-icon>
-                <md-icon>
+                <md-icon  @click="changePageSlP" name="next-arrow" :style="{color: nextArrowColorSlP}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                     </svg>
                 </md-icon>
             </section>
             <div class="slider-container hidden md:block" id="slideshow" >
-                    <div v-for="(product, index) in productsSlider" :key="index" class="slider-item">
+                    <div v-for="(product, index) in displayedProductsTableSlider()" :key="index" class="slider-item">
                         <div class="product-info">
                             <div class="product-image">
-                                <img :src="'https://picsum.photos/150/150?random=' + index" alt="Product Image">
+                                <img :src="'http://127.0.0.1:8000/api'+product.image_product" alt="Product Image">
                             </div>
-                            <h4 class="product-name">{{ product.name }}</h4>
+                            <h4 class="product-name">{{ product.nameProduct }}</h4>
                             <p class="product-price">$ {{ product.price }}</p>
-                            <p>Comprado por:</p>
-                            <button class="product-button" @click="goToProduct(product.id)">Go to Product</button>
+                            <p>Tienda: <b>{{ product.seller.name }}</b></p>
+                            <button class="product-button-slide" @click="goToProduct(product.id)">Go to Product</button>
                         </div>
                     </div>
             </div>
@@ -243,11 +247,16 @@ export default {
             currentSlide:0,
             productsAdded: [],
             transactsMaked: [],
+            productsSlider: [],
             pageInfo: {
                 actualPage: 1,
                 available_page:0
             },
             pageInfoSP: {
+                actualPage: 1, 
+                available_page: 0
+            },
+            pageInfoSlP: {
                 actualPage: 1, 
                 available_page: 0
             },
@@ -290,13 +299,6 @@ export default {
                 3,
                 3,
             ],
-            productsSlider: [
-                1,
-                2,
-                3,
-                4,
-                4
-            ]
         }
     },
     created() {
@@ -307,6 +309,7 @@ export default {
         this.getLast24HTransacts();
         this.displayedProductsTable2();
         this.displayedProductsTable1_5();
+        this.getLast24HFisicProducts()
     },
     computed: {
         previousArrowColor() {
@@ -315,15 +318,6 @@ export default {
                 return '#c2c2c2'; 
             } else {
                 return ''; 
-            }
-        },
-        nextArrowColor() {
-            const pageNext = this.pageInfo.available_page
-            console.log(pageNext);
-            if (pageNext == 0) {
-                return '#c2c2c2'
-            } else {
-                return ''
             }
         },
         previousArrowColorSP() {
@@ -335,11 +329,36 @@ export default {
                 return ''; 
             }
         },
-        nextArrowColorSP() {
-            const pageNext = this.pageInfoSP.available_page
-            console.log(pageNext);
+        previousArrowColorSlP() {
+            const page = this.pageInfoSlP.actualPage;
+            console.log(page);
+            if (page === 1) {
+                return '#b2b2b2'; 
+            } else {
+                return ''; 
+            }
+        },
+        nextArrowColor() {
+            const pageNext = this.pageInfo.available_page
             if (pageNext == 0) {
                 return '#c2c2c2'
+            } else {
+                return ''
+            }
+        },
+        nextArrowColorSP() {
+            const pageNext = this.pageInfoSP.available_page
+            console.log(pageNext)
+            if (pageNext == 0) {
+                return '#c2c2c2'
+            } else {
+                return ''
+            }
+        },
+        nextArrowColorSlP() {
+            const pageNext = this.pageInfoSlP.available_page
+            if (pageNext == 0) {
+                return '#b2b2b2'
             } else {
                 return ''
             }
@@ -357,6 +376,18 @@ export default {
             })
             .catch(error => {
                 console.log(error.response.data)
+            })
+        },
+
+        async getLast24HFisicProducts(page=1) {
+            await axios.get(`http://127.0.0.1:8000/api/productos?page=${page}`)
+            .then(response => {
+                this.pageInfoSlP.actualPage = response.data.actual_page
+                this.pageInfoSlP.available_page = response.data.available_pages
+                this.productsSlider  = response.data.data
+            })
+            .catch(error=> {
+                console.log(error.response.data);
             })
         },
 
@@ -392,7 +423,6 @@ export default {
         async changePageSP(event) {
             const direction_arrow = event.currentTarget.getAttribute('name')
             console.log(direction_arrow);
-            console.log(this.pageInfoSP.actualPage, this.pageInfoSP.available_page);
             if (direction_arrow == "previous-arrow") {
                 let page = this.pageInfoSP.actualPage
                 if(page > 1) {
@@ -413,12 +443,40 @@ export default {
             }
 
         },
+
+        async changePageSlP(event) {
+            const direction_arrow = event.currentTarget.getAttribute('name')
+            let page = this.pageInfoSlP.actualPage
+            if (direction_arrow == "previous-arrow") {
+
+                
+                if(page > 1) {
+                    this.getLast24HFisicProducts(page-1)
+                }
+            } else {
+
+                if(this.pageInfoSlP.available_page != 0) {
+
+                let page = this.pageInfoSlP.actualPage + 1
+
+                let validator = true
+                if (validator == true) {
+                    this.getLast24HFisicProducts(page)
+                }
+            }
+            }
+        },
         displayedProductsTable2() {
 
             return this.productsTable2.slice(0, 12);
         },
+
+        displayedProductsTableSlider() {
+            return this.productsSlider.slice(0, 5);
+        },
+
         displayedProductsTable1_5() {
-            return this.productsTable2.slice(0, 6);
+            return this.productsTable2.slice(0, 5);
         },
 
         goToProduct(productId) {
@@ -506,6 +564,8 @@ text-align: left;
 .details {
     flex-grow: 1;
 }
+
+
 
 
 .FRow {
@@ -623,7 +683,7 @@ justify-content: flex-start;
 
 
 .method-item {
-    height: 110px;
+    height: 150px;
     color: black;
     display: flex;
     align-items: center;
@@ -632,7 +692,7 @@ justify-content: flex-start;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     padding: 20px;
-    margin: 20px 15px;
+    margin: 15px;
     transition: transform 0.3s ease;
     overflow: hidden;
     box-sizing: border-box;
@@ -644,7 +704,7 @@ justify-content: flex-start;
 .product-table-img {
     border-radius: 15px;
     width: 160px;
-    height: 100px;
+    height: 125px;
 }
 
 .slider-item:hover {
@@ -680,6 +740,17 @@ justify-content: flex-start;
 }
 
 .product-button {
+    background-color: #570b60;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    font-weight: bold;
+    font-size: 16px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.product-button-slide {
     background-color: #fff;
     color: #333;
     border: none;
@@ -690,7 +761,8 @@ justify-content: flex-start;
 }
 
 .product-button:hover {
-    background-color: #eee;
+    transform: scale(1.05);
+    background-color: #9a15ac;
 }
 
 .table {
