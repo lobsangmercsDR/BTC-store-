@@ -10,7 +10,7 @@
                         color: #fff;">
                         <tr>
                             <th class="p-2">Producto</th>
-                            <th class="p-2">Cantidad Disponibles</th>
+                            <th class="p-2">Tienda</th>
                             <th class="p-2">Fecha de Publicación</th>
                             <th class="p-2">Precio</th>
 
@@ -18,10 +18,10 @@
                     </thead>
                     <tbody>
                         <tr v-for="(product, index) in transactsMaked.data" :key="index"
-                            class="bg-gray-200 text-gray-700">
+                            class="bg-gray-200 digit-selled-item text-gray-700">
                             <td class="p-2">{{ product.productDigit.name }}</td> 
-                            <td class="p-2">{{ product.productDigit.actQuantity }}</td>
-                            <td class="p-2">{{ product.dateTransact }}</td>
+                            <td class="p-2">{{ product.productDigit.store_id.nameStore }}</td>
+                            <td class="p-2 wid">{{ product.dateTransact }}</td>
                             <td class="p-2">{{ product.productDigit.price }}</td>
                         </tr>
                     </tbody>
@@ -45,18 +45,18 @@
             <h1>Methods</h1>
             <div class="component-container component-container-color2">
                 
-                <div v-for="(product,index) in displayedProductsTable1_5()" :key="index" class="method-item"> 
-                    <img :src="'https://picsum.photos/150/150?random=' + index" alt="Product Image" class="product-table-img">
+                <div v-for="(product,index) in methodCreated" :key="index" class="method-item"> 
+                    <img :src="'http://127.0.0.1:8000/api'+ product.image" alt="Product Image" class="product-table-img">
                     <div class="description">
                         <div class="FRow">
-                        <div class="title3 title">Producto 1</div>
-                        <div style="margin-top: -8px;">(2/3/2023)</div>
-                        <div class="quantity_buy"><b>No. de compras:</b> 5</div>
-                        <div class="price"><b>Precio:</b> 2000</div>
-                        <div class="tienda"><b>Tienda:</b> Juana</div>
+                        <div class="title3 title">{{ product.nameMethod }}</div>
+                        <div style="margin-top: -8px;">({{ product.dateCreated }})</div>
+                        <div class="quantity_buy"><b>No. de compras:</b> {{ product.transacts_count }}</div>
+                        <div class="price"><b>Precio:</b> {{ product.price }}</div>
+                        <div class="tienda"><b>Tienda:</b> {{ product.store.nameStore }}</div>
                         </div>
                     </div>
-                    <div class="quantity"><span>La descripcion de este producto estara conectada con la Base de Datos y el servidor de la API</span></div>
+                    <div class="quantity"><span>{{ product.description }}</span></div>
                         <div class="details"><button class="product-button">Comprar</button></div>
                 </div>
                 <!-- <table class="table text-gray-400 border-separate space-y-4 text-sm">
@@ -248,6 +248,11 @@ export default {
             productsAdded: [],
             transactsMaked: [],
             productsSlider: [],
+            methodCreated: [],
+            pageInforMP: {
+                actualPage: 1, 
+                available_page: 0
+            },
             pageInfo: {
                 actualPage: 1,
                 available_page:0
@@ -309,7 +314,8 @@ export default {
         this.getLast24HTransacts();
         this.displayedProductsTable2();
         this.displayedProductsTable1_5();
-        this.getLast24HFisicProducts()
+        this.getLast24HFisicProducts();
+        this.getLast24HMethods();
     },
     computed: {
         previousArrowColor() {
@@ -322,7 +328,6 @@ export default {
         },
         previousArrowColorSP() {
             const page = this.pageInfoSP.actualPage;
-            console.log(page);
             if (page === 1) {
                 return '#c2c2c2'; 
             } else {
@@ -331,7 +336,6 @@ export default {
         },
         previousArrowColorSlP() {
             const page = this.pageInfoSlP.actualPage;
-            console.log(page);
             if (page === 1) {
                 return '#b2b2b2'; 
             } else {
@@ -348,7 +352,6 @@ export default {
         },
         nextArrowColorSP() {
             const pageNext = this.pageInfoSP.available_page
-            console.log(pageNext)
             if (pageNext == 0) {
                 return '#c2c2c2'
             } else {
@@ -418,6 +421,33 @@ export default {
                     this.getLast24HProducts(page)
                 }
             }
+        },
+
+        async changePageMP(event) {
+            const direction_arrow = event.currentTarget.getAttribute('name')
+            if (direction_arrow == "previous-arrow") {
+                let page = this.pageInfo.actualPage
+                if(page > 1) {
+                    this.getLast24HProducts(page-1)
+                }
+            } else {
+                let page = this.pageInfo.actualPage + 1
+                let validator = true
+                if (validator == true) {
+                    this.getLast24HProducts(page)
+                }
+            }
+        },
+
+        async getLast24HMethods(page=1) {
+            await axios.get(`http://127.0.0.1:8000/api/productos/methods`)
+            .then(response => {
+                console.log(response.data);
+                this.methodCreated = response.data
+            })
+            .catch(error => {
+                console.log(error.response.data)
+            })
         },
 
         async changePageSP(event) {
@@ -628,6 +658,10 @@ justify-content: flex-start;
     margin: -10px
 }
 
+.wid {
+    width: 150px;
+}
+
 .component-container-color1 {
     background-color: #f66305;
     color: white;
@@ -681,6 +715,10 @@ justify-content: flex-start;
     flex-shrink: 0;
 }
 
+/* .digit-selled-item:hover {
+    transform: scale(1.002);
+} */
+
 
 .method-item {
     height: 150px;
@@ -698,6 +736,11 @@ justify-content: flex-start;
     box-sizing: border-box;
     flex-shrink: 0;
     justify-content: flex-start;
+    /* transform: sca; */
+}
+
+.method-item:hover {
+    transform: scale(1.02);
 }
 
 

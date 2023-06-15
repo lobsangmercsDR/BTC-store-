@@ -55,11 +55,17 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Category(models.Model):
     nameCategory = models.CharField(max_length=50)
 
+
+
+
+
 class SubCategory(models.Model):
     nameSubCategory = models.CharField(max_length=50)
     minPriceBTC = models.DecimalField(max_digits=10, decimal_places=2)
     maxPriceBTC = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+
 
 class Stores(models.Model):
     nameStore = models.CharField(max_length=50)
@@ -67,8 +73,20 @@ class Stores(models.Model):
 
     @property
     def product_count(self):
-        return self.productfisic_set.count() + self.productdigit_set.count()
+        return self.productfisic_set.count() + self.productdigit_set.count() + self.methodproducts_set.count()
 
+class MethodProducts(models.Model):
+    nameMethod = models.CharField(max_length=50)
+    dateCreated = models.DateField()
+    description = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    store = models.ForeignKey(Stores, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=generate_file_path)
+    
+    @property
+    def transacts_count(self):
+        return self.transacts_set.count()
+        
 class ProductFisic(models.Model):
     nameProduct = models.CharField(max_length=50)
     image_product = models.ImageField(upload_to=generate_file_path, default=None)
@@ -101,6 +119,7 @@ class Transacts(models.Model):
     dateTransact = models.DateTimeField(auto_now_add=True)
     productFisic = models.ForeignKey(ProductFisic, on_delete=models.SET_NULL, default=None, null=True)
     productDigit = models.ForeignKey(ProductDigit, on_delete=models.SET_NULL, default=None, null=True)
+    methodProduct = models.ForeignKey(MethodProducts, on_delete=models.SET_NULL, default=None, null=True)
     quantity_asked = models.IntegerField(default=1)
     buyers = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
 

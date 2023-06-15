@@ -20,7 +20,7 @@ import os
 from .utils import services as uti
 from django.core import serializers
 from django.http import HttpResponse
-from .models import ProductFisic,ProductDigit,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
+from .models import ProductFisic,MethodProducts,ProductDigit,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
 from .serializers import (TransactsSerializer, 
                           CategorySerializer,
                           ProductDigitSerializer,
@@ -33,6 +33,7 @@ from .serializers import (TransactsSerializer,
                           RoleRequestsSerializer,
                           AuthenticationSerializer,
                           GroupsSerializer,
+                          MethodSerializer,
                           StoreSerializer,
                           SubCategorySerializer)
 
@@ -109,6 +110,13 @@ class ProductView(viewsets.ModelViewSet):
     # authentication_classes = [authentication.TokenAuthentication]
     # permission_classes = [IsAuthenticated,IsGroupAccepted]
     pagination_class = Paginator
+
+    def get_all_methods(self, request):
+        query = MethodProducts.objects.all()
+        serializer = MethodSerializer(query, many=True)
+        print(serializer.data)
+        return JsonResponse(serializer.data, status=200, safe=False)
+
 
     # GET all Products (with restrictions for sellers)
     def nested_list_products(self, request):

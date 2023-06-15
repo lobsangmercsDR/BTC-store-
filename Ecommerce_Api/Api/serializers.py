@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 
 from rest_framework import serializers,exceptions
-from .models import Category, ProductFisic, ProductDigit, Transacts,User,InvitationCodes,RoleRequests, SubCategory, Stores
+from .models import Category, ProductFisic, ProductDigit, Transacts,MethodProducts,User,InvitationCodes,RoleRequests, SubCategory, Stores
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
@@ -30,12 +30,19 @@ class ProductDigitSerializer(serializers.ModelSerializer):
         model = ProductDigit
         fields = ['id', 'name', 'price', 'orgQuantity','actQuantity', 'dateCreated','store_id']
 
-    # def to_representation(self, instance):
-    #     print(instance)
-    #     store = Stores.objects.get(id=instance.store_id)
-    #     serializer = StoreSerializer(store)
-    #     instance['store_id'] = serializer.data 
-    #     return super().to_representation(instance)
+    def to_representation(self, instance):
+        try:
+            store = Stores.objects.get(id=instance['store_id'])
+            serializer = StoreSerializer(store)
+            instance['store_id'] = serializer.data
+            return super().to_representation(instance) 
+        except:
+            store = Stores.objects.get(id=instance.store_id)
+            serializer = StoreSerializer(store)
+            result = super().to_representation(instance)
+            result['store_id'] = serializer.data
+            return result
+            
 
 
 
@@ -117,6 +124,19 @@ class InvitationCodesSerializer(serializers.ModelSerializer):
         else:
             InvitationCode = InvitationCodes.objects.create(created_by=ActualUser, **validated_data)
             return InvitationCode
+
+class MethodSerializer(serializers.ModelSerializer):
+    store = StoreSerializer()
+    transacts_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = MethodProducts
+        fields = ['nameMethod', 'dateCreated','description','price','store','image','transacts_count']
+
+
+    def get_transacts_count(self, obj):
+        return obj.transacts_count
+
 
 class UserCreatorSerializer(serializers.ModelSerializer):
     add_group = serializers.CharField(read_only=True)
