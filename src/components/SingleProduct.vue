@@ -1,29 +1,21 @@
 <template>
-  <div class="container">
+  <div class="modal" >
     <div class="bg-white rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto">
-      <div v-if="product" class="flex flex-col md:flex-row">
+      <div v-if="product" class="flex flex-col md:flex-row" style="    height: 500px;
+    width: 875px;">
         <div class="w-full md:w-1/2">
           <div class="max-w-[200px] mx-auto md:max-w-none">
             <div class="bg-gray-200 rounded-lg h-[250px] md:h-[500px]"></div>
           </div>
           <div class="flex justify-center mt-4 space-x-2 overflow-x-auto scrollbar-hide">
-            <div v-for="placeholderImage in placeholderImages" :key="placeholderImage.id">
-              <img class="w-10 h-10 object-contain rounded-lg mx-1" :src="placeholderImage.image"
-                :alt="placeholderImage.name" />
-            </div>
+
           </div>
         </div>
-        <div class="w-full md:w-1/2 md:pl-8">
+        <div class="w-full md:w-1/2 md:pl-8" style="overflow: auto;">
+          <div class="content">
           <h2 class="text-3xl font-semibold mb-4 text-orange-600 hover:text-purple-800 transition-colors duration-300 ">
             {{ product.name }}
           </h2>
-          <p class="text-gray-600 text-lg mb-4">{{ product.description }}</p>
-          <div class="mt-8 flex items-center">
-            <h3 class="text-xl font-semibold mb-2 text-left mr-4">Variante:</h3>
-            <select class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" v-model="selectedVariant">
-              <option v-for="option in product.variants" :key="option">{{ option }}</option>
-            </select>
-          </div>
           <span class="text-gray-600 text-lg mr-2 font-semibold"></span>
 
           <div class="flex items-center mb-4">
@@ -87,6 +79,7 @@
               class="bg-[#ac15c1] hover:bg-[#d836e8] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#ac15c1]">
               Comprar ahora
             </button>
+          </div>
           </div>
         </div>
       </div>
@@ -208,15 +201,14 @@ export default {
   mounted() {
     this.product = {
       id: 1,
-      name: 'PUFFY 2G - Girls (Super Blends)',
-      description: 'Super Blends were carefully crafted to mimic the live resin experience',
+      name: 'Producto',
       price: 0.011, // Precio ficticio en BTC
-      brand: 'Puffy',
+      brand: 'Marca de producto',
       likes: 0,
       dislikes: 0,
       variants: ['Chocolate Sativa', 'Berry Hibrida', 'Indica Girlscout Cookies'],
       additionalDetails:
-        'Super Blends were carefully crafted to mimic the live resin experience. We drew our inspiration from the cannabis plant. Creating unique cannabinoid formulas with terpene profiles that mirror today’s most popular strains.',
+        'sssssssssssssssssssssssss ssssssss sssssssssss sssssssssssssss sdsa s dsd sssss     sdsd sd dsd     sd  ',
       sellerUsername: 'JohnSeller',
     };
     this.productPriceBTC = this.product.price * this.btcPrice;

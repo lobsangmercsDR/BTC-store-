@@ -6,13 +6,17 @@
       <div class="espacio"></div>
 
     </div>
+    <div v-if="showModal">
+      <SingleProduct />
+    </div>
+    <user_shopVue />
     <!-- <digital_product_view />
     <productCard />
     <users_profile_component />
 
 
 
-    <SingleProduct />
+    
     <SingleDigitalProduct />
 
 
@@ -26,7 +30,7 @@
     <homeview />
     <users_profile_component />
     <digital_product_view />
-    <user_shopVue /> -->
+     -->
 
   </div>
 </template>
@@ -80,6 +84,7 @@ export default {
   },
   data() {
     return {
+      showModal:true,
       product1: {
         title: 'Backpack',
         description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit In odit exercitationem fuga id nam quia',

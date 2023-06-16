@@ -173,6 +173,24 @@
     </div>
 
 
+    <div v-if="showModal" class="modal">
+      <div class="modal-content">
+        <h2 class="modal-title">{{ modalCategoryId ? 'Editar Categoría' : 'Agregar Categoría' }}</h2>
+        <div class="modal-form">
+          <label for="categoryName" class="modal-label">Nombre:</label>
+          <input type="text" id="categoryName" v-model="modalCategoryName" class="modal-input">
+        </div>
+        <div class="modal-actions">
+          <button @click="saveCategory" class="save-button">
+            {{ modalCategoryId ? 'Guardar' : 'Agregar' }}
+          </button>
+          <button @click="cancelModal" class="cancel-button">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+
 
 
 
@@ -242,6 +260,7 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            showModal: false,
             heightContainer: 0,
             showModal1: false,
             showModal2: false,
