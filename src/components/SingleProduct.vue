@@ -82,6 +82,9 @@
           </div>
           </div>
         </div>
+        <button @click="cancelModal" class="cancel-button">
+            Cancelar
+        </button>
       </div>
       <div v-else class="text-center py-8">
         <p class="text-lg text-gray-600">Cargando datos del producto...</p>
