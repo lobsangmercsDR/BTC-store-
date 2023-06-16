@@ -1,9 +1,9 @@
 <template>
-    <div class="parent">
+    <div class="parent" ref="variable_container">
         <div class="div2">
             <!-- Table 2 -->
             <h1>Últimos productos digitales Vendidos</h1>
-            <div class="component-container component-container-color2">
+            <div class="component-container component-container-color2" :style="{height: (heightContainer +28) + 'px'}">
                 <table class="table text-gray-400 border-separate space-y-4 text-sm">
                     <thead class="" style="
                         background: rgb(122 0 160);
@@ -43,7 +43,7 @@
         <div class="div2 grid-limitada" style="width:840px;">
             <!-- Table 2 -->
             <h1>Methods</h1>
-            <div class="component-container component-container-color2">
+            <div  class="component-container component-container-color2">
                 
                 <div v-for="(product,index) in methodCreated" :key="index" class="method-item"> 
                     <img :src="'http://127.0.0.1:8000/api'+ product.image" alt="Product Image" class="product-table-img">
@@ -80,12 +80,12 @@
                     </tbody>
                 </table> -->
                 <section class="nav-arrows">
-            <md-icon class="arrow-icon" @click="previousSlide">
+            <md-icon class="arrow-icon" @click="changePageSMP" name="previous-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                     </svg>
                 </md-icon>
-                <md-icon>
+                <md-icon class="arrow_icon" @click="changePageSMP" name="next-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                     </svg>
@@ -93,9 +93,9 @@
         </section>
             </div>
         </div>
-        <div class="div1 grid-limitada">
+        <div class="div1 grid-limitada" ref="container" :style="{height: (heightContainer +28) + 'px'}">
             <!-- Table 1 -->
-            <h1>Últimos productos digitales agregados</h1>
+            <h1>Últimos productos digitales agregados </h1>
             <div class="component-container component-container-color1">
                 <table class="table text-gray-400 border-separate space-y-4 text-sm">
                     <thead class="" style="
@@ -242,6 +242,7 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            heightContainer: 0,
             showModal1: false,
             showModal2: false,
             currentSlide:0,
@@ -249,7 +250,7 @@ export default {
             transactsMaked: [],
             productsSlider: [],
             methodCreated: [],
-            pageInforMP: {
+            pageInfoMP: {
                 actualPage: 1, 
                 available_page: 0
             },
@@ -317,6 +318,9 @@ export default {
         this.getLast24HFisicProducts();
         this.getLast24HMethods();
     },
+    mounted() {
+        this.adaptTableHeight();
+    },
     computed: {
         previousArrowColor() {
             const page = this.pageInfo.actualPage;
@@ -370,6 +374,14 @@ export default {
 
 
     methods: {
+        async adaptTableHeight() {
+           this.heightContainer = this.$refs.variable_container.offsetHeight
+           console.log(this.heightContainer)
+
+
+        },
+
+
         async getLast24HProducts(page=1) {
             await axios.get(`http://127.0.0.1:8000/api/productos/digit?page=${page}`)
             .then(response => {
@@ -394,13 +406,26 @@ export default {
             })
         },
 
+        async getLast24HMethods(page=1) {
+            await axios.get(`http://127.0.0.1:8000/api/productos/methods?page=${page}`)
+            .then(response => {
+                console.log(response.data);
+                this.methodCreated = response.data.data
+                this.pageInfoMP.actualPage = response.data.actual_page
+                this.pageInfoMP.available_page = response.data.available_pages
+            })
+            .catch(error => {
+                console.log(error.response.data)
+            })
+        },
+
         async getLast24HTransacts(page=1) { 
             await axios.get(`http://127.0.0.1:8000/api/transacts?page=${page}`)
             .then(response => {
                 this.transactsMaked = response.data
                 this.pageInfoSP.available_page = response.data.available_pages;
                 this.pageInfoSP.actualPage = response.data.actual_page;
-
+                this.$refs.container.style.background = "#ffff"
             })
             .catch(error => {
                 console.log(error.response.data)
@@ -439,17 +464,6 @@ export default {
             }
         },
 
-        async getLast24HMethods(page=1) {
-            await axios.get(`http://127.0.0.1:8000/api/productos/methods`)
-            .then(response => {
-                console.log(response.data);
-                this.methodCreated = response.data.data
-            })
-            .catch(error => {
-                console.log(error.response.data)
-            })
-        },
-
         async changePageSP(event) {
             const direction_arrow = event.currentTarget.getAttribute('name')
             console.log(direction_arrow);
@@ -468,6 +482,32 @@ export default {
                 let validator = true
                 if (validator == true) {
                     this.getLast24HTransacts(page)
+                }
+            }
+            }
+
+        },
+
+        async changePageSMP(event) {
+            const direction_arrow = event.currentTarget.getAttribute('name')
+            console.log(direction_arrow);
+            console.log(this.pageInfoMP)
+            if (direction_arrow == "previous-arrow") {
+                let page = this.pageInfoMP.actualPage
+                console.log(page);
+                if(page > 1) {
+                    this.getLast24HMethods(page-1)
+                }
+            } else {
+
+                if(this.pageInfoMP.available_page != 0) {
+
+                
+                let page = this.pageInfoMP.actualPage + 1
+
+                let validator = true
+                if (validator == true) {
+                    this.getLast24HMethods(page)
                 }
             }
             }
