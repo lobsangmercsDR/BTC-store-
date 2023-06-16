@@ -96,7 +96,7 @@ class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):
         work_route=  r'C:\Users\TI\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
         local_route= r'C:\Users\alan8\OneDrive\Documentos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
-        complete_path = os.path.join(work_route, image_name)
+        complete_path = os.path.join(local_route, image_name)
         
         if os.path.exists(complete_path):
             return FileResponse(open(complete_path,'rb'),content_type='image/jpeg')
@@ -113,9 +113,18 @@ class ProductView(viewsets.ModelViewSet):
 
     def get_all_methods(self, request):
         query = MethodProducts.objects.all()
-        serializer = MethodSerializer(query, many=True)
-        print(serializer.data)
-        return JsonResponse(serializer.data, status=200, safe=False)
+        paginator = Paginator(query, per_page=5)
+        page_number= request.GET.get('page',1)
+        if int(page_number) > paginator.num_pages:
+            return JsonResponse({"error":"No hay mas paginas"}, status=404)
+        paginated_data = paginator.get_page(page_number) 
+        serializer= MethodSerializer(paginated_data, many=True) 
+        dicc = {
+            "actual_page": int(page_number),
+            "available_pages":  paginator.num_pages - int(page_number),
+            "data": serializer.data
+        }
+        return JsonResponse(dicc, status=200, safe=False)
 
 
     # GET all Products (with restrictions for sellers)

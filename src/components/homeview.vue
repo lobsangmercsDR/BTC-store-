@@ -443,7 +443,7 @@ export default {
             await axios.get(`http://127.0.0.1:8000/api/productos/methods`)
             .then(response => {
                 console.log(response.data);
-                this.methodCreated = response.data
+                this.methodCreated = response.data.data
             })
             .catch(error => {
                 console.log(error.response.data)
@@ -721,7 +721,7 @@ justify-content: flex-start;
 
 
 .method-item {
-    height: 150px;
+
     color: black;
     display: flex;
     align-items: center;
