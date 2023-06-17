@@ -1,8 +1,16 @@
-<template>
-  <div class="modal" >
-    <div class="bg-white rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto">
+<template >
+  <div class="modal" v-if="showModal" >
+    <div class="bg-white rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto" style="padding: 45px 32px;">
+      <button @click="closeModal" class="close-button">
+          <svg class="w-6 h-6 fill-current text-gray-500 hover:text-gray-700" xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24">
+            <path
+              d="M18.364 5.636a2 2 0 0 0-2.828 0L12 9.172 8.464 5.636a2 2 0 1 0-2.828 2.828L9.172 12l-3.536 3.536a2 2 0 1 0 2.828 2.828L12 14.828l3.536 3.536a2 2 0 1 0 2.828-2.828L14.828 12l3.536-3.536a2 2 0 0 0 0-2.828z" />
+          </svg>
+        </button>
       <div v-if="product" class="flex flex-col md:flex-row" style="    height: 500px;
     width: 875px;">
+
         <div class="w-full md:w-1/2">
           <div class="max-w-[200px] mx-auto md:max-w-none">
             <div class="bg-gray-200 rounded-lg h-[250px] md:h-[500px]"></div>
@@ -82,13 +90,11 @@
           </div>
           </div>
         </div>
-        <button @click="cancelModal" class="cancel-button">
-            Cancelar
-        </button>
       </div>
       <div v-else class="text-center py-8">
         <p class="text-lg text-gray-600">Cargando datos del producto...</p>
       </div>
+      
     </div>
 
     <!-- Ventana emergente de pago -->
@@ -96,6 +102,7 @@
       <div v-if="showPaymentModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
           <h2 class="text-2xl font-semibold mb-4">Confirmar compra</h2>
+          {{ showModal }}
           <p>Producto: {{ product.name }}</p>
           <p>Variante: {{ selectedVariant }}</p>
           <p>Marca: {{ product.brand }}</p>
@@ -174,8 +181,16 @@
 import { mapActions } from 'vuex';
 
 export default {
+  props: {
+    modalInfo : {
+      type: Object
+    }
+
+  },
   data() {
     return {
+
+      showModal: true,
       product: null,
       quantity: 1,
       selectedVariant: '',
@@ -216,6 +231,10 @@ export default {
     };
     this.productPriceBTC = this.product.price * this.btcPrice;
   },
+  created(){
+
+    console.log(this.modalInfo)
+  },
   methods: {
     ...mapActions('cart', ['addToCart']),
     addToCartLocal(product) {
@@ -228,6 +247,10 @@ export default {
         this.liked = true;
       }
     },
+    closeModal(){
+      this.showModal = false
+    },
+
     incrementDislikes() {
       if (!this.liked && !this.disliked) {
         this.product.dislikes++;
@@ -335,6 +358,16 @@ export default {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+.close-button {
+  position: absolute;
+    top: 9rem;
+    right: 32rem;
+}
+
+.close-button svg:hover {
+  color: rgb(212, 0, 255) !important;
 }
 
 .select-variant {

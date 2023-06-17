@@ -131,7 +131,7 @@ class MethodSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MethodProducts
-        fields = ['nameMethod', 'dateCreated','description','price','store','image','transacts_count']
+        fields = ['id','nameMethod', 'dateCreated','description','price','store','image','transacts_count']
 
 
     def get_transacts_count(self, obj):

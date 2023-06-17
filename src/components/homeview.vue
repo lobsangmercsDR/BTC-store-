@@ -57,7 +57,7 @@
                         </div>
                     </div>
                     <div class="quantity"><span>{{ product.description }}</span></div>
-                        <div class="details"><button class="product-button">Comprar</button></div>
+                        <div class="details"><button @click="openModal(product.id)" class="product-button">Comprar</button></div>
                 </div>
                 <!-- <table class="table text-gray-400 border-separate space-y-4 text-sm">
                      <thead class="bg-gray-800 text-gray-500">
@@ -165,7 +165,7 @@
                             </div>
                             <h4 class="product-name">{{ product.nameProduct }}</h4>
                             <p class="product-price">$ {{ product.price }}</p>
-                            <p>Tienda: <b>{{ product.seller.name }}</b></p>
+                            <p>Tienda: <b></b></p>
                             <button class="product-button-slide" @click="goToProduct(product.id)">Go to Product</button>
                         </div>
                     </div>
@@ -173,22 +173,8 @@
     </div>
 
 
-    <div v-if="showModal" class="modal">
-      <div class="modal-content">
-        <h2 class="modal-title">{{ modalCategoryId ? 'Editar Categoría' : 'Agregar Categoría' }}</h2>
-        <div class="modal-form">
-          <label for="categoryName" class="modal-label">Nombre:</label>
-          <input type="text" id="categoryName" v-model="modalCategoryName" class="modal-input">
-        </div>
-        <div class="modal-actions">
-          <button @click="saveCategory" class="save-button">
-            {{ modalCategoryId ? 'Guardar' : 'Agregar' }}
-          </button>
-          <button @click="cancelModal" class="cancel-button">
-            Cancelar
-          </button>
-        </div>
-      </div>
+    <div>
+        <SingleProduct :modalInfo="modalData"></SingleProduct>
     </div>
 
 
@@ -254,13 +240,17 @@
   
 <script>
 import axios from 'axios';
+import SingleProduct from '@/components/SingleProduct.vue'
 
 
 
 export default {
+    components: {
+        SingleProduct
+    },
     data() {
         return {
-            showModal: false,
+            modalData: null,
             heightContainer: 0,
             showModal1: false,
             showModal2: false,
@@ -395,9 +385,11 @@ export default {
     methods: {
         async adaptTableHeight() {
            this.heightContainer = this.$refs.variable_container.offsetHeight
-           console.log(this.heightContainer)
+        },
 
 
+        openModal(id) {
+            this.modalData = {showModal: true, objID: id }
         },
 
 
@@ -407,6 +399,7 @@ export default {
                 this.productsAdded = response.data.data
                 this.pageInfo.available_page = response.data.available_pages;
                 this.pageInfo.actualPage = response.data.page;
+                console.log(this.modalData);
             })
             .catch(error => {
                 console.log(error.response.data)

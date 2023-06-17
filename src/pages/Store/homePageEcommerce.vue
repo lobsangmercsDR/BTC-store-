@@ -5,10 +5,7 @@
       <homeview />
       <div class="espacio"></div>
 
-    </div>
-    <div v-if="showModal">
-      <SingleProduct />
-    </div>
+    </div>s
     <user_shopVue />
     <!-- <digital_product_view />
     <productCard />
