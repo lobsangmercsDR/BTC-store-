@@ -1,6 +1,6 @@
 <template >
   <div class="modal" v-if="showModal" >
-    <div class="bg-white rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto" style="padding: 45px 32px;">
+    <div class="bg-white rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto" style="padding: 20px 32px;">
       <button @click="closeModal" class="close-button">
           <svg class="w-6 h-6 fill-current text-gray-500 hover:text-gray-700" xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24">
@@ -13,7 +13,9 @@
 
         <div class="w-full md:w-1/2">
           <div class="max-w-[200px] mx-auto md:max-w-none">
-            <div class="bg-gray-200 rounded-lg h-[250px] md:h-[500px]"></div>
+            <div class="bg-gray-200 rounded-lg h-[250px] md:h-[500px]" style="display: flex;">
+              <img class="container-img" :src="'http://127.0.0.1:8000/api' + product.image_product"  alt="">
+            </div>
           </div>
           <div class="flex justify-center mt-4 space-x-2 overflow-x-auto scrollbar-hide">
 
@@ -22,14 +24,13 @@
         <div class="w-full md:w-1/2 md:pl-8" style="overflow: auto;">
           <div class="content">
           <h2 class="text-3xl font-semibold mb-4 text-orange-600 hover:text-purple-800 transition-colors duration-300 ">
-            {{ product.name }}
+            {{ product.nameProduct }}
           </h2>
           <span class="text-gray-600 text-lg mr-2 font-semibold"></span>
 
           <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Cantidad:</span>
-            <input v-model="quantity" type="number"
-              class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20" min="1" />
+            <input v-model="quantity" type="number" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20" min="1" />
           </div>
           <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Marca:</span>
@@ -37,13 +38,13 @@
           </div>
           <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Vendedor:</span>
-            <span class="text-lg">{{ product.brand }}</span>
+            <span class="text-lg">{{ product.seller.name }}</span>
           </div>
-          <div class="flex items-center mb-4">
-            <span class="text-gray-600 text-lg mr-2 font-semibold">Zona de entrega:</span>
-            <span class="text-lg">{{ product.brand }}</span>
+          <div class="flex items-center mb-4" style="display: block;">
+            <span class="text-gray-600 text-lg mr-2 font-semibold">Zona de entrega:</span>  <br>
+            <span class="text-lg">{{ product.address_direction }}</span>
           </div>
-          <div class="flex items-center mb-4">
+          <!-- <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Likes:</span>
             <span class="text-lg">{{ product.likes }}</span>
             <button @click="incrementLikes" class="text-green-500 hover:text-green-600 focus:outline-none"
@@ -67,22 +68,15 @@
                 <path d="M8 8h8v8H8z" />
               </svg>
             </button>
-          </div>
+          </div> -->
           <div class="flex mb-2">
-            <p class="text-2xl font-semibold mr-2">{{ productPriceBTC.toFixed(8) }} BTC</p>
-            <p class="text-green-500 text-lg font-extrabold">
-              ${{ convertToDollars(productPriceBTC).toFixed(2) }} USD
-            </p>
+            <p class="text-2xl font-semibold mr-2"> Precio: {{ product.price }}</p>
           </div>
           <div class="mt-8">
             <h3 class="text-xl font-semibold mb-2 text-left">Detalles adicionales:</h3>
-            <p class="text-gray-600 text-lg text-left">{{ product.additionalDetails }}</p>
+            <p class="text-gray-600 text-lg text-left">{{ product.aditional_details }}</p>
           </div>
           <div class="flex mb-4 space-x-4 justify-end">
-            <button @click="addToCartLocal(product)"
-              class="bg-[#f76108] hover:bg-[#fa7328] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#f76108]">
-              Agregar al carrito
-            </button>
             <button @click="buyNow"
               class="bg-[#ac15c1] hover:bg-[#d836e8] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#ac15c1]">
               Comprar ahora
@@ -102,18 +96,14 @@
       <div v-if="showPaymentModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
           <h2 class="text-2xl font-semibold mb-4">Confirmar compra</h2>
-          {{ showModal }}
-          <p>Producto: {{ product.name }}</p>
-          <p>Variante: {{ selectedVariant }}</p>
+          <p>Producto: {{ product.nameProduct }}</p>
           <p>Marca: {{ product.brand }}</p>
-          <p>Username del vendedor: {{ product.sellerUsername }}</p>
+          <p>Tienda: {{ product.seller.name }}</p>
           <p>Cantidad: {{ quantity }}</p>
-          <p>Precio total: {{ (product.price * quantity * btcPrice).toFixed(8) }} BTC / ${{ (product.price *
-            quantity).toFixed(2) }} USD</p>
+          <p>Precio total: {{  (product.price * quantity)}} </p>
           <hr class="my-4">
           <p>Username: {{ user.username }}</p>
-          <p>Saldo disponible en BTC: <span class="text-green-500">{{ user.balanceBTC.toFixed(8) }} BTC</span></p>
-          <p>Equivalente en USD: ${{ (user.balanceBTC * btcPrice).toFixed(2) }} USD</p>
+          <p>Saldo disponible: <span class="text-green-500">{{ user.balance.toFixed(2) }}</span></p>
           <input v-model="shippingAddress" type="text"
             class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-full mt-4"
             placeholder="Dirección de envío" required />
@@ -159,13 +149,11 @@
           <p>Número de orden: {{ orderNumber }}</p>
           <p>Fecha de compra: {{ formattedDate }}</p>
           <p>Estado: En espera</p>
-          <p>Nombre del producto: {{ product.name }}</p>
-          <p>Variante elegida: {{ selectedVariant }}</p>
+          <p>Nombre del producto: {{ product.nameProduct }}</p>
           <p>Marca: {{ product.brand }}</p>
-          <p>Username del vendedor: {{ product.sellerUsername }}</p>
+          <p>Tienda: {{ product.seller.name }}</p>
           <p>Cantidad comprada: {{ quantity }}</p>
-          <p>Total a pagar: {{ (product.price * quantity * btcPrice).toFixed(8) }} BTC / ${{ (product.price *
-            quantity).toFixed(2) }} USD</p>
+          <p>Total a pagar: {{ (product.price * quantity).toFixed(2) }} </p>
           <button class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded mt-4"
             @click="downloadInvoice">Descargar factura</button>
           <div class="flex justify-end mt-4">
@@ -179,27 +167,27 @@
 
 <script>
 import { mapActions } from 'vuex';
+import  axios  from 'axios';
 
 export default {
   props: {
-    modalInfo : {
-      type: Object
+    modalInfo : Object
+  },
+  watch: {
+    modalInfo(newValue) {
+      this.showModal = newValue.showModal
+      if (newValue.typeProd == 'fisic') {
+        this.renderProductData(newValue.objID)
+      }
     }
-
   },
   data() {
     return {
 
-      showModal: true,
+      showModal: false,
       product: null,
       quantity: 1,
       selectedVariant: '',
-      placeholderImages: [
-        { id: 1, name: 'Placeholder 1', image: 'https://via.placeholder.com/50x50' },
-        { id: 2, name: 'Placeholder 2', image: 'https://via.placeholder.com/50x50' },
-        { id: 3, name: 'Placeholder 3', image: 'https://via.placeholder.com/50x50' },
-      ],
-      btcPrice: 27.419, // Precio ficticio del BTC en USD
       productPriceBTC: 0,
       showPaymentModal: false,
       processingTransaction: false,
@@ -207,7 +195,7 @@ export default {
       showInvoiceModal: false,
       user: {
         username: 'JohnDoe',
-        balanceBTC: 100, // Saldo ficticio en BTC
+        balance: 10000, // Saldo ficticio en BTC
       },
       shippingAddress: '',
       orderNumber: '',
@@ -231,16 +219,22 @@ export default {
     };
     this.productPriceBTC = this.product.price * this.btcPrice;
   },
-  created(){
 
-    console.log(this.modalInfo)
+  computed: {
+    OpenModal(){
+      value = this.modalInfo
+      console.log(value)
+      return value
+    }
   },
   methods: {
-    ...mapActions('cart', ['addToCart']),
-    addToCartLocal(product) {
-      console.log('addToCartLocal method invoked');
-      this.addToCart(product); // Utiliza la acción addToCart del módulo cart
+    async renderProductData(id) {
+      await axios.get(`http://127.0.0.1:8000/api/productos/${id}`)
+        .then(response => {this.product = response.data; console.log(this.product)})
+        .catch(error => console.log(error.response.data))
     },
+
+
     incrementLikes() {
       if (!this.liked && !this.disliked) {
         this.product.likes++;
@@ -250,6 +244,8 @@ export default {
     closeModal(){
       this.showModal = false
     },
+
+
 
     incrementDislikes() {
       if (!this.liked && !this.disliked) {
@@ -280,7 +276,7 @@ export default {
     processPayment() {
       this.processingTransaction = true;
       setTimeout(() => {
-        if (this.user.balanceBTC >= this.product.price * this.quantity) {
+        if (this.user.balance >= this.product.price * this.quantity) {
           this.showPaymentModal = false;
           this.processingTransaction = false;
           this.showInvoiceModal = true;
@@ -345,6 +341,14 @@ export default {
 
 
 <style scoped>
+
+.container-img {
+      width: 100%;
+
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
 .container {
   display: flex;
   justify-content: center;
@@ -361,10 +365,11 @@ export default {
 }
 
 .close-button {
-  position: absolute;
-    top: 9rem;
-    right: 32rem;
+  margin-left: 53.5em;
+    margin-bottom: 20px;
+    margin-top: 0px;
 }
+
 
 .close-button svg:hover {
   color: rgb(212, 0, 255) !important;

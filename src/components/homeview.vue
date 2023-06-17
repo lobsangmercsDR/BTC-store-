@@ -165,8 +165,8 @@
                             </div>
                             <h4 class="product-name">{{ product.nameProduct }}</h4>
                             <p class="product-price">$ {{ product.price }}</p>
-                            <p>Tienda: <b></b></p>
-                            <button class="product-button-slide" @click="goToProduct(product.id)">Go to Product</button>
+                            <p>Tienda: <b> {{ product.seller.name }} </b></p>
+                            <button class="product-button-slide" @click="openModal(product.id, 'fisic')">Go to Product</button>
                         </div>
                     </div>
             </div>
@@ -388,8 +388,10 @@ export default {
         },
 
 
-        openModal(id) {
-            this.modalData = {showModal: true, objID: id }
+        openModal(id, type) {
+            console.log(id)
+            console.log(type);
+            this.modalData = {showModal: true,typeProd: type, objID: id }
         },
 
 
@@ -561,9 +563,6 @@ export default {
             return this.productsTable2.slice(0, 5);
         },
 
-        goToProduct(productId) {
-            this.$router.push({ name: 'Product', params: { id: productId } })
-        },
         handleAfterChange(currentSlide) {
             console.log(currentSlide)
             if (currentSlide === this.productsSlider.length - 5) {

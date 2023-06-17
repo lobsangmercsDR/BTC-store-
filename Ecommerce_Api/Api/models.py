@@ -93,6 +93,7 @@ class ProductFisic(models.Model):
     description = models.CharField(max_length=200, default="")
     priceProduct = models.DecimalField(max_digits=10, decimal_places=2)
     dateReleased = models.DateField(auto_now_add=True)
+    address_direction = models.CharField(max_length=50)
     active = models.BooleanField(default=False)
     brand = models.CharField(max_length=50, default="")
     aditional_details = models.CharField(max_length=200, default="")

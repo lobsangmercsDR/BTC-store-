@@ -344,6 +344,7 @@ class ProductSerializer(serializers.ModelSerializer):
                     'seller', 
                     'variants',
                     'quantity',
+                    'address_direction',
                     'description',
                     'category',
                     'subCategory',
