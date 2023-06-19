@@ -22,5 +22,6 @@ urlpatterns = [
     path('transacts',TransactsView.as_view({'get':'get_all_transacts','post':'post_transact_fisics'}), name='listOfTransacts'),
     path('transacts/<int:pk>',TransactsView.as_view({'delete':'delete_transact'}), name='individual_transact'),
     path('users/invitations', InvitationCodeView.as_view({'get':'get_invitation_codes','post':'post_invitation_code'}), name='invitation'),
+    path('userbased/invitation/<int:pk>', InvitationCodeView.as_view({'get':'get_invitation_code_user_based'}, name="Ayuda")),
     path('users/invitations/<int:pk>', InvitationCodeView.as_view({'delete':'delete_invitation_code'}), name='invitationssss'),
 ]

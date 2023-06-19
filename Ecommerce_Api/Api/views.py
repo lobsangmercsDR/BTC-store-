@@ -96,7 +96,7 @@ class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):
         work_route=  r'C:\Users\TI\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
         local_route= r'C:\Users\alan8\OneDrive\Documentos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
-        complete_path = os.path.join(local_route, image_name)
+        complete_path = os.path.join(work_route, image_name)
         
         if os.path.exists(complete_path):
             return FileResponse(open(complete_path,'rb'),content_type='image/jpeg')
@@ -491,10 +491,16 @@ class GroupsView(viewsets.ModelViewSet):
 class InvitationCodeView(viewsets.ModelViewSet):
     queryset = InvitationCodes.objects.all()
     serializer_class = InvitationCodesSerializer
-    permission_classes = [IsAuthenticated,IsAdmin]
+    permission_classes = [IsAuthenticated]
 
     def get_invitation_codes(self, request):
         invCodes = InvitationCodes.objects.all()
+        result = InvitationCodesSerializer(invCodes, many=True).data
+        return JsonResponse(result, status = 200, safe=False)
+    
+    def get_invitation_code_user_based(self, request, pk):
+        user = User.objects.get(id=pk)
+        invCodes = InvitationCodes.objects.filter(created_by=user)
         result = InvitationCodesSerializer(invCodes, many=True).data
         return JsonResponse(result, status = 200, safe=False)
 

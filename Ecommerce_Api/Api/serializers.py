@@ -80,7 +80,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model() 
         extra_kwargs = {'password':{'write_only':True}}
-        fields = ['id','email','password','name','userBalance','wallet_address','createdAt','is_active','group', 'last_login', 'shares_count', 'purchases_count']
+        fields = ['id','email','password','name','userBalance','phoneNumber','direction','wallet_address','createdAt','is_active','group', 'last_login', 'shares_count', 'purchases_count']
         ref_name = 'UserSerializer'
 
     def get_shares_count(self, obj):
@@ -452,7 +452,6 @@ class TransactsSerializer(serializers.ModelSerializer):
                 products = ProductFisic.objects.get(id=product_id)
                 total_price = quantity_asked * products.priceProduct
             elif type=='method':
-                print("llegue")
                 products = MethodProducts.objects.get(id=product_id)
                 total_price = products.price
         except:

@@ -24,12 +24,12 @@
 
         <div class="mb-4">
           <label for="bitcoin-wallet" class="text-lg">Wallet de Bitcoin:</label>
-          <input v-model="user.bitcoinWallet" id="bitcoin-wallet" type="text" class="form-input">
+          <input v-model="user.wallet_address" id="bitcoin-wallet" type="text" class="form-input" readonly>
         </div>
 
         <div class="mb-4">
           <label for="invitation-code" class="text-lg">Código de Invitación:</label>
-          <input v-model="user.invitationCode" id="invitation-code" type="text" class="form-input">
+          <input v-model="user.invitationCode" id="invitation-code" type="text" class="form-input" readonly>
         </div>
 
         <div class="flex justify-end">
@@ -43,7 +43,14 @@
 </template>
 
 <script>
+import axios from 'axios';
+import Cookies from 'js-cookie';
+
 export default {
+  created() {
+    this.getUserData()
+  },
+
   data() {
     return {
       user: {
@@ -59,6 +66,22 @@ export default {
   methods: {
     saveChanges() {
       // Aquí puedes agregar la lógica para guardar los cambios en el servidor
+    },
+    async getUserData() {
+      await axios.get(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`, {
+        headers:{
+          Authorization: `Token ${Cookies.get('token')}`
+      }})
+      .then(response => {this.user = response.data;console.log(response.data)})
+      .catch(error => {console.log(error.response.data)})
+
+      await axios.get(`http://127.0.0.1:8000/api/userbased/invitation/${Cookies.get('svg')}`, {
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      })
+      .then(response => {this.user.invitationCode = response.data[0].invitationCodes})
+      .catch(error=> {console.log(error.response.data)})
     }
   }
 };

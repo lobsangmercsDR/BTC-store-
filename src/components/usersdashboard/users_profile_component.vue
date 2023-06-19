@@ -8,7 +8,7 @@
         <aside class="flex w-72 flex-col space-y-2 border-r-2 border-gray-200 bg-white p-2" :class="{ 'hidden': !asideOpen }" style="height: 90.5vh">
           <a href="#" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'home'">
             <span class="text-2xl"><i class="bx bx-home"></i></span>
-            <span>Pefil</span>
+            <span>Perfil</span>
           </a>
   
           <a href="#" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'wallet'">
