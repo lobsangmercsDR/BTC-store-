@@ -96,7 +96,7 @@ class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):
         work_route=  r'C:\Users\TI\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
         local_route= r'C:\Users\alan8\OneDrive\Documentos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
-        complete_path = os.path.join(work_route, image_name)
+        complete_path = os.path.join(local_route, image_name)
         
         if os.path.exists(complete_path):
             return FileResponse(open(complete_path,'rb'),content_type='image/jpeg')
@@ -125,6 +125,13 @@ class ProductView(viewsets.ModelViewSet):
             "data": serializer.data
         }
         return JsonResponse(dicc, status=200, safe=False)
+    
+    def get_method(self, request, *args, pk):
+        instance = MethodProducts.objects.get(id=pk)
+        print(instance)
+        serializer = MethodSerializer(instance)
+        result = serializer.data
+        return JsonResponse(result, status=200)
 
 
     # GET all Products (with restrictions for sellers)
@@ -376,7 +383,7 @@ class UserView(viewsets.ModelViewSet):
     def get_user(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        result = format_data(serializer.data)
+        result = serializer.data
         return JsonResponse(result, status=200)
 
 
@@ -420,8 +427,7 @@ class AuthenticationView(ObtainAuthToken):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
-        grop = list(user.groups.values_list('name'))
-        data = {'token': token.key, 'user':grop, 'D_A':user.is_superuser}
+        data = {'token': token.key, 'user':user.id, 'D_A':user.is_superuser}
         return JsonResponse(data)
 
 
@@ -448,8 +454,15 @@ class TransactsView(viewsets.ModelViewSet):
         }
         return JsonResponse(dicc, status=200, safe=False)
 
-    def post_transact(self, request):
-        serializer = TransactsSerializer(data=request.data, context={'request':request})
+    def post_transact_fisics(self, request):
+        serializer = TransactsSerializer(data=request.data, context={'request':request, 'type':'fisics'})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        print(serializer.data)
+        return JsonResponse(serializer.data, status=201)
+    
+    def post_new_transacts_method(self, request):
+        serializer = TransactsSerializer(data=request.data, context={'request':request, 'type':'method'})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         print(serializer.data)

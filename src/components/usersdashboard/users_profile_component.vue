@@ -3,7 +3,7 @@
       <!-- Encabezado -->
  
       <!-- Contenido principal -->
-      <div class="flex">
+      <div class="flex" style="margin-top: 80px;">
         <!-- Barra lateral -->
         <aside class="flex w-72 flex-col space-y-2 border-r-2 border-gray-200 bg-white p-2" :class="{ 'hidden': !asideOpen }" style="height: 90.5vh">
           <a href="#" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'home'">

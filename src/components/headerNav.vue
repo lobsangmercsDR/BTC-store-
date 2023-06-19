@@ -30,66 +30,13 @@
 
         <!-- Iconos -->
         <div class="flex items-center relative">
-          <!-- Icono de carrito de compras -->
-          <div class="relative flex items-center">
-            <Button @click="toggleCart" class="relative mr-6 p-button">
-              <i class="pi pi-shopping-cart text-white-500 h-100 w-100 cart-icon"></i>
-              <span class="ml-1 text-sm font-medium" v-show="cartOpen">
-                <span class="cart-total text-white">
-                  Cantidad total:{{ getTotalItems() }}||
-                  <span class="cart-total-price">Total del carrito:{{ getTotalPrice() }}</span>
-                </span>
-              </span>
-            </Button>
-            <!-- Desplegable del carrito -->
-            <div v-show="cartOpen" class="cart">
-              <div class="w-80 bg-white rounded-lg shadow-xl overflow-hidden">
-                <div class="flex items-center justify-between p-4 text-sm font-semibold text-gray-900 bg-orange-500">
-                  <span>Carrito de Compras</span>
-                  <Button @click="closeCart" class="text-white">
-                    <i class="pi pi-times-circle h-6 w-6"></i>
-                  </Button>
-                </div>
-                <!-- Productos físicos -->
-                <div class="px-4 py-2 text-sm font-semibold text-gray-900 bg-gray-100">
-                  Productos físicos (Total: {{ totalPhysical }})
-                </div>
-                <ul class="px-4 py-2 text-black">
-                  <li v-for="product in physicalProducts" :key="product.id">
-                    {{ product.name }} ({{ product.quantity }} x {{ product.price }})
-                    <Button  @click="decreaseQuantity(product, 'physical')" 
-                      icon="pi pi-minus"></Button>
-                    <Button @click="increaseQuantity(product, 'physical')" class="ml-2 p-button-success p-button-rounded"
-                      icon="pi pi-plus"></Button>
-                  </li>
-                </ul>
-                <!-- Productos digitales -->
-                <div class="px-4 py-2 text-sm font-semibold text-gray-900 bg-gray-100">
-                  Productos digitales (Total: {{ totalDigital }})
-                </div>
-                <ul class="px-4 py-2 text-black">
-                  <li v-for="product in digitalProducts" :key="product.id">
-                    {{ product.name }} ({{ product.quantity }} x {{ product.price }})
-                    <Button @click="decreaseQuantity(product, 'digital')" class="ml-2 p-button-danger p-button-rounded"
-                      icon="pi pi-minus"></Button>
-                    <Button @click="increaseQuantity(product, 'digital')" class="ml-2 p-button-success p-button-rounded"
-                      icon="pi pi-plus"></Button>
-                  </li>
-                </ul>
-                <!-- Botón de pago -->
-                <div class="flex items-center justify-end px-4 py-2 bg-gray-100">
-                  <Button @click="pay" class="p-button-success" label="Pagar"></Button>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <!-- Icono de usuario -->
           <div class="relative flex items-center">
             <Button @click="toggleUserMenu" class="flex items-center ml-4 p-button-text">
               <i class="pi pi-user text-white h-100 w-100"></i>
-              <span class="ml-2 text-white">{{ username }}|</span>
-              <span class="ml-2 text-white">Balance: 00</span>
+              <span class="ml-2 text-white">{{ user.name }}|</span>
+              <span class="ml-2 text-white">Balance: {{ user.balance }}</span>
             </Button>
             <!-- Desplegable del usuario -->
             <div v-show="userMenuOpen" class="user-menu">
@@ -102,7 +49,7 @@
                 </div>
                 <ul class="px-4 py-2 text-black">
                   <li v-for="option in userOptions" :key="option.id">
-                    <Button @click="handleUserOption(option)" class="p-button-text" label="{{ option.label }}"></Button>
+                    <Button @click="handleUserOption(option)" class="p-button-text">{{ option.label }}</Button>
                   </li>
                 </ul>
               </div>
@@ -119,6 +66,8 @@
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
+import Cookies from 'js-cookie';
+import axios from 'axios';
 
 export default {
   components: {
@@ -126,15 +75,23 @@ export default {
     Dropdown,
     InputText
   },
+  created() {
+    this.takeUserInfo()
+  },
+  
   data() {
     return {
+      hasToken: false,
       logoImage: '',
       categories: [],
       selectedCategory: null,
       searchText: '',
       cartOpen: false,
       userMenuOpen: false,
-      username: 'John Doe',
+      user: {
+        name: '',
+        balance: ''
+      }, 
       physicalProducts: [],
       digitalProducts: [],
       userOptions: [
@@ -147,6 +104,24 @@ export default {
     };
   },
   methods: {
+    async takeUserInfo() {
+      let token = Cookies.get('token')
+      if (token != null) {
+        this.hasToken = true 
+        await axios.get(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`, {
+          headers: {
+            Authorization: `Token ${token}`
+          }
+        })
+        .then(response => {
+          this.user.name = response.data.name; 
+          this.user.balance = response.data.userBalance
+        })
+        .catch(error => {console.log(error)})
+      }
+      
+    },
+
     toggleCart() {
       this.cartOpen = !this.cartOpen;
       if (this.userMenuOpen) this.userMenuOpen = false;
@@ -162,7 +137,12 @@ export default {
       this.userMenuOpen = false;
     },
     handleUserOption(option) {
-      console.log(option);
+      if(option.id == 3) {
+        this.$router.push('/logout')
+      }
+      else if(option.id == 1) {
+        this.$router.push('/profile')
+      }
     },
     decreaseQuantity(product, type) {
       // Decrease quantity

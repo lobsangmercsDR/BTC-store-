@@ -37,6 +37,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=254, unique=True)
     name  = models.CharField(max_length=50)
     wallet_address = models.CharField(max_length=50)
+    userBalance = models.DecimalField(max_digits=10, decimal_places=2)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     createdAt = models.DateTimeField(auto_now_add=True)
@@ -76,8 +77,11 @@ class Stores(models.Model):
         return self.productfisic_set.count() + self.productdigit_set.count() + self.methodproducts_set.count()
 
 class MethodProducts(models.Model):
-    nameMethod = models.CharField(max_length=50)
+    nameProduct = models.CharField(max_length=50)
     dateCreated = models.DateField()
+    actQuantity = models.IntegerField(default=0)
+    quantity = models.IntegerField(default=0)
+    sendDirection = models.CharField(max_length=50, default="")
     description = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     store = models.ForeignKey(Stores, on_delete=models.CASCADE)
@@ -91,6 +95,7 @@ class ProductFisic(models.Model):
     nameProduct = models.CharField(max_length=50)
     image_product = models.ImageField(upload_to=generate_file_path, default=None)
     description = models.CharField(max_length=200, default="")
+    actQuantity = models.IntegerField(default=0)
     priceProduct = models.DecimalField(max_digits=10, decimal_places=2)
     dateReleased = models.DateField(auto_now_add=True)
     address_direction = models.CharField(max_length=50)
@@ -118,6 +123,7 @@ class ProductDigit(models.Model):
 
 class Transacts(models.Model):
     dateTransact = models.DateTimeField(auto_now_add=True)
+    sendDirection = models.CharField(max_length=50,default="", null=True)
     productFisic = models.ForeignKey(ProductFisic, on_delete=models.SET_NULL, default=None, null=True)
     productDigit = models.ForeignKey(ProductDigit, on_delete=models.SET_NULL, default=None, null=True)
     methodProduct = models.ForeignKey(MethodProducts, on_delete=models.SET_NULL, default=None, null=True)

@@ -13,6 +13,9 @@ module.exports = {
           "net": require.resolve("net-browserify")
         }
       },
+    },
+    devServer: {
+      "host": 'localhost',
     }
   };
   

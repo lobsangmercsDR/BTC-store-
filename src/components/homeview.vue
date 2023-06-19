@@ -16,7 +16,7 @@
 
                         </tr>
                     </thead>
-                    <tbody>
+                    <!-- <tbody>
                         <tr v-for="(product, index) in transactsMaked.data" :key="index"
                             class="bg-gray-200 digit-selled-item text-gray-700">
                             <td class="p-2">{{ product.productDigit.name }}</td> 
@@ -24,7 +24,7 @@
                             <td class="p-2 wid">{{ product.dateTransact }}</td>
                             <td class="p-2">{{ product.productDigit.price }}</td>
                         </tr>
-                    </tbody>
+                    </tbody> -->
                 </table>
                 <section class="nav-arrows">
             <md-icon class="arrow-icon" @click="changePageSP" :style="{color:previousArrowColorSP}" name="previous-arrow">
@@ -49,7 +49,7 @@
                     <img :src="'http://127.0.0.1:8000/api'+ product.image" alt="Product Image" class="product-table-img">
                     <div class="description">
                         <div class="FRow">
-                        <div class="title3 title">{{ product.nameMethod }}</div>
+                        <div class="title3 title">{{ product.nameProduct}}</div>
                         <div style="margin-top: -8px;">({{ product.dateCreated }})</div>
                         <div class="quantity_buy"><b>No. de compras:</b> {{ product.transacts_count }}</div>
                         <div class="price"><b>Precio:</b> {{ product.price }}</div>
@@ -57,7 +57,7 @@
                         </div>
                     </div>
                     <div class="quantity"><span>{{ product.description }}</span></div>
-                        <div class="details"><button @click="openModal(product.id)" class="product-button">Comprar</button></div>
+                        <div class="details"><button @click="openModal(product.id, 'method')" class="product-button">Comprar</button></div>
                 </div>
                 <!-- <table class="table text-gray-400 border-separate space-y-4 text-sm">
                      <thead class="bg-gray-800 text-gray-500">
@@ -109,7 +109,7 @@
                             <th class="p-2">Tienda</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <!-- <tbody>
                         <tr v-for="(product, index) in productsAdded" :key="index"
                             class="bg-gray-200 text-gray-700">
                             <td class="w-1/4 p-2">{{ product.name }}</td>
@@ -118,7 +118,7 @@
                             <td class="p-2">{{ product.price }}</td>
                             <td class="w-1/4 p-2">{{ product.store_id.nameStore }}</td>
                         </tr>
-                    </tbody>
+                    </tbody> -->
                 </table>
                 <section class="nav-arrows">
             <md-icon class="arrow-icon" :style="{color:previousArrowColor}" name="previous-arrow" @click="changePageAP">
@@ -402,6 +402,7 @@ export default {
                 this.pageInfo.available_page = response.data.available_pages;
                 this.pageInfo.actualPage = response.data.page;
                 console.log(this.modalData);
+                console.log(response.data);
             })
             .catch(error => {
                 console.log(error.response.data)
@@ -414,6 +415,7 @@ export default {
                 this.pageInfoSlP.actualPage = response.data.actual_page
                 this.pageInfoSlP.available_page = response.data.available_pages
                 this.productsSlider  = response.data.data
+                console.log(response.data);
             })
             .catch(error=> {
                 console.log(error.response.data);
@@ -427,22 +429,24 @@ export default {
                 this.methodCreated = response.data.data
                 this.pageInfoMP.actualPage = response.data.actual_page
                 this.pageInfoMP.available_page = response.data.available_pages
+                console.log(response.data);
             })
             .catch(error => {
-                console.log(error.response.data)
+                console.log(error)
             })
         },
 
         async getLast24HTransacts(page=1) { 
             await axios.get(`http://127.0.0.1:8000/api/transacts?page=${page}`)
             .then(response => {
-                this.transactsMaked = response.data
+                this.transactsMaked = response.data 
                 this.pageInfoSP.available_page = response.data.available_pages;
                 this.pageInfoSP.actualPage = response.data.actual_page;
                 this.$refs.container.style.background = "#ffff"
+                console.log(response.data);
             })
             .catch(error => {
-                console.log(error.response.data)
+                console.log(error)
             })
         },
 
@@ -532,7 +536,6 @@ export default {
             const direction_arrow = event.currentTarget.getAttribute('name')
             let page = this.pageInfoSlP.actualPage
             if (direction_arrow == "previous-arrow") {
-
                 
                 if(page > 1) {
                     this.getLast24HFisicProducts(page-1)

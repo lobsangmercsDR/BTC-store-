@@ -80,7 +80,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model() 
         extra_kwargs = {'password':{'write_only':True}}
-        fields = ['id','email','password','name','wallet_address','createdAt','is_active','group', 'last_login', 'shares_count', 'purchases_count']
+        fields = ['id','email','password','name','userBalance','wallet_address','createdAt','is_active','group', 'last_login', 'shares_count', 'purchases_count']
         ref_name = 'UserSerializer'
 
     def get_shares_count(self, obj):
@@ -131,7 +131,7 @@ class MethodSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MethodProducts
-        fields = ['id','nameMethod', 'dateCreated','description','price','store','image','transacts_count']
+        fields = ['id','nameProduct', 'dateCreated','actQuantity','quantity','sendDirection','description','price','store','image','transacts_count']
 
 
     def get_transacts_count(self, obj):
@@ -339,6 +339,7 @@ class ProductSerializer(serializers.ModelSerializer):
                     'image_product',
                     'dateReleased',
                     'active',
+                    'actQuantity',
                     'brand',
                     'aditional_details',
                     'seller', 
@@ -425,36 +426,57 @@ class TransactProductNestedSerializer(serializers.ModelSerializer):
 
 class TransactsSerializer(serializers.ModelSerializer):
     productDigit_id = serializers.IntegerField(write_only=True)
-    quantity_asked = serializers.IntegerField(required=True)
+    quantity_asked = serializers.IntegerField(required=False)
+    sendDirection = serializers.CharField(required=False)
     productDigit = ProductDigitSerializer(read_only=True)
     buyers = UserNestedSerializer(read_only=True)
     dateTransact = serializers.DateTimeField(format="%m/%d/%Y %I:%M:%S %p", read_only=True)
     
     class Meta:
         model  = Transacts 
-        fields = ['id','dateTransact','quantity_asked','productDigit','buyers', 'productDigit_id']
+        fields = ['id','dateTransact','quantity_asked','sendDirection','productDigit','buyers', 'productDigit_id']
 
     def create(self, validated_data):
         print(validated_data)
+        type = self.context.get('type') 
         product_id = validated_data.pop('productDigit_id', None)
-        quantity_asked = validated_data['quantity_asked'] 
+        if not type == 'method':
+            quantity_asked = validated_data['quantity_asked'] 
         
         request = self.context.get('request')
         buyer_id= request.user.id
         buyers = User.objects.get(id=buyer_id)
+        total_price = 0
         try:
-            products = ProductDigit.objects.get(id=product_id)
+            if type == 'fisics':
+                products = ProductFisic.objects.get(id=product_id)
+                total_price = quantity_asked * products.priceProduct
+            elif type=='method':
+                print("llegue")
+                products = MethodProducts.objects.get(id=product_id)
+                total_price = products.price
         except:
             raise serializers.ValidationError({"error":"Producto Inexistente"}) 
-
-        if(products.actQuantity == 0):
-            raise serializers.ValidationError({"error":"No quedan mas productos disponibles"})
-        products.actQuantity -= quantity_asked
-        if products.actQuantity < 0:
-            raise serializers.ValidationError({"error":"Pide mas de lo que hay"})
+        print(total_price)
+        user = User.objects.get(id=request.user.id)
+        if user.userBalance < total_price:
+            print(products.priceProduct)
+            raise serializers.ValidationError({"success": False, 
+                                               "message":"Saldo insuficiente"})
+        if not type == 'method':
+            if(products.actQuantity == 0):
+                raise serializers.ValidationError({"error":"No quedan mas productos disponibles"})
+            products.actQuantity -= quantity_asked
+            if products.actQuantity < 0:
+                raise serializers.ValidationError({"error":"Pide mas de lo que hay"})
+        user.userBalance -= total_price
+        user.save()
         products.save() 
         print(products)
-        transact = Transacts.objects.create(productDigit=products,buyers=buyers, **validated_data)
+        if type == "fisics":
+            transact = Transacts.objects.create(productFisic=products,buyers=buyers, **validated_data)
+        elif type=="method":
+            transact = Transacts.objects.create(methodProduct=products,buyers=buyers, **validated_data)
         return transact
     
 

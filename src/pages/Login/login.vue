@@ -120,10 +120,11 @@ export default {
                     password: this.password
                 })
                 Cookies.set('token', response.data.token, {expires: 1, secure:true, sameSite: 'strict'}, null, null, true)
+                Cookies.set('svg', response.data.user,  {expires: 1, secure:true, sameSite: 'strict'}, null, null, true)
                 this.$router.push('/')
             }
             catch(error) {
-                this.error = error.response.data
+                // this.error = error.response.data
                 console.log(error)
             }
         }

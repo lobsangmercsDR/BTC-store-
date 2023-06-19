@@ -8,13 +8,13 @@
               d="M18.364 5.636a2 2 0 0 0-2.828 0L12 9.172 8.464 5.636a2 2 0 1 0-2.828 2.828L9.172 12l-3.536 3.536a2 2 0 1 0 2.828 2.828L12 14.828l3.536 3.536a2 2 0 1 0 2.828-2.828L14.828 12l3.536-3.536a2 2 0 0 0 0-2.828z" />
           </svg>
         </button>
-      <div v-if="product" class="flex flex-col md:flex-row" style="    height: 500px;
+      <div v-if="productFisic" class="flex flex-col md:flex-row" style="    height: 500px;
     width: 875px;">
 
         <div class="w-full md:w-1/2">
           <div class="max-w-[200px] mx-auto md:max-w-none">
             <div class="bg-gray-200 rounded-lg h-[250px] md:h-[500px]" style="display: flex;">
-              <img class="container-img" :src="'http://127.0.0.1:8000/api' + product.image_product"  alt="">
+              <img class="container-img" :src="'http://127.0.0.1:8000/api' + productFisic.image_product"  alt="">
             </div>
           </div>
           <div class="flex justify-center mt-4 space-x-2 overflow-x-auto scrollbar-hide">
@@ -24,7 +24,7 @@
         <div class="w-full md:w-1/2 md:pl-8" style="overflow: auto;">
           <div class="content">
           <h2 class="text-3xl font-semibold mb-4 text-orange-600 hover:text-purple-800 transition-colors duration-300 ">
-            {{ product.nameProduct }}
+            {{ productFisic.nameProduct }}
           </h2>
           <span class="text-gray-600 text-lg mr-2 font-semibold"></span>
 
@@ -34,15 +34,19 @@
           </div>
           <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Marca:</span>
-            <span class="text-lg">{{ product.brand }}</span>
+            <span class="text-lg">{{ productFisic.brand }}</span>
           </div>
           <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Vendedor:</span>
-            <span class="text-lg">{{ product.seller.name }}</span>
+            <span class="text-lg">{{ productFisic.seller.name }}</span>
+          </div>
+          <div class="flex items-center mb-4">
+            <span class="text-gray-600 text-lg mr-2 font-semibold">Cantidad Disponible:</span>
+            <span class="text-lg">{{ productFisic.actQuantity }}</span>
           </div>
           <div class="flex items-center mb-4" style="display: block;">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Zona de entrega:</span>  <br>
-            <span class="text-lg">{{ product.address_direction }}</span>
+            <span class="text-lg">{{ productFisic.address_direction }}</span>
           </div>
           <!-- <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Likes:</span>
@@ -70,11 +74,11 @@
             </button>
           </div> -->
           <div class="flex mb-2">
-            <p class="text-2xl font-semibold mr-2"> Precio: {{ product.price }}</p>
+            <p class="text-2xl font-semibold mr-2"> Precio: {{ productFisic.price }}</p>
           </div>
           <div class="mt-8">
             <h3 class="text-xl font-semibold mb-2 text-left">Detalles adicionales:</h3>
-            <p class="text-gray-600 text-lg text-left">{{ product.aditional_details }}</p>
+            <p class="text-gray-600 text-lg text-left">{{ productFisic.aditional_details }}</p>
           </div>
           <div class="flex mb-4 space-x-4 justify-end">
             <button @click="buyNow"
@@ -85,31 +89,114 @@
           </div>
         </div>
       </div>
-      <div v-else class="text-center py-8">
-        <p class="text-lg text-gray-600">Cargando datos del producto...</p>
+      <div v-if="method" class="flex flex-col md:flex-row" style="    height: 500px;
+    width: 875px;">
+
+        <div class="w-full md:w-1/2">
+          <div class="max-w-[200px] mx-auto md:max-w-none">
+            <div class="bg-gray-200 rounded-lg h-[250px] md:h-[500px]" style="display: flex;">
+              <img class="container-img" :src="'http://127.0.0.1:8000/api' + method.image"  alt="">
+            </div>
+          </div>
+          <div class="flex justify-center mt-4 space-x-2 overflow-x-auto scrollbar-hide">
+
+          </div>
+        </div>
+        <div class="w-full md:w-1/2 md:pl-8" style="overflow: auto;">
+          <div class="content">
+          <h2 class="text-3xl font-semibold mb-4 text-orange-600 hover:text-purple-800 transition-colors duration-300 ">
+            {{ method.nameProduct }}
+          </h2>
+          <span class="text-gray-600 text-lg mr-2 font-semibold"></span>
+          <div class="flex items-center mb-4">
+            <span class="text-gray-600 text-lg mr-2 font-semibold">Tienda:</span>
+            <span class="text-lg">{{ method.store.nameStore }}</span>
+          </div>
+          <div class="flex items-center mb-4">
+            <span class="text-gray-600 text-lg mr-2 font-semibold">Cantidad Disponible:</span>
+            <span class="text-lg">Infinity</span>
+          </div>
+          <!-- <div class="flex items-center mb-4">
+            <span class="text-gray-600 text-lg mr-2 font-semibold">Likes:</span>
+            <span class="text-lg">{{ product.likes }}</span>
+            <button @click="incrementLikes" class="text-green-500 hover:text-green-600 focus:outline-none"
+              :disabled="liked">
+              <svg class="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path
+                  d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z" />
+                <path
+                  d="M15.707 9.293l-4 4a.997.997 0 0 1-1.414 0l-2-2a.999.999 0 1 1 1.414-1.414L11 10.586l3.293-3.293a.999.999 0 1 1 1.414 1.414z" />
+              </svg>
+            </button>
+          </div>
+          <div class="flex items-center mb-4">
+            <span class="text-gray-600 text-lg mr-2 font-semibold">Dislikes:</span>
+            <span class="text-lg">{{ product.dislikes }}</span>
+            <button @click="incrementDislikes" class="text-red-500 hover:text-red-600 focus:outline-none"
+              :disabled="disliked">
+              <svg class="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path
+                  d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z" />
+                <path d="M8 8h8v8H8z" />
+              </svg>
+            </button>
+          </div> -->
+          <div class="flex mb-2">
+            <p class="text-2xl font-semibold mr-2"> Precio: {{ method.price }}</p>
+          </div>
+          <div class="mt-8">
+            <h3 class="text-xl font-semibold mb-2 text-left">Detalles adicionales:</h3>
+            <p class="text-gray-600 text-lg text-left">{{ method.description}}</p>
+          </div>
+          <div class="flex mb-4 space-x-4 justify-end">
+            <button @click="buyNow"
+              class="bg-[#ac15c1] hover:bg-[#d836e8] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#ac15c1]">
+              Comprar ahora
+            </button>
+          </div>
+          </div>
+        </div>
       </div>
+      <!-- <div v-else class="text-center py-8">
+        <p class="text-lg text-gray-600">Cargando datos del producto...</p>
+      </div> -->
       
     </div>
 
     <!-- Ventana emergente de pago -->
     <transition name="modal">
       <div v-if="showPaymentModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
+        <div v-if="productFisic" class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
           <h2 class="text-2xl font-semibold mb-4">Confirmar compra</h2>
-          <p>Producto: {{ product.nameProduct }}</p>
-          <p>Marca: {{ product.brand }}</p>
-          <p>Tienda: {{ product.seller.name }}</p>
+          <p>Producto: {{ productFisic.nameProduct}}</p>
+          <p>Marca: {{ productFisic.brand }}</p>
+          <p>Tienda: {{ productFisic.seller.name }}</p>
           <p>Cantidad: {{ quantity }}</p>
-          <p>Precio total: {{  (product.price * quantity)}} </p>
+          <p>Precio total: {{  (productFisic.price * quantity)}} </p>
           <hr class="my-4">
           <p>Username: {{ user.username }}</p>
-          <p>Saldo disponible: <span class="text-green-500">{{ user.balance.toFixed(2) }}</span></p>
-          <input v-model="shippingAddress" type="text"
+          <p>Saldo disponible: <span class="text-green-500">{{ user.balance }}</span></p>
+          <input v-model="transactInfo.sendDirection" type="text"
             class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-full mt-4"
             placeholder="Dirección de envío" required />
           <div class="flex justify-end mt-4">
             <button @click="showPaymentModal = false" class="text-gray-500 hover:text-gray-700 mr-2">Cancelar</button>
-            <button @click="processPayment"
+            <button @click="processFisicPayment"
+              class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">Confirmar</button>
+          </div>
+        </div>
+        <div v-if="method" class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
+          <h2 class="text-2xl font-semibold mb-4">Confirmar compra</h2>
+          <p>Producto: {{ method.nameProduct }}</p>
+          <p>Precio: {{ method.price }}</p>
+          <p>Tienda: {{ method.store.nameStore }}</p>
+          <p>Precio total: {{  (method.price * quantity)}} </p>
+          <hr class="my-4">
+          <p>Username: {{ user.username }}</p>
+          <p>Saldo disponible: <span class="text-green-500">{{ user.balance }}</span></p>
+          <div class="flex justify-end mt-4">
+            <button @click="showPaymentModal = false" class="text-gray-500 hover:text-gray-700 mr-2">Cancelar</button>
+            <button @click="processMethodPayment"
               class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">Confirmar</button>
           </div>
         </div>
@@ -132,7 +219,7 @@
         class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
           <h2 class="text-2xl font-semibold mb-4">Transacción fallida</h2>
-          <p>Tu transacción ha sido rechazada debido a fondos insuficientes.</p>
+          <p>Tu transacción ha sido rechazada debido a fondos insuficientes o cantidad inexistente.</p>
           <div class="flex justify-end mt-4">
             <button @click="showTransactionFailedModal = false"
               class="text-gray-500 hover:text-gray-700 mr-2">Cerrar</button>
@@ -144,16 +231,31 @@
     <!-- Ventana emergente de factura generada -->
     <transition name="modal">
       <div v-if="showInvoiceModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
+        <div v-if="productFisic" class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
           <h2 class="text-2xl font-semibold mb-4">Factura generada</h2>
           <p>Número de orden: {{ orderNumber }}</p>
           <p>Fecha de compra: {{ formattedDate }}</p>
           <p>Estado: En espera</p>
-          <p>Nombre del producto: {{ product.nameProduct }}</p>
-          <p>Marca: {{ product.brand }}</p>
-          <p>Tienda: {{ product.seller.name }}</p>
+          <p>Nombre del producto: {{ productFisic.nameProduct }}</p>
+          <p>Marca: {{ productFisic.brand }}</p>
+          <p>Tienda: {{ productFisic.seller.name }}</p>
           <p>Cantidad comprada: {{ quantity }}</p>
-          <p>Total a pagar: {{ (product.price * quantity).toFixed(2) }} </p>
+          <p>Total a pagar: {{ (productFisic.price * quantity).toFixed(2) }} </p>
+          <button class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded mt-4"
+            @click="downloadInvoice">Descargar factura</button>
+          <div class="flex justify-end mt-4">
+            <button @click="showInvoiceModal = false" class="text-gray-500 hover:text-gray-700 mr-2">Cerrar</button>
+          </div>
+        </div>
+        <div v-if="method" class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
+          <h2 class="text-2xl font-semibold mb-4">Factura generada</h2>
+          <p>Número de orden: {{ orderNumber }}</p>
+          <p>Fecha de compra: {{ formattedDate }}</p>
+          <p>Estado: En espera</p>
+          <p>Nombre del producto: {{ method.nameProduct }}</p>
+          <p>Tienda: {{ method.store.nameStore }}</p>
+          <p>Cantidad comprada: {{ quantity }}</p>
+          <p>Total a pagar: {{ (method.price * quantity).toFixed(2) }} </p>
           <button class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded mt-4"
             @click="downloadInvoice">Descargar factura</button>
           <div class="flex justify-end mt-4">
@@ -167,17 +269,27 @@
 
 <script>
 import { mapActions } from 'vuex';
+import Cookies from 'js-cookie';
 import  axios  from 'axios';
-
 export default {
   props: {
     modalInfo : Object
+  },
+
+  created()  {
+    this.takeUserInfo();
+
   },
   watch: {
     modalInfo(newValue) {
       this.showModal = newValue.showModal
       if (newValue.typeProd == 'fisic') {
-        this.renderProductData(newValue.objID)
+        this.renderProductFisicData(newValue.objID)
+        
+      }
+      else if(newValue.typeProd== 'method') {
+        console.log("llegue")
+        this.renderMethodData(newValue.objID)
       }
     }
   },
@@ -185,7 +297,8 @@ export default {
     return {
 
       showModal: false,
-      product: null,
+      productFisic: null,
+      method:null,
       quantity: 1,
       selectedVariant: '',
       productPriceBTC: 0,
@@ -193,6 +306,11 @@ export default {
       processingTransaction: false,
       showTransactionFailedModal: false,
       showInvoiceModal: false,
+      transactInfo: { 
+        productDigit_id: 0,
+        quantity_asked: 0,
+        sendDirection:""
+      },
       user: {
         username: 'JohnDoe',
         balance: 10000, // Saldo ficticio en BTC
@@ -225,15 +343,46 @@ export default {
       value = this.modalInfo
       console.log(value)
       return value
-    }
+    },
   },
   methods: {
-    async renderProductData(id) {
+    async renderProductFisicData(id) {
       await axios.get(`http://127.0.0.1:8000/api/productos/${id}`)
-        .then(response => {this.product = response.data; console.log(this.product)})
+        .then(response => {
+          this.productFisic = response.data;
+          console.log(this.productFisic)
+          this.transactInfo.productDigit_id = response.data.id
+        })
         .catch(error => console.log(error.response.data))
     },
-
+    
+    async renderMethodData(id) {
+      await axios.get(`http://127.0.0.1:8000/api/productos/methods/${id}`)
+        .then(response => {
+          this.method = response.data;
+          this.transactInfo.productDigit_id = response.data.id
+          console.log(response.data);
+        })
+        .catch(error => console.log(error.response.data))
+    },
+    async takeUserInfo() {
+      let token = Cookies.get('token')
+      if (token != null) {
+        this.hasToken = true 
+        await axios.get(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`, {
+          headers: {
+            Authorization: `Token ${token}`
+          }
+        })
+        .then(response => {
+          this.user.username = response.data.name; 
+          this.user.balance = response.data.userBalance
+          console.log(this.user)
+        })
+        .catch(error => {})
+      }
+      
+    },
 
     incrementLikes() {
       if (!this.liked && !this.disliked) {
@@ -243,6 +392,8 @@ export default {
     },
     closeModal(){
       this.showModal = false
+      this.productFisic = null
+      this.method = null
     },
 
 
@@ -273,20 +424,80 @@ export default {
     buyNow() {
       this.showPaymentModal = true;
     },
-    processPayment() {
+    processFisicPayment() {
       this.processingTransaction = true;
       setTimeout(() => {
-        if (this.user.balance >= this.product.price * this.quantity) {
+        if ((this.user.balance >= this.productFisic.price * this.quantity) && (this.productFisic.actQuantity != 0)) {
+          console.log("AAAw");
           this.showPaymentModal = false;
           this.processingTransaction = false;
           this.showInvoiceModal = true;
           this.orderNumber = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+          this.transactInfo.quantity_asked = this.quantity
+          this.makeTransact()
         } else {
           this.showPaymentModal = false;
           this.processingTransaction = false;
           this.showTransactionFailedModal = true;
         }
       }, 2000);
+    },
+
+    processMethodPayment() {
+      this.processingTransaction = true;
+      setTimeout(() => {
+        console.log(this.user.balance);
+        let balance = this.user.balance
+        let price = this.method.price
+        console.log(typeof(balance), typeof(price));
+        if ( parseInt(balance) >= parseInt(price)) {
+          console.log("AAAw");
+          this.showPaymentModal = false;
+          this.processingTransaction = false;
+          this.showInvoiceModal = true;
+          this.orderNumber = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+          this.transactInfo.quantity_asked = this.quantity
+          this.makeMethodTransact()
+        } else {
+          console.log(this.user.balance, this.method.price);
+          this.showPaymentModal = false;
+          this.processingTransaction = false;
+          this.showTransactionFailedModal = true;
+        }
+      }, 2000);
+    },
+
+    async makeTransact() {
+      console.log("llegue")
+      await axios.post(`http://127.0.0.1:8000/api/transacts`,this.transactInfo, {
+        headers:{
+          Authorization: `Token ${Cookies.get('token')}`
+        }})
+        .then(response => {
+          console.log(response)
+          this.takeUserInfo()
+        })
+        .catch(error =>
+        {
+          console.log(error.response.data)
+        })
+    },
+
+    async makeMethodTransact() {
+      console.log("llegue")
+      delete this.transactInfo.sendDirection 
+      await axios.post(`http://127.0.0.1:8000/api/productos/transacts/methods`,this.transactInfo, {
+        headers:{
+          Authorization: `Token ${Cookies.get('token')}`
+        }})
+        .then(response => {
+          console.log(response)
+          this.takeUserInfo()
+        })
+        .catch(error =>
+        {
+          console.log(error.response.data)
+        })
     },
     downloadInvoice() {
       const invoiceData = {
