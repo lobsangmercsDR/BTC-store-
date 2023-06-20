@@ -437,9 +437,13 @@ class TransactsView(viewsets.ModelViewSet):
     
 
     def get_all_transacts(self, request):
+        isDigital = request.GET.get('digitals',None)
+        if isDigital:
+            transacts = Transacts.objects.filter(productDigit__isnull=False)
+        else: 
+            transacts = Transacts.objects.all()
         # userPermision = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin])
         # if not userPermision['IsAdmin']:
-        transacts = Transacts.objects.all()
   
         paginator = Paginator(transacts, per_page=12)
         page_number= request.GET.get('page',1)

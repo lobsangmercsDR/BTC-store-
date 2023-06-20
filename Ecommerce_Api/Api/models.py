@@ -59,9 +59,6 @@ class Category(models.Model):
     nameCategory = models.CharField(max_length=50)
 
 
-
-
-
 class SubCategory(models.Model):
     nameSubCategory = models.CharField(max_length=50)
     minPriceBTC = models.DecimalField(max_digits=10, decimal_places=2)

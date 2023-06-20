@@ -1,5 +1,5 @@
 <template >
-  <div class="modal" v-if="showModal" >
+  <div class="modal" v-show="showModal" :class="{'modal-transition':showModal}" >
     <div class="bg-white rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto" style="padding: 20px 32px;">
       <button @click="closeModal" class="close-button">
           <svg class="w-6 h-6 fill-current text-gray-500 hover:text-gray-700" xmlns="http://www.w3.org/2000/svg"
@@ -8,6 +8,7 @@
               d="M18.364 5.636a2 2 0 0 0-2.828 0L12 9.172 8.464 5.636a2 2 0 1 0-2.828 2.828L9.172 12l-3.536 3.536a2 2 0 1 0 2.828 2.828L12 14.828l3.536 3.536a2 2 0 1 0 2.828-2.828L14.828 12l3.536-3.536a2 2 0 0 0 0-2.828z" />
           </svg>
         </button>
+      <div v-if="productDigital">productDigital</div>
       <div v-if="productFisic" class="flex flex-col md:flex-row" style="    height: 500px;
     width: 875px;">
 
@@ -282,6 +283,7 @@ export default {
   },
   watch: {
     modalInfo(newValue) {
+      console.log(1);
       this.showModal = newValue.showModal
       if (newValue.typeProd == 'fisic') {
         this.renderProductFisicData(newValue.objID)
@@ -291,6 +293,10 @@ export default {
         console.log("llegue")
         this.renderMethodData(newValue.objID)
       }
+      else if(newValue.typeProd == 'digits') {
+        console.log("aaja")
+        this.renderDigitProductData(newValue.objID)
+      }
     }
   },
   data() {
@@ -298,6 +304,10 @@ export default {
 
       showModal: false,
       productFisic: null,
+      productDigital: {
+        id: "1",
+        name:"señor amparame"
+      },
       method:null,
       quantity: 1,
       selectedVariant: '',
@@ -356,6 +366,16 @@ export default {
         .catch(error => console.log(error.response.data))
     },
     
+    async renderDigitProductData(id) {
+      await axios.get(`http://127.0.0.1:8000/api/transacts?digitals&page=2`)
+      .then(response => {
+        console.log(response.data)
+      })
+      .catch(error => {
+        console.log(error.response.data)
+      })
+    },
+
     async renderMethodData(id) {
       await axios.get(`http://127.0.0.1:8000/api/productos/methods/${id}`)
         .then(response => {
@@ -552,7 +572,19 @@ export default {
 
 
 <style scoped>
+.modal-transition {
+    opacity: 0;
+    animation: modalT 0.4s forwards;
+}
 
+@keyframes modalT{
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 .container-img {
       width: 100%;
 

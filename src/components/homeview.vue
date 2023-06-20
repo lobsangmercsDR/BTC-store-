@@ -16,15 +16,15 @@
 
                         </tr>
                     </thead>
-                    <!-- <tbody>
+                    <tbody>
                         <tr v-for="(product, index) in transactsMaked.data" :key="index"
-                            class="bg-gray-200 digit-selled-item text-gray-700">
+                            class="bg-gray-200 digit-selled-item text-gray-700" @click="openModal(product.id, 'digits')">
                             <td class="p-2">{{ product.productDigit.name }}</td> 
                             <td class="p-2">{{ product.productDigit.store_id.nameStore }}</td>
                             <td class="p-2 wid">{{ product.dateTransact }}</td>
                             <td class="p-2">{{ product.productDigit.price }}</td>
                         </tr>
-                    </tbody> -->
+                    </tbody>
                 </table>
                 <section class="nav-arrows">
             <md-icon class="arrow-icon" @click="changePageSP" :style="{color:previousArrowColorSP}" name="previous-arrow">
@@ -97,7 +97,7 @@
             <!-- Table 1 -->
             <h1>Últimos productos digitales agregados </h1>
             <div class="component-container component-container-color1">
-                <table class="table text-gray-400 border-separate space-y-4 text-sm">
+                <table class="table  text-gray-400 border-separate space-y-4 text-sm">
                     <thead class="" style="
                         background: #c65a03;
                         color: #fff;">
@@ -109,16 +109,16 @@
                             <th class="p-2">Tienda</th>
                         </tr>
                     </thead>
-                    <!-- <tbody>
+                    <tbody>
                         <tr v-for="(product, index) in productsAdded" :key="index"
-                            class="bg-gray-200 text-gray-700">
+                            class="bg-gray-200 digit-selled-item text-gray-700" @click="openModal(product.id, 'digits')">
                             <td class="w-1/4 p-2">{{ product.name }}</td>
                             <td class="p-2" style="width: 20px;">{{ product.orgQuantity }}</td>
                             <td class="p-2">{{ product.dateCreated }}</td>
                             <td class="p-2">{{ product.price }}</td>
                             <td class="w-1/4 p-2">{{ product.store_id.nameStore }}</td>
                         </tr>
-                    </tbody> -->
+                    </tbody>
                 </table>
                 <section class="nav-arrows">
             <md-icon class="arrow-icon" :style="{color:previousArrowColor}" name="previous-arrow" @click="changePageAP">
@@ -437,7 +437,7 @@ export default {
         },
 
         async getLast24HTransacts(page=1) { 
-            await axios.get(`http://127.0.0.1:8000/api/transacts?page=${page}`)
+            await axios.get(`http://127.0.0.1:8000/api/transacts?digitals&page=${page}`)
             .then(response => {
                 this.transactsMaked = response.data 
                 this.pageInfoSP.available_page = response.data.available_pages;
@@ -795,6 +795,7 @@ justify-content: flex-start;
 
 .method-item:hover {
     transform: scale(1.02);
+    background-color: rgb(255, 255, 255);
 }
 
 
@@ -802,6 +803,13 @@ justify-content: flex-start;
     border-radius: 15px;
     width: 160px;
     height: 125px;
+}
+
+.digit-selled-item:hover {
+    transform: scale(1);
+    background-color: rgb(255, 253, 253);
+    transition: background-color 0.12s ease-in-out;
+    cursor: pointer;
 }
 
 .slider-item:hover {

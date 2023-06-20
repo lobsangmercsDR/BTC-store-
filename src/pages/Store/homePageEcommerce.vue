@@ -5,8 +5,9 @@
       <homeview />
       <div class="espacio"></div>
 
-    </div>s
-    <user_shopVue />
+    </div>
+    <SingleDigitalProduct />
+    <!-- <user_shopVue /> -->
     <!-- <digital_product_view />
     <productCard />
     <users_profile_component />
@@ -14,7 +15,7 @@
 
 
     
-    <SingleDigitalProduct />
+
 
 
     <AddDigitalProduct />
