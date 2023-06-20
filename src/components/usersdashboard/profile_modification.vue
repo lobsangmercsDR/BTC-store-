@@ -14,12 +14,12 @@
 
         <div class="mb-4">
           <label for="address" class="text-lg">Dirección:</label>
-          <input v-model="user.address" id="address" type="text" class="form-input">
+          <input v-model="user.direction" id="address" type="text" class="form-input">
         </div>
 
         <div class="mb-4">
           <label for="phone" class="text-lg">Teléfono:</label>
-          <input v-model="user.phone" id="phone" type="text" class="form-input">
+          <input v-model="user.phoneNumber" id="phone" type="text" class="form-input">
         </div>
 
         <div class="mb-4">
@@ -54,25 +54,42 @@ export default {
   data() {
     return {
       user: {
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        address: '123 Main St, City',
-        phone: '555-123-4567',
-        bitcoinWallet: '',
-        invitationCode: ''
+        name: true,
+        email: true,
+        phoneNumber: true,
+        direction:true,
+        wallet_address: true,
+        invitationCode: true
       }
     };
   },
   methods: {
-    saveChanges() {
-      // Aquí puedes agregar la lógica para guardar los cambios en el servidor
+   async saveChanges() {
+    console.log(this.user);
+      await axios.put(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`,this.user,
+      {
+        headers:{
+          Authorization:`Token ${Cookies.get('token')}`
+        }
+      })
+      .then(response => {console.log(response.data)})
+      .catch(error => {console.log(error.response.data)})
     },
-    async getUserData() {
+    async getUserData() { 
       await axios.get(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`, {
         headers:{
           Authorization: `Token ${Cookies.get('token')}`
       }})
-      .then(response => {this.user = response.data;console.log(response.data)})
+      .then(response => {
+        const filtered = Object.keys(response.data).reduce((resultado, clave) => {
+          if (this.user[clave]) {
+            resultado[clave] = this.user[clave];
+          }
+          return resultado;
+        }, {});
+        this.user = filtered;
+        console.log(filtered)
+      })
       .catch(error => {console.log(error.response.data)})
 
       await axios.get(`http://127.0.0.1:8000/api/userbased/invitation/${Cookies.get('svg')}`, {
