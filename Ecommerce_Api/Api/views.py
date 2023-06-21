@@ -438,6 +438,7 @@ class TransactsView(viewsets.ModelViewSet):
 
     def get_all_transacts(self, request):
         isDigital = request.GET.get('digitals',None)
+        print(isDigital)
         if isDigital:
             transacts = Transacts.objects.filter(productDigit__isnull=False)
         else: 

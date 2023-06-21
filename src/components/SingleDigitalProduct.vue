@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="bg-white rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto">
+    <div class="bg-white card rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto">
       <div v-if="product" class="flex flex-col md:flex-row">
         <div class="w-full md:w-1/2">
           <div class="bg-gray-200 rounded-lg h-[250px] md:h-[500px]">
@@ -20,7 +20,7 @@
           <div class="mt-8 flex items-center space-x-4"></div>
           <div class="mt-4">
             <div class="flex items-center mb-2">
-              <span class="text-gray-600 text-lg mr-2 font-semibold">Vendedor:</span>
+              <span class="text-gray-600 text-lg mr-2 font-semibold">Tienda:</span>
               <span class="text-lg">{{ product.brand }}</span>
             </div>
             <div class="flex items-center mb-2">
@@ -36,45 +36,8 @@
               <span class="text-lg">{{ product.quantity }}</span>
             </div>
             <div class="flex items-center mb-2">
-              <span class="text-gray-600 text-lg mr-2 font-semibold">Likes:</span>
-              <span class="text-lg">{{ product.likes }}</span>
-              <button @click="incrementLikes" class="text-green-500 hover:text-green-600 focus:outline-none">
-                <svg
-                  class="w-6 h-6 fill-current"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"
-                  />
-                  <path
-                    d="M15.707 9.293l-4 4a.997.997 0 0 1-1.414 0l-2-2a.999.999 0 1 1 1.414-1.414L11 10.586l3.293-3.293a.999.999 0 1 1 1.414 1.414z"
-                  />
-                </svg>
-              </button>
-            </div>
-            <div class="flex items-center mb-2">
-              <span class="text-gray-600 text-lg mr-2 font-semibold">Dislikes:</span>
-              <span class="text-lg">{{ product.dislikes }}</span>
-              <button @click="incrementDislikes" class="text-red-500 hover:text-red-600 focus:outline-none">
-                <svg
-                  class="w-6 h-6 fill-current"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"
-                  />
-                  <path d="M8 8h8v8H8z" />
-                </svg>
-              </button>
-            </div>
-            <div class="flex items-center mb-2">
-              <p class="text-2xl font-semibold mr-2">{{ productPriceBTC.toFixed(8) }} BTC</p>
-              <p class="text-green-500 text-lg font-extrabold">
-                ${{ convertToDollars(productPriceBTC).toFixed(2) }} USD
-              </p>
-              <p v-if="!needChecker" class="ml-2 text-gray-600 text-sm">(+{{ product.checkerPrice.toFixed(8) }} BTC FOR Checker)</p>
+              <p class="text-2xl font-semibold mr-2">{{ product.price.toFixed(0)}}</p>
+              <p v-if="!needChecker" class="ml-2 text-gray-600 text-sm">(+{{ product.checkerPrice.toFixed(2) }} del Checker)</p>
             </div>
 
             <!-- Botón Need checker -->
@@ -84,14 +47,14 @@
                 @click="openCheckerModal"
                 class="bg-red-500 hover:bg-green-600 text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 mr-2"
               >
-                Need checker
+                Necesita verificacion
               </button>
               <button
                 v-else
                 class="bg-green-500 text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 mr-2"
                 disabled
               >
-                This product has checker
+                Verificado
               </button>
             </div>
 
@@ -99,12 +62,6 @@
               <button
                 @click="addToCart"
                 class="bg-[#f76108] hover:bg-[#fa7328] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#f76108] mr-2"
-              >
-                Agregar al carrito
-              </button>
-              <button
-                @click="buyNow"
-                class="bg-[#ac15c1] hover:bg-[#d836e8] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#ac15c1]"
               >
                 Comprar ahora
               </button>
@@ -153,7 +110,7 @@
             <p>Orden: {{ orderNumber }}</p>
             <p>Producto: {{ product.name }}</p>
             <p>Cantidad: {{ quantity }}</p>
-            <p>Vendedor: {{ product.brand }}</p>
+            <p>Tienda: {{ product.brand }}</p>
             <p>Dirección de la transacción: {{ transactionAddress }}</p>
           </div>
           <div class="flex justify-end mt-4">
@@ -235,7 +192,7 @@ export default {
       category: [],
       subcategory: [],
       seller_username: "Djangolapara",
-      checkerPrice: 0.005, // Precio adicional del checker
+      checkerPrice: 10, // Precio adicional del checker
     };
     this.productPriceBTC = this.product.price * this.btcPrice;
   },
@@ -287,7 +244,7 @@ export default {
       doc.text(`Orden: ${this.orderNumber}`, 20, 30);
       doc.text(`Producto: ${this.product.name}`, 20, 40);
       doc.text(`Cantidad: ${this.quantity}`, 20, 50);
-      doc.text(`Vendedor: ${this.product.brand}`, 20, 60);
+      doc.text(`Tienda: ${this.product.brand}`, 20, 60);
       doc.text(`Dirección de la Transacción: ${this.transactionAddress}`, 20, 70);
       doc.save("invoice.pdf");
     },
@@ -403,6 +360,10 @@ export default {
 
 .font-semibold {
   font-weight: 600;
+}
+
+.card {
+  width: 985px;
 }
 
 .mb-2 {

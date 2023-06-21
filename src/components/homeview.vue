@@ -17,7 +17,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(product, index) in transactsMaked.data" :key="index"
+                        <tr v-if="transactsMaked.data" v-for="(product, index) in transactsMaked.data" :key="index"
                             class="bg-gray-200 digit-selled-item text-gray-700" @click="openModal(product.id, 'digits')">
                             <td class="p-2">{{ product.productDigit.name }}</td> 
                             <td class="p-2">{{ product.productDigit.store_id.nameStore }}</td>
@@ -415,7 +415,6 @@ export default {
                 this.pageInfoSlP.actualPage = response.data.actual_page
                 this.pageInfoSlP.available_page = response.data.available_pages
                 this.productsSlider  = response.data.data
-                console.log(response.data);
             })
             .catch(error=> {
                 console.log(error.response.data);
@@ -425,11 +424,9 @@ export default {
         async getLast24HMethods(page=1) {
             await axios.get(`http://127.0.0.1:8000/api/productos/methods?page=${page}`)
             .then(response => {
-                console.log(response.data);
                 this.methodCreated = response.data.data
                 this.pageInfoMP.actualPage = response.data.actual_page
                 this.pageInfoMP.available_page = response.data.available_pages
-                console.log(response.data);
             })
             .catch(error => {
                 console.log(error)
@@ -437,13 +434,11 @@ export default {
         },
 
         async getLast24HTransacts(page=1) { 
-            await axios.get(`http://127.0.0.1:8000/api/transacts?digitals&page=${page}`)
+            await axios.get(`http://127.0.0.1:8000/api/transacts?digitals=true&page=${page}`)
             .then(response => {
                 this.transactsMaked = response.data 
                 this.pageInfoSP.available_page = response.data.available_pages;
                 this.pageInfoSP.actualPage = response.data.actual_page;
-                this.$refs.container.style.background = "#ffff"
-                console.log(response.data);
             })
             .catch(error => {
                 console.log(error)
