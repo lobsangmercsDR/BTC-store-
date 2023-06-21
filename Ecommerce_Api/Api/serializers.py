@@ -28,7 +28,7 @@ class ProductDigitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductDigit
-        fields = ['id', 'name', 'price', 'orgQuantity','actQuantity', 'dateCreated','store_id']
+        fields = ['id', 'name', 'price', 'description','additional_details','orgQuantity','actQuantity', 'dateCreated','store_id']
 
     def to_representation(self, instance):
         try:
@@ -440,11 +440,13 @@ class TransactsSerializer(serializers.ModelSerializer):
         print(validated_data)
         type = self.context.get('type') 
         product_id = validated_data.pop('productDigit_id', None)
-        if not type == 'method':
+        print(type)
+        if not type == 'method' and not type == 'digitals':
             quantity_asked = validated_data['quantity_asked'] 
         
         request = self.context.get('request')
         buyer_id= request.user.id
+        print(buyer_id)
         buyers = User.objects.get(id=buyer_id)
         total_price = 0
         try:
@@ -454,15 +456,17 @@ class TransactsSerializer(serializers.ModelSerializer):
             elif type=='method':
                 products = MethodProducts.objects.get(id=product_id)
                 total_price = products.price
+            elif type == 'digitals':
+                products = ProductDigit.objects.get(id=product_id)
+                total_price = products.price
         except:
             raise serializers.ValidationError({"error":"Producto Inexistente"}) 
         print(total_price)
         user = User.objects.get(id=request.user.id)
         if user.userBalance < total_price:
-            print(products.priceProduct)
             raise serializers.ValidationError({"success": False, 
                                                "message":"Saldo insuficiente"})
-        if not type == 'method':
+        if not type == 'method' and not type== 'digitals':
             if(products.actQuantity == 0):
                 raise serializers.ValidationError({"error":"No quedan mas productos disponibles"})
             products.actQuantity -= quantity_asked
@@ -476,6 +480,8 @@ class TransactsSerializer(serializers.ModelSerializer):
             transact = Transacts.objects.create(productFisic=products,buyers=buyers, **validated_data)
         elif type=="method":
             transact = Transacts.objects.create(methodProduct=products,buyers=buyers, **validated_data)
+        elif type == "digitals":
+            transact = Transacts.objects.create(productDigit=products, buyers=buyers, **validated_data)
         return transact
     
 

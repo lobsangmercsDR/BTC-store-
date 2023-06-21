@@ -18,7 +18,7 @@
                     </thead>
                     <tbody>
                         <tr v-if="transactsMaked.data" v-for="(product, index) in transactsMaked.data" :key="index"
-                            class="bg-gray-200 digit-selled-item text-gray-700" @click="openModal(product.id, 'digits')">
+                            class="bg-gray-200 digit-selled-item text-gray-700" @click="openModal(product.productDigit.id, 'digits')">
                             <td class="p-2">{{ product.productDigit.name }}</td> 
                             <td class="p-2">{{ product.productDigit.store_id.nameStore }}</td>
                             <td class="p-2 wid">{{ product.dateTransact }}</td>
@@ -171,82 +171,23 @@
                     </div>
             </div>
     </div>
-
-
     <div>
         <SingleProduct :modalInfo="modalData"></SingleProduct>
+        <SingleDigitalProduct :modalInfo="modalData"> </SingleDigitalProduct>
     </div>
-
-
-
-
-
-
-<!-- 
-  
-    <div v-if="showModal1" class="modal">
-        <div class="modal-content">
-            <span class="close-button" @click="closeModal1">&times;</span>
-            <h2>Detalles del producto</h2>
-            <table class="table text-gray-400 border-separate space-y-4 text-sm">
-                <thead class="bg-gray-800 text-gray-500">
-                    <tr>
-                        <th class="p-2">Producto</th>
-                        <th class="p-2">Cantidad Comprada</th>
-                        <th class="p-2">Fecha de Compra</th>
-                        <th class="p-2">Precio</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(product, index) in productsTable1" :key="index" class="bg-gray-200 text-gray-700">
-                        <td class="p-2">{{ product.name }}</td>
-                        <td class="p-2">{{ product.quantitySold }}</td>
-                        <td class="p-2">{{ product.dateSold }}</td>
-                        <td class="p-2">{{ product.price }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <button class="modal-close" @click="closeModal1">Cerrar</button>
-        </div>
-    </div>
-
-
-    <div v-if="showModal2" class="modal">
-        <div class="modal-content">
-            <span class="close-button" @click="closeModal2">&times;</span>
-            <h2>Detalles del producto</h2>
-            <table class="table text-gray-400 border-separate space-y-4 text-sm">
-                <thead class="bg-gray-800 text-gray-500">
-                    <tr>
-                        <th class="p-2">Producto</th>
-                        <th class="p-2">Cantidad Disponibles</th>
-                        <th class="p-2">Fecha de Publicación</th>
-                        <th class="p-2">Precio</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(product, index) in productsTable2" :key="index" class="bg-gray-200 text-gray-700">
-                        <td class="p-2">{{ product.name }}</td>
-                        <td class="p-2">{{ product.quantityAvailable }}</td>
-                        <td class="p-2">{{ product.datePublished }}</td>
-                        <td class="p-2">{{ product.price }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <button class="modal-close" @click="closeModal2">Cerrar</button>
-        </div>
-    </div> -->
 </template>
   
 <script>
 import axios from 'axios';
 import SingleProduct from '@/components/SingleProduct.vue'
+import SingleDigitalProduct from './SingleDigitalProduct.vue';
 
 
 
 export default {
     components: {
-        SingleProduct
+        SingleProduct,
+        SingleDigitalProduct
     },
     data() {
         return {
@@ -304,16 +245,7 @@ export default {
             }]
             },
 
-            productsTable2: [
-                1,
-                2,
-                3,
-                4,
-                4,
-                3,
-                3,
-                3,
-            ],
+            productsTable2: [],
         }
     },
     created() {
@@ -391,7 +323,12 @@ export default {
         openModal(id, type) {
             console.log(id)
             console.log(type);
-            this.modalData = {showModal: true,typeProd: type, objID: id }
+            if(type == "digits") {
+                this.modalData = {showDigitModal: true,typeProd: type, objID: id }
+            } else {
+                this.modalData = {showModal: true,typeProd: type, objID: id }
+            }
+            
         },
 
 
