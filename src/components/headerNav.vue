@@ -105,7 +105,9 @@ export default {
   },
   methods: {
     async takeUserInfo() {
+      console.log("aaa");
       let token = Cookies.get('token')
+      console.log(token);
       if (token != null) {
         this.hasToken = true 
         await axios.get(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`, {
@@ -114,10 +116,12 @@ export default {
           }
         })
         .then(response => {
+          console.log("aaaee");
+          console.log(response);
           this.user.name = response.data.name; 
           this.user.balance = response.data.userBalance
         })
-        .catch(error => {console.log(error)})
+        .catch(error => {console.log(2)})
       }
       
     },

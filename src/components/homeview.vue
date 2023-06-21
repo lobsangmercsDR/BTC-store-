@@ -175,6 +175,7 @@
 
     <div>
         <SingleProduct :modalInfo="modalData"></SingleProduct>
+        <SingleDigitalProduct :modalInfo="modalData"></SingleDigitalProduct>
     </div>
 
 
@@ -241,12 +242,14 @@
 <script>
 import axios from 'axios';
 import SingleProduct from '@/components/SingleProduct.vue'
+import SingleDigitalProduct from './SingleDigitalProduct.vue';
 
 
 
 export default {
     components: {
-        SingleProduct
+        SingleProduct,
+        SingleDigitalProduct
     },
     data() {
         return {

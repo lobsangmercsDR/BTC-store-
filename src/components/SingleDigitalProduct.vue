@@ -1,5 +1,5 @@
-<template>
-  <div class="container">
+<template >
+  <div class="modal" v-show="showModal">
     <div class="bg-white card rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto">
       <div v-if="product" class="flex flex-col md:flex-row">
         <div class="w-full md:w-1/2">
@@ -60,11 +60,11 @@
 
             <div class="flex mt-4 justify-end">
               <button
-                @click="addToCart"
-                class="bg-[#f76108] hover:bg-[#fa7328] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#f76108] mr-2"
+                @click="buyNow"
+                class="bg-[#ac15c1] hover:bg-[#d836e8] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#ac15c1]"
               >
                 Comprar ahora
-              </button>
+              </button> 
             </div>
           </div>
         </div>
@@ -157,8 +157,20 @@
 import jsPDF from "jspdf";
 
 export default {
+  created() {
+  },
+
+  watch: {
+    modalInfo(newValue) {
+      console.log(newValue)
+    }
+  },
+  props: {
+    modalInfo : Object
+  },
   data() {
     return {
+      showModal:true,
       product: null,
       hasPurchased: false,
       quantity: 1,
@@ -281,6 +293,7 @@ export default {
   align-items: center;
   height: 100vh;
 }
+
 
 .bg-white {
   margin: 0 auto;

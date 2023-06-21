@@ -1,4 +1,5 @@
 <template >
+      
   <div class="modal" v-show="showModal" :class="{'modal-transition':showModal}" >
     <div class="bg-white rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto" style="padding: 20px 32px;">
       <button @click="closeModal" class="close-button">
@@ -8,7 +9,6 @@
               d="M18.364 5.636a2 2 0 0 0-2.828 0L12 9.172 8.464 5.636a2 2 0 1 0-2.828 2.828L9.172 12l-3.536 3.536a2 2 0 1 0 2.828 2.828L12 14.828l3.536 3.536a2 2 0 1 0 2.828-2.828L14.828 12l3.536-3.536a2 2 0 0 0 0-2.828z" />
           </svg>
         </button>
-      <div v-if="productDigital">productDigital</div>
       <div v-if="productFisic" class="flex flex-col md:flex-row" style="    height: 500px;
     width: 875px;">
 
@@ -272,7 +272,11 @@
 import { mapActions } from 'vuex';
 import Cookies from 'js-cookie';
 import  axios  from 'axios';
+import SingleDigitalProduct from './SingleDigitalProduct.vue';
 export default {
+  components: {
+    SingleDigitalProduct
+  },
   props: {
     modalInfo : Object
   },
