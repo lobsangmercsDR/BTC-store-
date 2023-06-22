@@ -67,7 +67,7 @@
 
             <div class="flex mt-4 justify-end">
               <button
-                @click="addToCart"
+                @click="buyNow"
                 class="bg-[#f76108] hover:bg-[#fa7328] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#f76108] mr-2"
               >
                 Comprar ahora
