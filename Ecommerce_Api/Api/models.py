@@ -117,9 +117,26 @@ class ProductDigit(models.Model):
     additional_details = models.CharField(max_length=200)
     subCategory = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True)
     text_preview = models.CharField(max_length=200)
+    needChecker = models.BooleanField(default=True)
     orgQuantity= models.IntegerField(default=1)
     actQuantity = models.IntegerField(default=1)
     store = models.ForeignKey(Stores, on_delete=models.CASCADE)
+
+    @property
+    def solic_count(self):
+        return self.checkersolic_set.count()
+
+class CheckerSolic(models.Model):
+    OPTIONS = (
+        ('active','Activo'),
+        ('canceled','Invalido'),
+        ('pending','Pendiente'),
+        ('expired','Expirado')
+        )
+
+    product = models.ForeignKey(ProductDigit, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.CharField(max_length=50, choices=OPTIONS)
 
 
 class Transacts(models.Model):

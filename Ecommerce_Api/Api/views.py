@@ -20,8 +20,9 @@ import os
 from .utils import services as uti
 from django.core import serializers
 from django.http import HttpResponse
-from .models import ProductFisic,MethodProducts,ProductDigit,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
-from .serializers import (TransactsSerializer, 
+from .models import ProductFisic,MethodProducts,CheckerSolic,ProductDigit,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
+from .serializers import (TransactsSerializer,
+                          SolicCheckerSerializer,
                           CategorySerializer,
                           ProductDigitSerializer,
                           CategoryWithoutProductsSerializer, 
@@ -91,12 +92,10 @@ def validate_group(user, groups):
         return True
 
 class Img_view(viewsets.ModelViewSet):
-    # queryset = ProductFisic.objects.all()
-    # serializer_class = ProductSerializer
     def get_file_img(self, request, image_name):
         work_route=  r'C:\Users\TI\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
         local_route= r'C:\Users\alan8\OneDrive\Documentos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
-        complete_path = os.path.join(local_route, image_name)
+        complete_path = os.path.join(work_route, image_name)
         
         if os.path.exists(complete_path):
             return FileResponse(open(complete_path,'rb'),content_type='image/jpeg')
@@ -337,6 +336,31 @@ class CategoryView(viewsets.ModelViewSet):
         instance = self.get_object()
         self.perform_destroy(instance)
         return JsonResponse({'message': 'El campo fue borrado correctamente', 'status':200}, status=200)
+
+
+class SolicCheckerView(viewsets.ModelViewSet):
+    queryset = CheckerSolic.objects.all()
+    authentication_classes = [authentication.TokenAuthentication]
+
+    def get_solic_checker(self, request):
+        objects = CheckerSolic.objects.all()
+        serializer = SolicCheckerSerializer(objects, many=True)
+        return JsonResponse(serializer.data,safe=False)
+    
+    def post_solic_checker(self, request,pk):
+        try:
+            product = ProductDigit.objects.get(id=pk)
+            user= User.objects.get(id=request.user.id)
+        except:
+
+            return JsonResponse({'error':'El producto no existe'},status=404)
+        newObj = CheckerSolic(product=product, status='pending', user=user)
+        newObj.save()
+        serializer = SolicCheckerSerializer(newObj)
+        print(serializer.data)
+        return JsonResponse(serializer.data,status=201)
+
+
 
 class UserView(viewsets.ModelViewSet):
     queryset = User.objects.all()

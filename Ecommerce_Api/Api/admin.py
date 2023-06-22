@@ -1,8 +1,9 @@
 from django.contrib import admin
-from .models import ProductFisic, ProductDigit, Category,Transacts, User, InvitationCodes, RoleRequests, SubCategory, Stores, MethodProducts
+from .models import ProductFisic, ProductDigit, Category,Transacts, User,CheckerSolic, InvitationCodes, RoleRequests, SubCategory, Stores, MethodProducts
  
 # Register your models here.
 admin.site.register(ProductFisic)
+admin.site.register(CheckerSolic)
 admin.site.register(Category)
 admin.site.register(Transacts)
 admin.site.register(User)

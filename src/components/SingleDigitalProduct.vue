@@ -40,7 +40,7 @@
             </div>
             <div class="flex items-center mb-2">
               <p class="text-2xl font-semibold mr-2">{{ productDigit.price}}</p>
-              <p v-if="!needChecker" class="ml-2 text-gray-600 text-sm">(+{{ product.checkerPrice.toFixed(2) }} del Checker)</p>
+              <p v-if="productDigit.needChecker" class="ml-2 text-gray-600 text-sm">(+{{ product.checkerPrice.toFixed(2) }} del Checker)</p>
             </div>
             <div class="mt-8">
             <h3 class="text-xl font-semibold mb-2 text-left">Detalles adicionales:</h3>
@@ -50,7 +50,7 @@
             <!-- Botón Need checker -->
             <div class="flex items-center mb-2">
               <button
-                v-if="needChecker"
+                v-if="productDigit.needChecker"
                 @click="openCheckerModal"
                 class="bg-red-500 hover:bg-green-600 text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 mr-2"
               >
@@ -141,13 +141,14 @@
     <transition name="modal">
       <div v-if="showCheckerModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
-          <h2 class="text-2xl font-semibold mb-4">Need Checker</h2>
-          <p v-if="needChecker" class="text-red-500">Este producto requiere el uso de un checker.</p>
-          <p v-else class="text-green-500">Este producto ya ha sido verificado.</p>
-          <textarea v-model="checkerInput" class="border border-gray-300 rounded-lg p-2 mb-4 w-full h-32 resize-none" placeholder="Introduce tu texto..."></textarea>
+          <h2 class="text-2xl font-semibold mb-4">Solicitud de checking</h2>
+          <p class="text-red-500">Este producto requiere el uso de un checker.</p>
+          <p style="margin-top: 10px;">
+          Mediante esta solicitud, el usuario tendra verificacion validada de que el producto existe, sin embargo, el precio sumado sera de <b>+{{ priceChecker.toFixed(2) }}</b>
+          </p>
           <div class="flex justify-end mt-4">
             <button @click="closeCheckerModal" class="text-gray-500 hover:text-gray-700 mr-2">Cerrar</button>
-            <button v-if="needChecker" @click="sendCheckerRequest" class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">Enviar</button>
+            <button v-if="productDigit.needChecker" @click="sendCheckerRequest(productDigit.id)" class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">Solicitar</button>
           </div>
         </div>
       </div>
@@ -190,11 +191,11 @@ export default {
         name: "",
         balance: 0,
       },
+      priceChecker: 22.00,
       showPaymentModal: false,
       showSuccessModal: false,
       showDeclinedModal: false,
       showCheckerModal: false,
-      needChecker: false,
       checkerInput: "",
       addChecker: false,
       orderNumber: "",
@@ -327,10 +328,14 @@ export default {
       this.productFisic = null
       this.method = null
     },
-    sendCheckerRequest() {
-      // Lógica para enviar la solicitud del checker
-
-      // Cerrar el modal después de enviar la solicitud
+    async sendCheckerRequest(id) {
+      console.log(id)
+      await axios.post(`http://127.0.0.1:8000/api/solicChecker/${id}`,null,{
+        headers:{
+            Authorization:`Token ${Cookies.get('token')}`
+        }})
+      .then(response=> {console.log(response.data)})
+      .catch(error => {console.log(error.response.data)})
       this.showCheckerModal = false;
     },
   },

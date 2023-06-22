@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 
 from rest_framework import serializers,exceptions
-from .models import Category, ProductFisic, ProductDigit, Transacts,MethodProducts,User,InvitationCodes,RoleRequests, SubCategory, Stores
+from .models import Category, ProductFisic, ProductDigit, CheckerSolic, Transacts,MethodProducts,User,InvitationCodes,RoleRequests, SubCategory, Stores
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
@@ -28,19 +28,25 @@ class ProductDigitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductDigit
-        fields = ['id', 'name', 'price', 'description','additional_details','orgQuantity','actQuantity', 'dateCreated','store_id']
+        fields = ['id', 'name', 'price', 'description','additional_details','needChecker','orgQuantity','actQuantity', 'dateCreated','store_id']
+
 
     def to_representation(self, instance):
         try:
+            product = ProductDigit.objects.filter(id=instance['id']).first()
             store = Stores.objects.get(id=instance['store_id'])
             serializer = StoreSerializer(store)
             instance['store_id'] = serializer.data
-            return super().to_representation(instance) 
+            result=super().to_representation(instance)
+            result['no_solicitudes'] = product.solic_count 
+            return result
         except:
             store = Stores.objects.get(id=instance.store_id)
+            product = ProductDigit.objects.filter(id=instance.id).first()
             serializer = StoreSerializer(store)
             result = super().to_representation(instance)
             result['store_id'] = serializer.data
+            result['no_solicitudes'] = product.solic_count
             return result
             
 
@@ -423,6 +429,18 @@ class TransactProductNestedSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductFisic
         fields = ['id','nameProduct','priceProduct','dateReleased','active', 'seller']
+
+
+class SolicCheckerSerializer(serializers.ModelSerializer): 
+    product = ProductDigitSerializer()
+    class Meta: 
+        model = CheckerSolic
+        fields = ['id','product','status']
+
+    def to_representation(self, instance):
+        print(instance)
+        result = super().to_representation(instance)
+        return result
 
 class TransactsSerializer(serializers.ModelSerializer):
     productDigit_id = serializers.IntegerField(write_only=True)
