@@ -96,7 +96,7 @@ class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):
         work_route=  r'C:\Users\TI\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
         local_route= r'C:\Users\alan8\OneDrive\Documentos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
-        complete_path = os.path.join(local_route, image_name)
+        complete_path = os.path.join(work_route, image_name)
         
         if os.path.exists(complete_path):
             return FileResponse(open(complete_path,'rb'),content_type='image/jpeg')
@@ -171,6 +171,16 @@ class ProductView(viewsets.ModelViewSet):
         instance = self.get_object()
         serializer = ProductSerializer(instance)
         return JsonResponse(serializer.data,status=200)
+        
+    def get_digit_product(self, request, *args, pk):
+        try:
+            instance = ProductDigit.objects.get(id=pk)
+            serializer = ProductDigitSerializer(instance)
+            result = serializer.data
+            return JsonResponse(result, status=200)
+        except: 
+            return JsonResponse({"error":"no existe"}, status=200)
+
 
 
     # POST a new product (Taking Seller id)
@@ -440,7 +450,7 @@ class TransactsView(viewsets.ModelViewSet):
         isDigital = request.GET.get('digitals',None)
         print(isDigital)
         if isDigital:
-            transacts = Transacts.objects.filter(productDigit__isnull=False)
+            transacts = Transacts.objects.filter(productDigit__isnull=False).order_by('-dateTransact')
         else: 
             transacts = Transacts.objects.all()
         # userPermision = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin])
@@ -461,6 +471,13 @@ class TransactsView(viewsets.ModelViewSet):
 
     def post_transact_fisics(self, request):
         serializer = TransactsSerializer(data=request.data, context={'request':request, 'type':'fisics'})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        print(serializer.data)
+        return JsonResponse(serializer.data, status=201)
+    
+    def post_transact_digits(self, request):
+        serializer = TransactsSerializer(data=request.data, context={'request':request, 'type':'digitals'})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         print(serializer.data)

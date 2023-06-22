@@ -49,31 +49,6 @@
             <span class="text-gray-600 text-lg mr-2 font-semibold">Zona de entrega:</span>  <br>
             <span class="text-lg">{{ productFisic.address_direction }}</span>
           </div>
-          <!-- <div class="flex items-center mb-4">
-            <span class="text-gray-600 text-lg mr-2 font-semibold">Likes:</span>
-            <span class="text-lg">{{ product.likes }}</span>
-            <button @click="incrementLikes" class="text-green-500 hover:text-green-600 focus:outline-none"
-              :disabled="liked">
-              <svg class="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path
-                  d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z" />
-                <path
-                  d="M15.707 9.293l-4 4a.997.997 0 0 1-1.414 0l-2-2a.999.999 0 1 1 1.414-1.414L11 10.586l3.293-3.293a.999.999 0 1 1 1.414 1.414z" />
-              </svg>
-            </button>
-          </div>
-          <div class="flex items-center mb-4">
-            <span class="text-gray-600 text-lg mr-2 font-semibold">Dislikes:</span>
-            <span class="text-lg">{{ product.dislikes }}</span>
-            <button @click="incrementDislikes" class="text-red-500 hover:text-red-600 focus:outline-none"
-              :disabled="disliked">
-              <svg class="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path
-                  d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z" />
-                <path d="M8 8h8v8H8z" />
-              </svg>
-            </button>
-          </div> -->
           <div class="flex mb-2">
             <p class="text-2xl font-semibold mr-2"> Precio: {{ productFisic.price }}</p>
           </div>
@@ -117,31 +92,6 @@
             <span class="text-gray-600 text-lg mr-2 font-semibold">Cantidad Disponible:</span>
             <span class="text-lg">Infinity</span>
           </div>
-          <!-- <div class="flex items-center mb-4">
-            <span class="text-gray-600 text-lg mr-2 font-semibold">Likes:</span>
-            <span class="text-lg">{{ product.likes }}</span>
-            <button @click="incrementLikes" class="text-green-500 hover:text-green-600 focus:outline-none"
-              :disabled="liked">
-              <svg class="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path
-                  d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z" />
-                <path
-                  d="M15.707 9.293l-4 4a.997.997 0 0 1-1.414 0l-2-2a.999.999 0 1 1 1.414-1.414L11 10.586l3.293-3.293a.999.999 0 1 1 1.414 1.414z" />
-              </svg>
-            </button>
-          </div>
-          <div class="flex items-center mb-4">
-            <span class="text-gray-600 text-lg mr-2 font-semibold">Dislikes:</span>
-            <span class="text-lg">{{ product.dislikes }}</span>
-            <button @click="incrementDislikes" class="text-red-500 hover:text-red-600 focus:outline-none"
-              :disabled="disliked">
-              <svg class="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path
-                  d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z" />
-                <path d="M8 8h8v8H8z" />
-              </svg>
-            </button>
-          </div> -->
           <div class="flex mb-2">
             <p class="text-2xl font-semibold mr-2"> Precio: {{ method.price }}</p>
           </div>
@@ -297,10 +247,6 @@ export default {
         console.log("llegue")
         this.renderMethodData(newValue.objID)
       }
-      else if(newValue.typeProd == 'digits') {
-        console.log("aaja")
-        this.renderDigitProductData(newValue.objID)
-      }
     }
   },
   data() {
@@ -368,16 +314,6 @@ export default {
           this.transactInfo.productDigit_id = response.data.id
         })
         .catch(error => console.log(error.response.data))
-    },
-    
-    async renderDigitProductData(id) {
-      await axios.get(`http://127.0.0.1:8000/api/transacts?digitals&page=2`)
-      .then(response => {
-        console.log(response.data)
-      })
-      .catch(error => {
-        console.log(error.response.data)
-      })
     },
 
     async renderMethodData(id) {

@@ -1,27 +1,30 @@
-<template >
-  <div class="modal" v-show="showModal">
+<template>
+  <div class="modal modal-transition" v-show="showDigitModal" >
     <div class="bg-white card rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto">
-      <div v-if="product" class="flex flex-col md:flex-row">
-        <div class="w-full md:w-1/2">
-          <div class="bg-gray-200 rounded-lg h-[250px] md:h-[500px]">
+      <button @click="closeModal" class="close-button">
+          <svg class="w-6 h-6 fill-current text-gray-500 hover:text-gray-700" xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24">
+            <path
+              d="M18.364 5.636a2 2 0 0 0-2.828 0L12 9.172 8.464 5.636a2 2 0 1 0-2.828 2.828L9.172 12l-3.536 3.536a2 2 0 1 0 2.828 2.828L12 14.828l3.536 3.536a2 2 0 1 0 2.828-2.828L14.828 12l3.536-3.536a2 2 0 0 0 0-2.828z" />
+          </svg>
+        </button>
+      <div v-if="productDigit" class="flex flex-col md:flex-row">
+        <div class="w-full md:w-1/2" >
+          <div class="bg-gray-200 rounded-lg h-[250px] md:h-[500px]" style="height: 460px;">
             <h3 class="text-xl font-semibold mb-2 text-left">Preview:</h3>
-            <p class="text-gray-600 text-lg text-left">{{ product.additional_details }}</p>
+            <p class="text-gray-600 text-lg text-left">{{ productDigit.additional_details }}</p>
             <p v-if="!hasPurchased" class="text-red-500 text-sm mt-2">For complete view buy the product</p>
           </div>
-          <div class="flex items-center mb-2">
-            <p class="text-2xl font-semibold mr-2">Categorias:</p>
-            <p class="text-green-500 text-lg font-extrabold">Subcate</p>
-          </div>
         </div>
-        <div class="w-full md:w-1/2 md:pl-8 text-left">
+        <div class="w-full md:w-1/2 md:pl-8 text-left" style="overflow: auto; height: 460px;">
+          <div style="box-sizing: border-box;">
           <h2 class="text-3xl font-semibold mb-4 text-orange-600 hover:text-purple-800 transition-colors duration-300">
-            {{ product.name }}
+            {{ productDigit.name}}
           </h2>
-          <div class="mt-8 flex items-center space-x-4"></div>
           <div class="mt-4">
             <div class="flex items-center mb-2">
               <span class="text-gray-600 text-lg mr-2 font-semibold">Tienda:</span>
-              <span class="text-lg">{{ product.brand }}</span>
+              <span class="text-lg">{{ productDigit.store_id.nameStore }}</span>
             </div>
             <div class="flex items-center mb-2">
               <span class="text-gray-600 text-lg mr-2 font-semibold"></span>
@@ -29,16 +32,20 @@
             </div>
             <div class="flex items-center mb-2">
               <span class="text-gray-600 text-lg mr-2 font-semibold">Fecha de Publicacion:</span>
-              <span class="text-lg">{{ product.release_data }}</span>
+              <span class="text-lg">{{ productDigit.dateCreated }}</span>
             </div>
             <div class="flex items-center mb-2">
               <span class="text-gray-600 text-lg mr-2 font-semibold">Cantidad</span>
               <span class="text-lg">{{ product.quantity }}</span>
             </div>
             <div class="flex items-center mb-2">
-              <p class="text-2xl font-semibold mr-2">{{ product.price.toFixed(0)}}</p>
+              <p class="text-2xl font-semibold mr-2">{{ productDigit.price}}</p>
               <p v-if="!needChecker" class="ml-2 text-gray-600 text-sm">(+{{ product.checkerPrice.toFixed(2) }} del Checker)</p>
             </div>
+            <div class="mt-8">
+            <h3 class="text-xl font-semibold mb-2 text-left">Detalles adicionales:</h3>
+            <p class="text-gray-600 text-lg text-left">asdasdasdasdasdasdasfasdfgvsdfgasdfgsdfgasg awetge g erg d dsyhsd erty eg sdfy gery eryw5t egrtgserth sertsertg erer erg e esyweg e aqt efawevrw fweterferwr54t  t eart ergser b et ert ertwet ert  ertge gegerge   r geg eg eret  ergey asg hreruy e eythrdhedghr sh erthrt sr sdryh seyher thsrt se yesy seysr hfhgjdhkrtu  seg hsrthdrh rhsrtuy sdtdryjsdhdrfth f</p>
+          </div>
 
             <!-- Botón Need checker -->
             <div class="flex items-center mb-2">
@@ -60,13 +67,14 @@
 
             <div class="flex mt-4 justify-end">
               <button
-                @click="buyNow"
-                class="bg-[#ac15c1] hover:bg-[#d836e8] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#ac15c1]"
+                @click="addToCart"
+                class="bg-[#f76108] hover:bg-[#fa7328] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#f76108] mr-2"
               >
                 Comprar ahora
               </button> 
             </div>
           </div>
+        </div>
         </div>
       </div>
       <div v-else class="text-center py-8">
@@ -79,21 +87,16 @@
       <div v-if="showPaymentModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
           <h2 class="text-2xl font-semibold mb-4">Confirmar compra</h2>
-          <p>Producto: {{ product.name }}</p>
-          <p>Cantidad: {{ quantity }}</p>
-          <p>Precio total: {{ (product.price * quantity * btcPrice).toFixed(8) }} BTC / ${{ (product.price * quantity).toFixed(2) }} USD</p>
-          <p>
-            <input type="checkbox" v-model="addChecker" class="mr-2" :disabled="needChecker" />
-            <span>Agregar Checker (+{{ product.checkerPrice.toFixed(8) }} BTC)</span>
-          </p>
+          <p>Producto: {{ productDigit.name }}</p>
+          <p>Cantidad: 1</p>
+          <p>Precio total: {{ productDigit.price}}</p>
           <p v-if="addChecker" class="text-red-500 text-sm">Los productos digitales comprados sin checker no tienen derecho a garantía.</p>
           <hr class="my-4">
           <p>Username: {{ user.username }}</p>
-          <p>Saldo disponible en BTC: <span class="text-green-500">{{ user.balanceBTC.toFixed(8) }} BTC</span></p>
-          <p>Equivalente en USD: ${{ (user.balanceBTC * btcPrice).toFixed(2) }} USD</p>
+          <p>Saldo disponible: <span class="text-green-500">{{ user.balance }}</span></p>
           <div class="flex justify-end mt-4">
             <button @click="showPaymentModal = false" class="text-gray-500 hover:text-gray-700 mr-2">Cancelar</button>
-            <button @click="confirmPayment" class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">Confirmar</button>
+            <button @click="confirmPayment(productDigit.id)" class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">Confirmar</button>
           </div>
         </div>
       </div>
@@ -108,10 +111,9 @@
           <div class="mt-4">
             <h3 class="text-xl font-semibold mb-2">Factura:</h3>
             <p>Orden: {{ orderNumber }}</p>
-            <p>Producto: {{ product.name }}</p>
-            <p>Cantidad: {{ quantity }}</p>
-            <p>Tienda: {{ product.brand }}</p>
-            <p>Dirección de la transacción: {{ transactionAddress }}</p>
+            <p>Producto: {{ productDigit.name }}</p>
+            <p>Cantidad: 1</p>
+            <p>Tienda: {{ productDigit.store_id.nameStore }}</p>
           </div>
           <div class="flex justify-end mt-4">
             <button @click="showSuccessModal = false" class="text-gray-500 hover:text-gray-700 mr-2">Cerrar</button>
@@ -154,30 +156,39 @@
 </template>
 
 <script>
+import axios from "axios";
 import jsPDF from "jspdf";
+import Cookies from "js-cookie";
 
 export default {
-  created() {
+  props : {
+    modalInfo: Object
   },
-
-  watch: {
+  
+  watch : {
     modalInfo(newValue) {
-      console.log(newValue)
+      this.showDigitModal = newValue.showDigitModal
+      console.log(newValue, this.showDigitModal)
+      this.renderDigitProductData(newValue.objID)
     }
   },
-  props: {
-    modalInfo : Object
+
+  created() {
+    this.takeUserInfo();
   },
+
   data() {
     return {
       showModal:true,
       product: null,
+      productDigit: null,
       hasPurchased: false,
       quantity: 1,
       btcPrice: 40000,
+      showDigitModal: false,
       user: {
-        username: "JohnDoe",
-        balanceBTC: 0.5,
+        name: "",
+        balance: 0,
       },
       showPaymentModal: false,
       showSuccessModal: false,
@@ -190,6 +201,7 @@ export default {
       transactionAddress: "",
     };
   },
+
   mounted() {
     this.product = {
       name: 'Pack 100000 cuentas de GMAIL',
@@ -224,30 +236,64 @@ export default {
     buyNow() {
       this.showPaymentModal = true;
     },
-    confirmPayment() {
-      // Verificar si el usuario tiene fondos suficientes
-      if (this.user.balanceBTC >= this.product.price * this.quantity) {
-        console.log(`Comprando ${this.quantity} unidades del producto`);
-
-        // Lógica adicional para procesar el pago
-
-        // Mostrar el modal de éxito
+    confirmPayment(id) {
+      console.log(id, this.user.balance, this.productDigit.price)
+      if (parseInt(this.user.balance) >= parseInt(this.productDigit.price)) {
         this.showPaymentModal = false;
         this.showSuccessModal = true;
-
-        // Generar número de orden y dirección de la transacción
         this.orderNumber = Math.floor(Math.random() * 1000000);
-        this.transactionAddress = "0x123abc...";
-
-        // Resetear el estado
         this.quantity = 1;
+        this.makeTransact(id)
         this.addChecker = false;
       } else {
-        // Mostrar el modal de transacción declinada
         this.showPaymentModal = false;
         this.showDeclinedModal = true;
       }
     },
+    async renderDigitProductData(id) {
+      await axios.get(`http://127.0.0.1:8000/api/productos/digit/${id}`)
+      .then(response => {
+        this.productDigit = response.data
+        console.log(this.productDigit)
+      })
+      .catch(error => {
+        console.log(error.response.data)
+      })
+    },
+
+    async makeTransact(id) {
+      await axios.post(`http://127.0.0.1:8000/api/productos/transacts/digits`,{productDigit_id:id}, {
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      }) 
+      .then( response => {
+        console.log(response.data)
+      })
+      .catch (error => {
+        console.log(error.response.data)
+      })
+    },
+
+    async takeUserInfo() {
+      let token = Cookies.get('token')
+      if (token != null) {
+        this.hasToken = true 
+        await axios.get(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`, {
+          headers: {
+            Authorization: `Token ${token}`
+          }
+        })
+        .then(response => {
+          this.user.username = response.data.name; 
+          this.user.balance = response.data.userBalance
+          console.log(this.user)
+        })
+        .catch(error => {})
+      }
+      
+    },
+
     downloadInvoice() {
       const doc = new jsPDF();
       doc.setFontSize(18);
@@ -276,6 +322,11 @@ export default {
     openCheckerModal() {
       this.showCheckerModal = true;
     },
+    closeModal(){
+      this.showDigitModal = false
+      this.productFisic = null
+      this.method = null
+    },
     sendCheckerRequest() {
       // Lógica para enviar la solicitud del checker
 
@@ -292,6 +343,11 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
+}
+.close-button {
+  margin-left: 53.5em;
+    margin-bottom: 20px;
+    margin-top: 0px;
 }
 
 
@@ -866,6 +922,21 @@ export default {
 .text-lg {
   font-size: 1.125rem;
   line-height: 1.75rem;
+}
+
+.modal-transition {
+    opacity: 0;
+    animation: modalT 0.4s forwards;
+}
+
+@keyframes modalT{
+0%{
+  opacity: 0;
+}
+100% {
+  opacity: 1;
+}
+
 }
 
 .text-gray-600 {

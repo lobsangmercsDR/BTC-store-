@@ -4,8 +4,10 @@ from .views import  ProductView, ProductsDigitView,CategoryView,TransactsView,Us
 urlpatterns = [
     path('images/<str:image_name>', Img_view.as_view({'get':'get_file_img'}), name="IMG_GET"),
     path('productos/digit', ProductsDigitView.as_view({'get':'get_digit_products'}, name="Digital_Products")),
+    path('productos/digit/<int:pk>', ProductView.as_view({'get':'get_digit_product'}, name="Digital_Products")),
     path('productos/methods', ProductView.as_view({'get':'get_all_methods'}, name="MethodsRN")),
     path('productos/transacts/methods', TransactsView.as_view({ 'post':'post_new_transacts_method'}, name="MethodsRN")),
+    path('productos/transacts/digits', TransactsView.as_view({ 'post':'post_transact_digits'}, name="CreateDigitTransact")),
     path('productos/methods/<int:pk>', ProductView.as_view({'get':'get_method'}, name="godHelpMe")),
     # path('productos/stores', StoresView.as_view({'get':'get_digit_products'}, name="Digital_Products")),
     path('productos',ProductView.as_view({'get':'nested_list_products','post':'post_product'}), name='listOfProducts' ),

@@ -6,7 +6,6 @@
       <div class="espacio"></div>
 
     </div>
-    <SingleDigitalProduct />
     <!-- <user_shopVue /> -->
     <!-- <digital_product_view />
     <productCard />

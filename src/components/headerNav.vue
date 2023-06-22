@@ -21,10 +21,10 @@
 
           <!-- Menú -->
           <div class="flex items-center mr-6">
-            <Button label="Home" class="mr-6 p-button-text" style="color: white !important;"></Button>
-            <Button label="Become Seller" class="mr-6 p-button-text" style="color: white !important;"></Button>
-            <Button label="Categorías" class="mr-6 p-button-text" style="color: white !important;"></Button>
-            <Button label="FAQ" class="mr-6 p-button-text" style="color: white !important;"></Button>
+            <Button label="Home" class="mr-6 p-button-text" style="color: white !important;" @click="redirect(1)"></Button>
+            <Button label="Become Seller" class="mr-6 p-button-text" style="color: white !important;" @click="redirect(2)"></Button>
+            <Button label="Categorías" class="mr-6 p-button-text" style="color: white !important;" @click="redirect(3)"></Button>
+            <Button label="FAQ" class="mr-6 p-button-text" style="color: white !important;" @click="redirect(4)"></Button>
           </div>
         </div>
 
@@ -162,6 +162,11 @@ export default {
     },
     getTotalPrice() {
       // Calculate total price
+    },
+    redirect(id) {
+      if(id==1) {
+        this.$router.push('/homePageEcommerce')
+      }
     }
   }
 };

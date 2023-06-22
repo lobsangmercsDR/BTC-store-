@@ -113,6 +113,8 @@ class ProductDigit(models.Model):
     name = models.CharField(max_length=50)
     price = models.DecimalField(max_digits=10,decimal_places=2)
     dateCreated = models.DateTimeField(auto_now_add=True)
+    description = models.CharField(max_length=200)
+    additional_details = models.CharField(max_length=200)
     subCategory = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True)
     text_preview = models.CharField(max_length=200)
     orgQuantity= models.IntegerField(default=1)
