@@ -1,6 +1,7 @@
 <template>
     <div class="order-review">
-      <h2 class="text-2xl font-bold mb-4">Vigentes</h2>
+      <section class="column">
+      <h2 class="text-2xl font-bold mt-8 mb-4">Vigentes</h2>
       <div class="accordion">
         <div class="accordion-item">
           <h3 class="accordion-header" @click="toggleAccordion('active')">
@@ -34,7 +35,9 @@
           </div>
         </div>
       </div>
-  
+      </section>
+      
+      <section class="column">
       <h2 class="text-2xl font-bold mt-8 mb-4">Pendientes de Aprobación</h2>
       <div class="accordion">
         <div class="accordion-item">
@@ -69,7 +72,9 @@
           </div>
         </div>
       </div>
-  
+      </section>
+      
+      <section class="column">
       <h2 class="text-2xl font-bold mt-8 mb-4">Expiradas</h2>
       <div class="accordion">
         <div class="accordion-item">
@@ -104,6 +109,7 @@
           </div>
         </div>
       </div>
+      </section>
     </div>
   </template>
   
@@ -166,8 +172,12 @@
   <style scoped>
   .order-review {
     max-width: 800px;
-    margin: 0 auto;
+    /* margin: 0 auto; */
     padding: 2rem;
+    /* justify-content: space-around !important; */
+    display: flex;
+    min-width: 100%;
+    gap: 46px;
   }
   
   .table {
