@@ -1,5 +1,7 @@
 <template>
-  <div class="modal modal-transition" v-show="showDigitModal" >
+
+
+  <div class="modal modal-transition" v-show="showModal">
     <div class="bg-white card rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto">
       <button @click="closeModal" class="close-button">
           <svg class="w-6 h-6 fill-current text-gray-500 hover:text-gray-700" xmlns="http://www.w3.org/2000/svg"
@@ -23,7 +25,7 @@
           </h2>
           <div class="mt-4">
             <div class="flex items-center mb-2">
-              <span class="text-gray-600 text-lg mr-2 font-semibold">Tienda:</span>
+              <span class="text-gray-600 text-l-show mr-2 font-semibold">Tienda:</span>
               <span class="text-lg">{{ productDigit.store_id.nameStore }}</span>
             </div>
             <div class="flex items-center mb-2">
@@ -168,7 +170,9 @@ export default {
   
   watch : {
     modalInfo(newValue) {
-      this.showDigitModal = newValue.showDigitModal
+
+      console.log(newValue)
+      this.showModal = true
       console.log(newValue, this.showDigitModal)
       this.renderDigitProductData(newValue.objID)
     }
@@ -180,7 +184,7 @@ export default {
 
   data() {
     return {
-      showModal:true,
+      showModal:false,
       product: null,
       productDigit: null,
       hasPurchased: false,
@@ -254,6 +258,7 @@ export default {
     async renderDigitProductData(id) {
       await axios.get(`http://127.0.0.1:8000/api/productos/digit/${id}`)
       .then(response => {
+        console.log(response.data);
         this.productDigit = response.data
         console.log(this.productDigit)
       })
@@ -324,7 +329,7 @@ export default {
       this.showCheckerModal = true;
     },
     closeModal(){
-      this.showDigitModal = false
+      this.showModal = false
       this.productFisic = null
       this.method = null
     },

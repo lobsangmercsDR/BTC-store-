@@ -120,6 +120,7 @@ class ProductDigit(models.Model):
     needChecker = models.BooleanField(default=True)
     orgQuantity= models.IntegerField(default=1)
     actQuantity = models.IntegerField(default=1)
+    comisionCheck = models.DecimalField(max_digits=10, decimal_places=2)
     store = models.ForeignKey(Stores, on_delete=models.CASCADE)
 
     @property
@@ -135,6 +136,7 @@ class CheckerSolic(models.Model):
         )
 
     product = models.ForeignKey(ProductDigit, on_delete=models.CASCADE)
+    dateCreated= models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.CharField(max_length=50, choices=OPTIONS)
 

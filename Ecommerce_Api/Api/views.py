@@ -95,7 +95,7 @@ class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):
         work_route=  r'C:\Users\TI\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
         local_route= r'C:\Users\alan8\OneDrive\Documentos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
-        complete_path = os.path.join(local_route, image_name)
+        complete_path = os.path.join(work_route, image_name)
         
         if os.path.exists(complete_path):
             return FileResponse(open(complete_path,'rb'),content_type='image/jpeg')
@@ -343,7 +343,19 @@ class SolicCheckerView(viewsets.ModelViewSet):
     authentication_classes = [authentication.TokenAuthentication]
 
     def get_solic_checker(self, request):
-        objects = CheckerSolic.objects.all()
+        pending = request.GET.get('pending', None)
+        cancel = request.GET.get('canceled',None)
+        approved = request.GET.get('approved',None)
+
+        if pending:
+            objects = CheckerSolic.objects.filter(status = 'pending')
+        elif cancel:
+            objects = CheckerSolic.objects.filter(status = 'canceled')
+        elif approved:
+            objects = CheckerSolic.objects.filter(status = 'active')
+        else: 
+            objects = CheckerSolic.objects.all()
+
         serializer = SolicCheckerSerializer(objects, many=True)
         return JsonResponse(serializer.data,safe=False)
     

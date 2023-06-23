@@ -28,7 +28,7 @@ class ProductDigitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductDigit
-        fields = ['id', 'name', 'price', 'description','additional_details','needChecker','orgQuantity','actQuantity', 'dateCreated','store_id']
+        fields = ['id', 'name', 'price', 'description','comisionCheck','additional_details','needChecker','orgQuantity','actQuantity', 'dateCreated','store_id']
 
 
     def to_representation(self, instance):
@@ -432,10 +432,12 @@ class TransactProductNestedSerializer(serializers.ModelSerializer):
 
 
 class SolicCheckerSerializer(serializers.ModelSerializer): 
+    dateCreated = serializers.DateTimeField(format="%d/%m/%Y %I:%M:%S %p")
+
     product = ProductDigitSerializer()
     class Meta: 
         model = CheckerSolic
-        fields = ['id','product','status']
+        fields = ['id','product','dateCreated','status']
 
     def to_representation(self, instance):
         print(instance)
