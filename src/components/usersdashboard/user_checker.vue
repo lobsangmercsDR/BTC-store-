@@ -15,16 +15,16 @@
                 <tr>
                   <th class="py-2">ID del producto</th>
                   <th class="py-2">Nombre del producto</th>
-                  <th class="py-2">Estado del Checker</th>
+                  <th class="py-2">Fecha de decision</th>
                   <th class="py-2">Comision</th>
                   <th class="py-2">Opciones</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="order in activeOrders" :key="order.checkerId">
-                  <td class="py-2">{{ order.productId }}</td>
-                  <td class="py-2">{{ order.productName }}</td>
-                  <td class="py-2">{{ order.checkerStatus }}</td>
+                  <td class="py-2">{{ order.product.id }}</td>
+                  <td class="py-2">{{ order.product.name   }}</td>
+                  <td class="py-2">{{ order.dateCreated }}</td>
                   <td class="py-2">{{ order.btcValue }}</td>
                   <td><button @click.stop="openDetailsModal(order)" class="px-2 py-1 bg-orange-500 text-white rounded ml-2" style="margin:0px">Ver detalles</button></td>
 
@@ -62,7 +62,7 @@
                   <td class="py-2">{{ order.product.name }}</td>
                   <td class="py-2">{{ order.dateCreated }}</td>
                   <td class="py-2">{{ order.product.comisionCheck }}</td>
-                  <td><button @click="openDetailsModal(order.product.id, 'digits')" class="px-2 py-1 bg-orange-500 text-white rounded ml-2" style="margin:0px">Ver detalles</button></td>
+                  <td><button @click="openDetailsModal(order.product.id, 'checker')" class="px-2 py-1 bg-orange-500 text-white rounded ml-2" style="margin:0px">Ver detalles</button></td>
 
                 </tr>
               </tbody>
@@ -121,6 +121,7 @@ import SingleDigitalProduct from '../SingleDigitalProduct.vue';
 
     created() {
       this.getSolicPendingOrders()
+      this.getSolicActiveOrders()
     },
 
 
@@ -150,7 +151,7 @@ import SingleDigitalProduct from '../SingleDigitalProduct.vue';
       openDetailsModal(id, type) {
             console.log(id)
             console.log(type);
-            if(type == "digits") {
+            if(type == "checker") {
                 this.modalData = {showDigitModal: true,typeProd: type, objID: id }
             }
         },
@@ -160,6 +161,15 @@ import SingleDigitalProduct from '../SingleDigitalProduct.vue';
        .then(response => {
         this.pendingOrders = response.data
         console.log(this.pendingOrders)
+      })
+       .catch(error => {console.log(error.response.data)})
+      },
+
+      async getSolicActiveOrders() {
+       await axios.get(`http://127.0.0.1:8000/api/solicChecker?approved=true`)
+       .then(response => {
+        this.activeOrders = response.data
+        console.log(this.activeOrders)
       })
        .catch(error => {console.log(error.response.data)})
       },

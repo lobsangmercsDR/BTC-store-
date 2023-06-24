@@ -1,7 +1,7 @@
 <template>
 
 
-  <div class="modal modal-transition" v-show="showModal">
+  <div class="modal modal-transition" v-show="showModal" >
     <div class="bg-white card rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto">
       <button @click="closeModal" class="close-button">
           <svg class="w-6 h-6 fill-current text-gray-500 hover:text-gray-700" xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +50,7 @@
           </div>
 
             <!-- Botón Need checker -->
-            <div class="flex items-center mb-2">
+            <div class="flex items-center mb-2" v-if="!checkerView">
               <button
                 v-if="productDigit.needChecker"
                 @click="openCheckerModal"
@@ -67,7 +67,21 @@
               </button>
             </div>
 
-            <div class="flex mt-4 justify-end">
+            <div class="flex items-center mb-2" v-if="checkerView">
+              <button
+                class="bg-green-500 text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 mr-2"
+              >
+                Aprobar
+              </button>
+              <button
+                @click="openCheckerModal"
+                class="bg-red-500 hover:bg-green-600 text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 mr-2"
+              >
+                Retirar
+              </button>
+            </div>
+
+            <div class="flex mt-4 justify-end" v-if="!checkerView">
               <button
                 @click="buyNow"
                 class="bg-[#f76108] hover:bg-[#fa7328] text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#f76108] mr-2"
@@ -174,7 +188,7 @@ export default {
       console.log(newValue)
       this.showModal = true
       console.log(newValue, this.showDigitModal)
-      this.renderDigitProductData(newValue.objID)
+      this.renderDigitProductData(newValue.objID, newValue.typeProd)
     }
   },
 
@@ -185,7 +199,7 @@ export default {
   data() {
     return {
       showModal:false,
-      product: null,
+      checkerView: false,
       productDigit: null,
       hasPurchased: false,
       quantity: 1,
@@ -255,12 +269,14 @@ export default {
         this.showDeclinedModal = true;
       }
     },
-    async renderDigitProductData(id) {
+    async renderDigitProductData(id,type) {
       await axios.get(`http://127.0.0.1:8000/api/productos/digit/${id}`)
       .then(response => {
-        console.log(response.data);
-        this.productDigit = response.data
-        console.log(this.productDigit)
+        console.log(type);
+        if( type == 'checker') { 
+          this.checkerView = true
+        }
+          this.productDigit = response.data
       })
       .catch(error => {
         console.log(error.response.data)
