@@ -28,7 +28,8 @@ class ProductDigitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductDigit
-        fields = ['id', 'name', 'price', 'description','comisionCheck','additional_details','needChecker','orgQuantity','actQuantity', 'dateCreated','store_id']
+        fields = ['id', 'name', 'price','no_solicitud', 'description','comisionCheck','additional_details','needChecker','orgQuantity','actQuantity', 'dateCreated','store_id']
+
 
 
     def to_representation(self, instance):

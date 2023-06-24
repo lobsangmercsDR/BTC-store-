@@ -233,6 +233,27 @@ class ProductsDigitView(viewsets.ModelViewSet):
         serializer = ProductDigitSerializer(paginated_data, many=True)
         return JsonResponse({'available_pages':paginator.num_pages-int(page_number),'page':int(page_number),'data':serializer.data}, status=200, safe=False)
 
+    def put_Product_state(self, request,pkS,pk):
+        try:
+            product = ProductDigit.objects.get(id=pk)
+            solic = CheckerSolic.objects.get(id=pkS)
+        except Exception as e:
+            print(e) 
+            return JsonResponse({'message':'El producto no existe'})
+        val = request.data.get('status',None)
+        print(val, 244)
+        if val != None:
+            if request.data['status'] == True:
+                product.needChecker = False
+                solic.status = 'active'
+            elif request.data['status'] == False:
+                product.needChecker = True
+                solic.status = 'canceled'
+        else: 
+            return JsonResponse({'response':'invalido'}, status=400)
+        solic.save()
+        product.save()
+        return JsonResponse({'succes':True})
 
 class CategoryView(viewsets.ModelViewSet):
     queryset = Category.objects.all()
@@ -364,8 +385,12 @@ class SolicCheckerView(viewsets.ModelViewSet):
             product = ProductDigit.objects.get(id=pk)
             user= User.objects.get(id=request.user.id)
         except:
-
             return JsonResponse({'error':'El producto no existe'},status=404)
+        if CheckerSolic.objects.filter(product_id=product.id).exists():
+            print("122313")
+            product.no_solicitud += 1
+            product.save() 
+            return JsonResponse({'no_solicitudes':product.no_solicitud})
         newObj = CheckerSolic(product=product, status='pending', user=user)
         newObj.save()
         serializer = SolicCheckerSerializer(newObj)

@@ -4,6 +4,7 @@ import dashboard from '../pages/master/dashboard'
 
 import home from '../pages/Dashboard/home'
 import profile from '../pages/Dashboard/profile'
+import user_checker from '../components/usersdashboard/user_checker.vue'
 import products_fis from '../pages/Dashboard/products_fis.vue'
 import cases from '../pages/Dashboard/cases.vue'
 import inventario from '../pages/Dashboard/inventario.vue'
@@ -26,6 +27,7 @@ import deposit_coins from '../pages/Dashboard/wallet_cripto/deposit_coins.vue'
 
   const routes = [
     {
+      
       name: 'Dashboard',
       path: '/',
       component: dashboard,
@@ -104,6 +106,7 @@ import deposit_coins from '../pages/Dashboard/wallet_cripto/deposit_coins.vue'
       ]
       
     },
+
     {
       path: '/login',
       name: 'login',
@@ -133,7 +136,10 @@ import deposit_coins from '../pages/Dashboard/wallet_cripto/deposit_coins.vue'
     {
       name: 'profile',
       path: '/profile',
-      component:profile
+      component:profile,
+      children: [
+        { path: 'checker',name:'asasd', component: user_checker },
+      ]
     },
 
    

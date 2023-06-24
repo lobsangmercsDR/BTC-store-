@@ -25,8 +25,8 @@
                   <td class="py-2">{{ order.product.id }}</td>
                   <td class="py-2">{{ order.product.name   }}</td>
                   <td class="py-2">{{ order.dateCreated }}</td>
-                  <td class="py-2">{{ order.btcValue }}</td>
-                  <td><button @click.stop="openDetailsModal(order)" class="px-2 py-1 bg-orange-500 text-white rounded ml-2" style="margin:0px">Ver detalles</button></td>
+                  <td class="py-2">{{ order.product.comisionCheck }}</td>
+                  <td><button @click.stop="openDetailsModal(order.product.id, 'checker',order.status,order.id)" class="px-2 py-1 bg-orange-500 text-white rounded ml-2" style="margin:0px">Ver detalles</button></td>
 
                 </tr>
               </tbody>
@@ -52,6 +52,7 @@
                   <th class="py-2">ID del producto</th>
                   <th class="py-2">Nombre del producto</th>
                   <th class="py-2">Fecha de solicitud</th>
+                  <th class="py-2">No. Solicitudes</th>
                   <th class="py-2">Comision</th>
                   <th class="py-2">Opciones</th>
                 </tr>
@@ -61,8 +62,9 @@
                   <td class="py-2">{{ order.product.id }}</td>
                   <td class="py-2">{{ order.product.name }}</td>
                   <td class="py-2">{{ order.dateCreated }}</td>
+                  <td class="py-2">{{ order.product.no_solicitud }}</td>
                   <td class="py-2">{{ order.product.comisionCheck }}</td>
-                  <td><button @click="openDetailsModal(order.product.id, 'checker')" class="px-2 py-1 bg-orange-500 text-white rounded ml-2" style="margin:0px">Ver detalles</button></td>
+                  <td><button @click="openDetailsModal(order.product.id, 'checker',order.status,order.id)" class="px-2 py-1 bg-orange-500 text-white rounded ml-2" style="margin:0px">Ver detalles</button></td>
 
                 </tr>
               </tbody>
@@ -71,7 +73,7 @@
         </div>
       </div>
       </section>
-        <SingleDigitalProduct :modalInfo="modalData"></SingleDigitalProduct>
+        <SingleDigitalProduct :modalInfo="modalData" @updated="handleUpdateChecking"></SingleDigitalProduct>
       <section class="column">
       <h2 class="text-2xl font-bold mt-8 mb-4 fontHeader  ">Expiradas</h2>
       <div class="accordion">
@@ -85,21 +87,21 @@
             <table class="table w-full">
               <thead>
                 <tr>
-                  <th class="py-2">Nombre del producto</th>
                   <th class="py-2">ID del producto</th>
-                  <th class="py-2">Estado del Checker</th>
-                  <th class="py-2">Valor del BTC del Checker</th>
-                  <th class="py-2">Equivalente en Dólares</th>
+                  <th class="py-2">Nombre del producto</th>
+                  <th class="py-2">Fecha de rechazo</th>
+                  <th class="py-2">Precio</th>
+                  <th class="py-2">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="order in expiredOrders" :key="order.checkerId">
-                  <td class="py-2">{{ order.checkerId }}</td>
-                  <td class="py-2">{{ order.productName }}</td>
-                  <td class="py-2">{{ order.productId }}</td>
-                  <td class="py-2">{{ order.checkerStatus }}</td>
-                  <td class="py-2">{{ order }}</td>
-                  <td class="py-2">{{ order.dollarEquivalent }}</td>
+                  <td class="py-2">{{ order.product.id }}</td>
+                  <td class="py-2">{{ order.product.name }}</td>
+                  <td class="py-2">{{ order.dateCreated }}</td>
+                  <td class="py-2">{{ order.product.price }}</td>
+                  
+                  <td><button @click="openDetailsModal(order.product.id, 'checker',order.status,order.id)" class="px-2 py-1 bg-orange-500 text-white rounded ml-2" style="margin:0px">Ver detalles</button></td>
                 </tr>
               </tbody>
             </table>
@@ -121,6 +123,7 @@ import SingleDigitalProduct from '../SingleDigitalProduct.vue';
 
     created() {
       this.getSolicPendingOrders()
+      this.getSolicRefusedOrders()
       this.getSolicActiveOrders()
     },
 
@@ -131,32 +134,27 @@ import SingleDigitalProduct from '../SingleDigitalProduct.vue';
         activeOrders: [],
         pendingOrders: [],
         modalData: null,
-        expiredOrders: [
-          // Órdenes expiradas
-          {
-            checkerId: 3,
-            productName: "Producto 3",
-            productId: 789,
-            checkerStatus: "Expirado",
-            btcValue: 1.8,
-            dollarEquivalent: 18000
-          },
-          // ...
-        ],
+        expiredOrders: [],
         activeAccordion: "",
         showModal: false
       };
     },
     methods: {
-      openDetailsModal(id, type) {
+      handleUpdateChecking() {
+        this.$emit('updated')
+      },
+
+      openDetailsModal(id, type, status, idOrd) {
             console.log(id)
             console.log(type);
+            console.log(status);
             if(type == "checker") {
-                this.modalData = {showDigitModal: true,typeProd: type, objID: id }
+                this.modalData = {showDigitModal: true,typeProd: type, objID: id, status:status,order:idOrd }
             }
         },
 
       async getSolicPendingOrders() {
+        console.log(2222)
        await axios.get(`http://127.0.0.1:8000/api/solicChecker?pending=true`)
        .then(response => {
         this.pendingOrders = response.data
@@ -170,6 +168,15 @@ import SingleDigitalProduct from '../SingleDigitalProduct.vue';
        .then(response => {
         this.activeOrders = response.data
         console.log(this.activeOrders)
+      })
+       .catch(error => {console.log(error.response.data)})
+      },
+
+      async getSolicRefusedOrders() {
+       await axios.get(`http://127.0.0.1:8000/api/solicChecker?canceled=true`)
+       .then(response => {
+        this.expiredOrders = response.data
+        console.log(this.expiredOrders)
       })
        .catch(error => {console.log(error.response.data)})
       },

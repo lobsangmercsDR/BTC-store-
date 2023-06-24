@@ -120,6 +120,7 @@ class ProductDigit(models.Model):
     needChecker = models.BooleanField(default=True)
     orgQuantity= models.IntegerField(default=1)
     actQuantity = models.IntegerField(default=1)
+    no_solicitud = models.IntegerField(default=1)
     comisionCheck = models.DecimalField(max_digits=10, decimal_places=2)
     store = models.ForeignKey(Stores, on_delete=models.CASCADE)
 

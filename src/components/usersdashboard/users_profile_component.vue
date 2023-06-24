@@ -63,7 +63,7 @@
             <buy_categories/>
           </template>
           <template v-if="selectedOption === 'checker_panel'">
-            <user_checker/>
+            <user_checker @updated ="returnRoute('checker_panel')"/>
           </template>
           <template v-if="selectedOption === 'p_product_add'">
             <AddProduct/>
@@ -90,11 +90,21 @@ import buy_categories from './buy_categories.vue';
 import user_checker from './user_checker.vue';
   
   export default {
+    created() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const option = urlParams.get('option');
+      console.log(option)
+      if (option === 'checker_panel') {
+        this.selectedOption = 'checker_panel';
+        console.log(this.selectedOption);
+      }
+    },
+
     data() {
       return {
         profileOpen: false,
         asideOpen: true,
-        selectedOption: 'dashboard',
+        selectedOption: 'home',
       };
     },
     components: {
@@ -107,7 +117,19 @@ import user_checker from './user_checker.vue';
         buy_categories,
         user_checker,
     },
+
+  methods: {
+    returnRoute(route) {
+      console.log("llego");
+      if (route === 'checker_panel') {
+        const newUrl = window.location.origin + window.location.pathname + '?option=checker_panel';
+        window.location.href = newUrl;
+      }
+    }
+  }
   };
+
+
   </script>
   
   <style>

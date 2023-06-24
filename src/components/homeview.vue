@@ -326,7 +326,7 @@ export default {
             if(type == "digits") {
                 this.modalData = {showDigitModal: true,typeProd: type, objID: id }
             } else {
-                this.modalData = {showModal: true,typeProd: type, objID: id }
+                this.modalData = {showFisicModal: true,typeProd: type, objID: id }
             }
             
         },

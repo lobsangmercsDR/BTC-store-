@@ -67,14 +67,17 @@
               </button>
             </div>
 
-            <div class="flex items-center mb-2" v-if="checkerView">
+            <div class="flex items-center mb-2" v-if="checkerView ">
               <button
+                v-if = "status != 'active'" 
+                @click="makeActionInChecking(this.productDigit.id,'approve',this.orderS)"
                 class="bg-green-500 text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 mr-2"
               >
                 Aprobar
               </button>
               <button
-                @click="openCheckerModal"
+              @click="makeActionInChecking(this.productDigit.id,'refuse',this.orderS)"
+                v-if="status != 'canceled'"
                 class="bg-red-500 hover:bg-green-600 text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 mr-2"
               >
                 Retirar
@@ -186,8 +189,10 @@ export default {
     modalInfo(newValue) {
 
       console.log(newValue)
-      this.showModal = true
-      console.log(newValue, this.showDigitModal)
+      this.showModal = newValue.showDigitModal
+      this.status = newValue.status
+      this.orderS = newValue.order
+      console.log(this.status)
       this.renderDigitProductData(newValue.objID, newValue.typeProd)
     }
   },
@@ -196,8 +201,12 @@ export default {
     this.takeUserInfo();
   },
 
+  
+
   data() {
     return {
+      orderS:0,
+      status:"",
       showModal:false,
       checkerView: false,
       productDigit: null,
@@ -223,35 +232,45 @@ export default {
 
   mounted() {
     this.product = {
-      name: 'Pack 100000 cuentas de GMAIL',
-      description: 'Compra lass cuentas',
-      price: 0.011,
+      name: '',
+      description: '',
+      price: 0,
       likes: 0,
       dislikes: 0,
-      additionalDetails:
-        'Super Blends were carefully crafted to mimic the live resin experience. We drew our inspiration from the cannabis plant. Creating unique cannabinoid formulas with terpene profiles that mirror today’s most popular strains.',
-      release_data: "Aqui fecha",
+      additionalDetails:'',
+      release_data: "",
       quantity: 0,
       category: [],
       subcategory: [],
-      seller_username: "Djangolapara",
-      checkerPrice: 10, // Precio adicional del checker
+      seller_username: "",
+      checkerPrice: 0, // Precio adicional del checker
     };
     this.productPriceBTC = this.product.price * this.btcPrice;
   },
   methods: {
-    incrementLikes() {
-      this.product.likes++;
+    async makeActionInChecking(id, type,ordID) {
+      console.log(ordID);
+      if(type=='approve') {
+        await axios.put(`http://127.0.0.1:8000/api/productos/digit/${id}/${ordID}`,{status:true})
+        .then(response => {
+          console.log(response.data)
+          this.$emit('updated')
+        })
+        .catch(error => {
+          console.log(error)
+        })
+      }else if (type == 'refuse'){
+        await axios.put(`http://127.0.0.1:8000/api/productos/digit/${id}/${ordID}`,{status:false})
+        .then(response => {
+          console.log(response.data)
+          this.$emit('updated')
+        })
+        .catch(error => {
+          console.log(error)
+        })
+      }
     },
-    incrementDislikes() {
-      this.product.dislikes++;
-    },
-    convertToDollars(price) {
-      return price * this.btcPrice;
-    },
-    addToCart() {
-      console.log(`Agregando ${this.quantity} unidades del producto al carrito`);
-    },
+
     buyNow() {
       this.showPaymentModal = true;
     },
