@@ -286,36 +286,62 @@ class RoleRequestsSerializer(serializers.ModelSerializer):
         return roleRequest
 
 class SubCategorySerializer(serializers.ModelSerializer):
+    purchased = serializers.SerializerMethodField()
+
+    
     class Meta:
         model = SubCategory
-        fields = ['id', 'nameSubCategory', 'minPriceBTC','maxPriceBTC']
+        fields = ['id', 'nameSubCategory','priceSubCategory', 'purchased','minPriceBTC','maxPriceBTC']
+
+    def get_purchased(self, obj):
+        idUser = self.context['request'].user.id
+        print(idUser)
+        hasPurchased = TransactCategories.objects.filter(user_id=idUser, subCategory=obj.id).exists()
+        print(hasPurchased)
+        if hasPurchased:
+            return True
+        else:
+            return False
 
 class TransactCategorySerializer(serializers.ModelSerializer):
-    dateTransact = serializers.DateTimeField(format=dateFormat)
-    subCategory = SubCategorySerializer()
-    user = UserSerializer()
+    dateTransact = serializers.DateTimeField(format=dateFormat, required=False)
+    user = UserSerializer(read_only=True)
+    subcategory_id = serializers.IntegerField(write_only=True)
+    subCategory = SubCategorySerializer(read_only=True)
     
     class Meta:
         model = TransactCategories
-        fields = ['id', 'subCategory','user','dateTransact']
+        fields = ['id', 'subCategory','subcategory_id','user','dateTransact']
+
+
+
+    def validate_subcategory_id(self, value):
+        subcategory = SubCategory.objects.filter(id=value).exists()
+        if subcategory:
+            return value
+        else:
+            raise serializers.ValidationError("No existe")
 
     def create(self, validated_data):
         userBuyer = self.context['request'].user  # Obtener el usuario actual
-        subcategory = validated_data.get('subCategory',None)
-        subcategoryObj = SubCategory.objects.get(id=subcategory) # Obtener el otro usuario relacionado con la categoría
-        userCreator = subcategoryObj.user
+        subcategory = validated_data.get('subcategory_id',None)
+        print(userBuyer)
+        print(subcategory)
+        subcategoryObj = SubCategory.objects.get(id=subcategory) 
+        userCreator = subcategoryObj.userCreator
 
         if userBuyer.userBalance >= subcategoryObj.priceSubCategory:
                 userBuyer.userBalance -= subcategoryObj.priceSubCategory
                 userCreator.userBalance += subcategoryObj.priceSubCategory
                 userBuyer.save()
                 userCreator.save()
-
+                print(dir(TransactCategories()))  
                 # Crear la transacción y guardarla en la base de datos
-                transact = TransactCategories.objects.create(
+                transact = TransactCategories(
                     user=userBuyer,
-                    subcategory=subcategoryObj,
+                    subCategory=subcategoryObj,
                 )
+                transact.save()
 
                 return transact
         else:
@@ -331,7 +357,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     def get_subCategories(self, obj):
         subCategories = SubCategory.objects.filter(category=obj.id)
-        return SubCategorySerializer(subCategories, many=True).data
+        return SubCategorySerializer(subCategories, many=True,context=self.context).data
 
 class CategoryWithoutProductsSerializer(serializers.ModelSerializer):
     product_count = serializers.SerializerMethodField()

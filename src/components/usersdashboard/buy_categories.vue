@@ -17,9 +17,9 @@
           >
             <h3 class="subcategory-name">{{ subcategory.nameSubCategory }}</h3>
             <div class="price-range">
-              Precio mínimo de producto: {{ subcategory.minPriceBTC }} BTC
+              Precio mínimo de producto: {{ subcategory.minPriceBTC }} 
               <br>
-              Precio máximo de producto: {{ subcategory.maxPriceBTC }} BTC
+              Precio máximo de producto: {{ subcategory.maxPriceBTC }} 
             </div>
             <button v-if="!subcategory.purchased" @click="openPurchaseModal(subcategory)" class="buy-button">
               Comprar
@@ -41,7 +41,7 @@
             <p><strong>Saldo disponible:</strong> {{ balance }}</p>
           </div>
           <div class="modal-actions">
-            <button @click="processPurchase" class="buy-button">
+            <button @click="processPurchase(selectedSubcategory.id)" class="buy-button">
               Comprar
             </button>
             <button @click="closePurchaseModal" class="cancel-button">
@@ -101,6 +101,7 @@
   
     created() {
       this.getCategories();
+      this.getUserInfo();
     },
   
     methods: {
@@ -114,10 +115,8 @@
           .then((response) => {
             this.categories = response.data.map((category) => ({
               ...category,
-              showSubcategories: false,
               subCategories: category.subCategories.map((subcategory) => ({
                 ...subcategory,
-                purchased: false,
               })),
             }));
           })
@@ -125,21 +124,57 @@
             console.log(error);
           });
       },
+
+      async getUserInfo() {
+        await axios.get(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`,
+        {
+          headers:{
+            Authorization:`Token ${Cookies.get('token')}`
+          }
+        })
+        .then(response => {
+          console.log(response.data)
+          this.username = response.data.name
+          this.balance = response.data.userBalance
+        })
+        .catch(error => {
+          console.log(error.response.data)
+        })
+      },
+
+      async processTransact(subCaId) {
+        await axios.post(`http://127.0.0.1:8000/api/transactscategories`,{subcategory_id:subCaId},
+        {
+          headers: {
+            Authorization:`Token ${Cookies.get('token')}`
+          }
+        })
+        .then(response => {
+            this.getCategories()
+        })
+        .catch(error=> {
+          console.log(error.response.data)
+        })
+      },
+
+
       openPurchaseModal(subcategory) {
         this.selectedSubcategory = subcategory;
         this.showPurchaseModal = true;
       },
-      processPurchase() {
+      processPurchase(subCaId) {
         this.showPurchaseModal = false;
         this.showProcessingModal = true;
   
         // Simulación de procesamiento de la transacción
         setTimeout(() => {
-          if (this.balance >= this.selectedSubcategory.minPriceBTC) {
+          console.log(parseInt(this.selectedSubcategory.minPriceBTC))
+          if (this.balance >= parseInt(this.selectedSubcategory.minPriceBTC)) {
             // Transacción exitosa
             this.selectedSubcategory.purchased = true;
             this.showProcessingModal = false;
             this.showSuccessModal = true;
+            this.processTransact(subCaId)
           } else {
             // Transacción fallida por falta de fondos
             this.showProcessingModal = false;

@@ -64,7 +64,7 @@ class SubCategory(models.Model):
     minPriceBTC = models.DecimalField(max_digits=10, decimal_places=2)
     maxPriceBTC = models.DecimalField(max_digits=10, decimal_places=2)
     priceSubCategory = models.DecimalField(max_digits=10, decimal_places=2)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    userCreator = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 

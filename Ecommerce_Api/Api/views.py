@@ -106,11 +106,21 @@ class Img_view(viewsets.ModelViewSet):
 
 class TransactSubcategoryView(viewsets.ModelViewSet):
     queryset = TransactCategories.objects.all()
+    serializer_class = TransactCategorySerializer
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [IsAuthenticated, IsGroupAccepted]
     
     def get(self, request):
-        objects= self.queryset
-        serializer = TransactCategorySerializer(objects, many=True)
+        transactse= TransactCategories.objects.all()
+        serializer = TransactCategorySerializer(transactse, many=True)
         return JsonResponse(serializer.data, status=200, safe=False)
+
+    def post(self, request):
+       serializer = TransactCategorySerializer(data=request.data, context={'request':request})
+       serializer.is_valid(raise_exception=True)
+       self.perform_create(serializer=serializer)
+       return JsonResponse(serializer.data, status=200)
+
 
 class ProductView(viewsets.ModelViewSet):
     queryset = ProductFisic.objects.all()
@@ -274,7 +284,7 @@ class CategoryView(viewsets.ModelViewSet):
     def nested_list_categories(self, request):
         categories = Category.objects.all()
         print(categories)
-        serializer = CategorySerializer(categories, many=True)
+        serializer = CategorySerializer(categories, many=True,context={'request':request})
         return JsonResponse(serializer.data, status=200, safe=False)   
 
 

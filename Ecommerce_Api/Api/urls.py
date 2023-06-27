@@ -2,7 +2,7 @@ from django.urls import path
 from .views import  ProductView, ProductsDigitView,TransactSubcategoryView, CategoryView,TransactsView,UserView, SolicCheckerView, AuthenticationView, GroupsView, LogoutView, InvitationCodeView, RoleRequestsView,Img_view
 
 urlpatterns = [
-    path('transactscategories',TransactSubcategoryView.as_view({'get':'get'}),name="CheckerSOLIC"),
+    path('transactscategories',TransactSubcategoryView.as_view({'get':'get', 'post':'post'}),name="CheckerSOLIC"),
     path('solicChecker',SolicCheckerView.as_view({'get':'get_solic_checker'},name="CheckerSOLIC")),
     path('solicChecker/<int:pk>',SolicCheckerView.as_view({'post':'post_solic_checker'},name="CheckerSOLIC")),
     path('images/<str:image_name>', Img_view.as_view({'get':'get_file_img'}), name="IMG_GET"),
