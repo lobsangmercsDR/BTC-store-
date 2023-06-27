@@ -20,8 +20,9 @@ import os
 from .utils import services as uti
 from django.core import serializers
 from django.http import HttpResponse
-from .models import ProductFisic,MethodProducts,CheckerSolic,ProductDigit,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
+from .models import ProductFisic,MethodProducts,CheckerSolic,TransactCategories,ProductDigit,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
 from .serializers import (TransactsSerializer,
+                          TransactCategorySerializer,
                           SolicCheckerSerializer,
                           CategorySerializer,
                           ProductDigitSerializer,
@@ -95,13 +96,21 @@ class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):
         work_route=  r'C:\Users\TI\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
         local_route= r'C:\Users\alan8\OneDrive\Documentos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
-        complete_path = os.path.join(work_route, image_name)
+        complete_path = os.path.join(local_route, image_name)
         
         if os.path.exists(complete_path):
             return FileResponse(open(complete_path,'rb'),content_type='image/jpeg')
         else:
             return JsonResponse({'error':'No se encuentra la imagen'})
 
+
+class TransactSubcategoryView(viewsets.ModelViewSet):
+    queryset = TransactCategories.objects.all()
+    
+    def get(self, request):
+        objects= self.queryset
+        serializer = TransactCategorySerializer(objects, many=True)
+        return JsonResponse(serializer.data, status=200, safe=False)
 
 class ProductView(viewsets.ModelViewSet):
     queryset = ProductFisic.objects.all()

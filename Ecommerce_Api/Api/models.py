@@ -63,6 +63,8 @@ class SubCategory(models.Model):
     nameSubCategory = models.CharField(max_length=50)
     minPriceBTC = models.DecimalField(max_digits=10, decimal_places=2)
     maxPriceBTC = models.DecimalField(max_digits=10, decimal_places=2)
+    priceSubCategory = models.DecimalField(max_digits=10, decimal_places=2)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 
@@ -150,6 +152,12 @@ class Transacts(models.Model):
     methodProduct = models.ForeignKey(MethodProducts, on_delete=models.SET_NULL, default=None, null=True)
     quantity_asked = models.IntegerField(default=1)
     buyers = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+
+
+class TransactCategories(models.Model):
+    dateTransact = models.DateTimeField(auto_now_add=True)
+    subCategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class InvitationCodes(models.Model):

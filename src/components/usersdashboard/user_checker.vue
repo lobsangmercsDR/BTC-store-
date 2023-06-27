@@ -1,12 +1,12 @@
 <template>
     <div class="order-review">
       <section class="column">
-      <h2 class="text-2xl font-bold mt-8 mb-4 fontHeader">Vigentes</h2>
+      <h2 class="text-2xl font-bold mt-8 mb-4 fontHeader">Aprobadas</h2>
       <div class="accordion">
         <div class="accordion-item">
           <h3 class="accordion-header" @click="toggleAccordion('active')">
             <button class="accordion-button"  :class="{ 'active': activeAccordion === 'active' }">
-              Vigentes
+              Aprobadas
             </button>
           </h3>
           <div v-show="activeAccordion === 'active'"  class="accordion-collapse" :class="{'keyup':activeAccordion  === 'keyup'}">
@@ -15,7 +15,7 @@
                 <tr>
                   <th class="py-2">ID del producto</th>
                   <th class="py-2">Nombre del producto</th>
-                  <th class="py-2">Fecha de decision</th>
+                  <th class="py-2">Fecha de aprobación</th>
                   <th class="py-2">Comision</th>
                   <th class="py-2">Opciones</th>
                 </tr>
@@ -37,12 +37,12 @@
       </section>
       
       <section class="column">
-      <h2 class="text-2xl font-bold mt-8 mb-4 fontHeader">Pendientes de Aprobación</h2>
+      <h2 class="text-2xl font-bold mt-8 mb-4 fontHeader">Pendientes de Revisión</h2>
       <div class="accordion">
         <div class="accordion-item">
           <h3 class="accordion-header" @click="toggleAccordion('pending')">
             <button class="accordion-button" :class="{ 'active': activeAccordion === 'pending' }">
-              Pendientes de Aprobación
+              Pendientes de Revisión
             </button>
           </h3>
           <div v-show="activeAccordion === 'pending'" class="accordion-collapse">
@@ -75,12 +75,12 @@
       </section>
         <SingleDigitalProduct :modalInfo="modalData" @updated="handleUpdateChecking"></SingleDigitalProduct>
       <section class="column">
-      <h2 class="text-2xl font-bold mt-8 mb-4 fontHeader  ">Expiradas</h2>
+      <h2 class="text-2xl font-bold mt-8 mb-4 fontHeader  ">Rechazadas</h2>
       <div class="accordion">
         <div class="accordion-item">
           <h3 class="accordion-header" @click="toggleAccordion('expired')">
             <button class="accordion-button" :class="{ 'active': activeAccordion === 'expired' }">
-              Expiradas
+              Rechazadas
             </button>
           </h3>
           <div v-show="activeAccordion === 'expired'" class="accordion-collapse">

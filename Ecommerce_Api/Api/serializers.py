@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 
 from rest_framework import serializers,exceptions
-from .models import Category, ProductFisic, ProductDigit, CheckerSolic, Transacts,MethodProducts,User,InvitationCodes,RoleRequests, SubCategory, Stores
+from .models import Category, ProductFisic, ProductDigit, TransactCategories, CheckerSolic, Transacts,MethodProducts,User,InvitationCodes,RoleRequests, SubCategory, Stores
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
@@ -10,7 +10,7 @@ import random
 import requests as rq
 import string
 
-dateFormat = serializers.DateTimeField(format="%d/%m/%Y %I:%M:%S %p",required=False)
+dateFormat = "%d/%m/%Y %I:%M:%S %p"
 
 class StoreSerializer(serializers.ModelSerializer):
     product_count = serializers.SerializerMethodField()
@@ -70,6 +70,8 @@ class GroupsSerializer(serializers.Serializer):
         count = obj.user_set.count()
         return count
      
+
+
 
 class UserNestedSerializer(serializers.ModelSerializer):
 
@@ -287,6 +289,37 @@ class SubCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = SubCategory
         fields = ['id', 'nameSubCategory', 'minPriceBTC','maxPriceBTC']
+
+class TransactCategorySerializer(serializers.ModelSerializer):
+    dateTransact = serializers.DateTimeField(format=dateFormat)
+    subCategory = SubCategorySerializer()
+    user = UserSerializer()
+    
+    class Meta:
+        model = TransactCategories
+        fields = ['id', 'subCategory','user','dateTransact']
+
+    def create(self, validated_data):
+        userBuyer = self.context['request'].user  # Obtener el usuario actual
+        subcategory = validated_data.get('subCategory',None)
+        subcategoryObj = SubCategory.objects.get(id=subcategory) # Obtener el otro usuario relacionado con la categoría
+        userCreator = subcategoryObj.user
+
+        if userBuyer.userBalance >= subcategoryObj.priceSubCategory:
+                userBuyer.userBalance -= subcategoryObj.priceSubCategory
+                userCreator.userBalance += subcategoryObj.priceSubCategory
+                userBuyer.save()
+                userCreator.save()
+
+                # Crear la transacción y guardarla en la base de datos
+                transact = TransactCategories.objects.create(
+                    user=userBuyer,
+                    subcategory=subcategoryObj,
+                )
+
+                return transact
+        else:
+            raise serializers.ValidationError("Saldo insuficiente para realizar la transacción.")
 
 class CategorySerializer(serializers.ModelSerializer): 
     subCategories = serializers.SerializerMethodField()
