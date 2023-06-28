@@ -145,12 +145,21 @@ class CheckerSolic(models.Model):
 
 
 class Transacts(models.Model):
+    OPTIONS = (
+        ('Entregado','Entregado'),
+        ('Procesando','Procesando'),
+        ('Aceptado','Aceptado'),
+        ('Rechazado','Rechazado')
+        )
+
+
     dateTransact = models.DateTimeField(auto_now_add=True)
     sendDirection = models.CharField(max_length=50,default="", null=True)
     productFisic = models.ForeignKey(ProductFisic, on_delete=models.SET_NULL, default=None, null=True)
     productDigit = models.ForeignKey(ProductDigit, on_delete=models.SET_NULL, default=None, null=True)
     methodProduct = models.ForeignKey(MethodProducts, on_delete=models.SET_NULL, default=None, null=True)
     quantity_asked = models.IntegerField(default=1)
+    status = models.CharField(max_length=50, choices=OPTIONS, default='Procesando')
     buyers = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
 
 

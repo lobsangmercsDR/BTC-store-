@@ -510,11 +510,12 @@ class TransactsSerializer(serializers.ModelSerializer):
     sendDirection = serializers.CharField(required=False)
     productDigit = ProductDigitSerializer(read_only=True)
     buyers = UserNestedSerializer(read_only=True)
+    productFisic = ProductSerializer(read_only=True)
     dateTransact = serializers.DateTimeField(format="%m/%d/%Y %I:%M:%S %p", read_only=True)
     
     class Meta:
         model  = Transacts 
-        fields = ['id','dateTransact','quantity_asked','sendDirection','productDigit','buyers', 'productDigit_id']
+        fields = ['id','dateTransact','quantity_asked','status','sendDirection','productDigit','productFisic','buyers', 'productDigit_id']
 
     def create(self, validated_data):
         print(validated_data)

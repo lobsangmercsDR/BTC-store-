@@ -4,7 +4,7 @@
       <h2 class="text-lg font-semibold">Mis órdenes</h2>
     </div>
     <div class="p-4">
-      <div v-if="orders.length === 0" class="text-gray-600">
+      <div v-if="ordersPhisics.length === 0" class="text-gray-600">
         No hay órdenes disponibles.
       </div>
       <div v-for="(orderList, orderType) in ordersByType" :key="orderType">
@@ -25,11 +25,12 @@
           <tbody>
             <tr v-for="order in orderList" :key="order.id" class="cursor-pointer">
               <td class="border px-4 py-2">{{ order.id }}</td>
-              <td class="border px-4 py-2">{{ order.date }}</td>
+              <td class="border px-4 py-2">{{ order.dateTransact }}</td>
               <td class="border px-4 py-2">{{ order.status }}</td>
               <td class="border px-4 py-2">
-                <button @click.stop="openReportModal(order)" class="px-2 py-1 bg-red-500 text-white rounded">Reportar problema</button>
+                <button @click.stop="openReportModal(order)" class="px-2 py-1 bg-orange-500 text-white rounded">Reportar problema</button>
                 <button @click.stop="openDetailsModal(order)" class="px-2 py-1 bg-blue-500 text-white rounded ml-2">Ver detalles</button>
+                <button class="px-2 py-1 bg-red-500 text-white rounded ml-2">Retirar</button>
               </td>
             </tr>
           </tbody>
@@ -78,26 +79,17 @@
 </template>
 
 <script>
+
+import axios from "axios";
+import Cookies from "js-cookie";
+
 export default {
+
+
   data() {
     return {
-      orders: [
-        {
-          id: '1',
-          type: 'physical',
-          date: '2023-05-01',
-          status: 'Entregado',
-          details: 'Detalles de la orden física 1'
-        },
-        {
-          id: '2',
-          type: 'virtual',
-          date: '2023-05-02',
-          status: 'Descargado',
-          details: 'Detalles de la orden virtual 2'
-        },
-        // Más órdenes...
-      ],
+      ordersPhisics: [],
+      ordersDigits: [],
       orderSections: {
         physical: true,
         virtual: true,
@@ -107,15 +99,48 @@ export default {
       selectedOrder: null,
     };
   },
+
+  created() {
+    this.renderOrdersData()
+  },
+
   computed: {
     ordersByType() {
       return {
-        physical: this.orders.filter((order) => order.type === 'physical'),
-        virtual: this.orders.filter((order) => order.type === 'virtual'),
+        physical: this.ordersPhisics,
+        virtual: this.ordersDigits,
       };
-    },
+    }
   },
   methods: {
+    async renderOrdersData() {
+      await axios.get(`http://127.0.0.1:8000/api/transacts?fisics=true`, {
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      }) 
+        .then(response => {
+          this.ordersPhisics  = response.data.data
+          console.log(this.ordersPhisics)
+        })
+        .catch(error => {
+          console.log(error.response.data)
+        });
+
+      await axios.get(`http://127.0.0.1:8000/api/transacts?digits=true`, {
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      })
+      .then(response => {
+        this.ordersDigits = response.data.data
+        console.log(this.ordersDigits)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+      },
+
     toggleOrderSection(orderType) {
       this.orderSections[orderType] = !this.orderSections[orderType];
     },
@@ -138,8 +163,8 @@ export default {
       this.selectedOrder = null;
       this.reportModalOpen = false;
     },
-  },
-};
+  }
+}
 </script>
 
 

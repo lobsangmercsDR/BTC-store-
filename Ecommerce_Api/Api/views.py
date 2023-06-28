@@ -96,7 +96,7 @@ class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):
         work_route=  r'C:\Users\TI\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
         local_route= r'C:\Users\alan8\OneDrive\Documentos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
-        complete_path = os.path.join(local_route, image_name)
+        complete_path = os.path.join(work_route, image_name)
         
         if os.path.exists(complete_path):
             return FileResponse(open(complete_path,'rb'),content_type='image/jpeg')
@@ -528,9 +528,14 @@ class TransactsView(viewsets.ModelViewSet):
 
     def get_all_transacts(self, request):
         isDigital = request.GET.get('digitals',None)
-        print(isDigital)
+        isFisic = request.GET.get('fisics',None)
+        print(isFisic)
+
         if isDigital:
-            transacts = Transacts.objects.filter(productDigit__isnull=False).order_by('-dateTransact')
+            transacts = Transacts.objects.filter(productDigit__isnull=False, buyers=request.user.id).order_by('-dateTransact')
+        elif isFisic:
+            transacts = Transacts.objects.filter(productFisic__isnull=False,buyers=request.user.id).order_by('-dateTransact')
+            print(transacts)
         else: 
             transacts = Transacts.objects.all()
         # userPermision = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin])
