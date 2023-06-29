@@ -90,6 +90,7 @@
                   <th class="py-2">ID del producto</th>
                   <th class="py-2">Nombre del producto</th>
                   <th class="py-2">Fecha de rechazo</th>
+                  <th class="py-2">No. Solicitudes</th>
                   <th class="py-2">Precio</th>
                   <th class="py-2">Acciones</th>
                 </tr>
@@ -99,6 +100,7 @@
                   <td class="py-2">{{ order.product.id }}</td>
                   <td class="py-2">{{ order.product.name }}</td>
                   <td class="py-2">{{ order.dateCreated }}</td>
+                  <td class="py-2">{{ order.product.no_solicitud }}</td>
                   <td class="py-2">{{ order.product.price }}</td>
                   
                   <td><button @click="openDetailsModal(order.product.id, 'checker',order.status,order.id)" class="px-2 py-1 bg-orange-500 text-white rounded ml-2" style="margin:0px">Ver detalles</button></td>

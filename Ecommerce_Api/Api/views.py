@@ -20,9 +20,10 @@ import os
 from .utils import services as uti
 from django.core import serializers
 from django.http import HttpResponse
-from .models import ProductFisic,MethodProducts,CheckerSolic,TransactCategories,ProductDigit,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
+from .models import ProductFisic,MethodProducts,ReportTransacts,CheckerSolic,TransactCategories,ProductDigit,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
 from .serializers import (TransactsSerializer,
                           TransactCategorySerializer,
+                          ReportSerializer,
                           SolicCheckerSerializer,
                           CategorySerializer,
                           ProductDigitSerializer,
@@ -273,6 +274,14 @@ class ProductsDigitView(viewsets.ModelViewSet):
         solic.save()
         product.save()
         return JsonResponse({'succes':True})
+
+class ReportView(viewsets.ModelViewSet):
+    def post_report(self, request, pkP):
+        serializer = ReportSerializer(data=request.data, context={'request':request,'idTransact':pkP})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return JsonResponse(serializer.data, status=200)
+        
 
 class CategoryView(viewsets.ModelViewSet):
     queryset = Category.objects.all()
@@ -529,6 +538,7 @@ class TransactsView(viewsets.ModelViewSet):
     def get_all_transacts(self, request):
         isDigital = request.GET.get('digitals',None)
         isFisic = request.GET.get('fisics',None)
+        widthPage = request.GET.get('pw', 12)
         print(isFisic)
 
         if isDigital:
@@ -541,7 +551,7 @@ class TransactsView(viewsets.ModelViewSet):
         # userPermision = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin])
         # if not userPermision['IsAdmin']:
   
-        paginator = Paginator(transacts, per_page=12)
+        paginator = Paginator(transacts, per_page=widthPage)
         page_number= request.GET.get('page',1)
         if int(page_number) > paginator.num_pages:
             return JsonResponse({"error":"No hay mas paginas"}, status=404)

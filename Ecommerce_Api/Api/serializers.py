@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 
 from rest_framework import serializers,exceptions
-from .models import Category, ProductFisic, ProductDigit, TransactCategories, CheckerSolic, Transacts,MethodProducts,User,InvitationCodes,RoleRequests, SubCategory, Stores
+from .models import Category, ProductFisic, ProductDigit,ReportTransacts, TransactCategories, CheckerSolic, Transacts,MethodProducts,User,InvitationCodes,RoleRequests, SubCategory, Stores
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
@@ -504,6 +504,8 @@ class SolicCheckerSerializer(serializers.ModelSerializer):
         result = super().to_representation(instance)
         return result
 
+
+
 class TransactsSerializer(serializers.ModelSerializer):
     productDigit_id = serializers.IntegerField(write_only=True)
     quantity_asked = serializers.IntegerField(required=False)
@@ -565,6 +567,33 @@ class TransactsSerializer(serializers.ModelSerializer):
             transact = Transacts.objects.create(productDigit=products, buyers=buyers, **validated_data)
         return transact
     
+
+class ReportSerializer(serializers.ModelSerializer):
+    transact = TransactsSerializer(required=False)
+    rMessage = serializers.CharField(error_messages={'required':'Debe especificar las razones de su reporte'})
+    dateReport = serializers.DateTimeField(format=dateFormat, read_only=True)
+    noReporte =serializers.CharField(required=False)
+
+
+    class Meta:
+        model = ReportTransacts
+        fields= ['id','transact','rMessage','dateReport', 'status','noReporte']
+
+    def create(self, validated_data):
+        idTransact= self.context.get('idTransact',None)
+        request = self.context.get('request',None)
+        if idTransact:
+            transact= Transacts.objects.filter(id=idTransact).first()
+
+        if transact:
+            user = User.objects.get(id=request.user.id)
+            noR = uti.generate_invitation_code(5)
+            report = ReportTransacts.objects.create(user=user, transact=transact, noReporte=noR, **validated_data)
+            return report
+        else:
+            raise serializers.ValidationError({'error':'No existe'})
+
+
 
 class AuthenticationSerializer(serializers.Serializer):
     email= serializers.EmailField()

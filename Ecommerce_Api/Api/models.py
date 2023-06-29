@@ -130,6 +130,9 @@ class ProductDigit(models.Model):
     def solic_count(self):
         return self.checkersolic_set.count()
 
+
+
+
 class CheckerSolic(models.Model):
     OPTIONS = (
         ('active','Activo'),
@@ -168,6 +171,21 @@ class TransactCategories(models.Model):
     subCategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+
+class ReportTransacts(models.Model):
+    OPTIONS = (
+        ('En proceso','En proceso'),
+        ('Resuelto','Resuelto'),
+        ('Rechazado','Rechazado')
+        )
+
+    rMessage = models.CharField(max_length=400)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    transact =models.ForeignKey(Transacts, on_delete=models.CASCADE)
+    dateReport = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(choices=OPTIONS, default='En proceso', max_length=10)
+    noReporte = models.CharField(max_length=6)
+    
 
 class InvitationCodes(models.Model):
     invitationCodes = models.CharField(max_length=15,default=uti.generate_invitation_code())

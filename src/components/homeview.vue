@@ -181,7 +181,7 @@
 import axios from 'axios';
 import SingleProduct from '@/components/SingleProduct.vue'
 import SingleDigitalProduct from './SingleDigitalProduct.vue';
-
+import Cookies from 'js-cookie'
 
 
 export default {
@@ -371,11 +371,17 @@ export default {
         },
 
         async getLast24HTransacts(page=1) { 
-            await axios.get(`http://127.0.0.1:8000/api/transacts?digitals=true&page=${page}`)
+            console.log(333);
+            await axios.get(`http://127.0.0.1:8000/api/transacts?digitals=true&page=${page}`, {
+            headers: {
+                Authorization: `Token ${Cookies.get('token')}`
+            }})
             .then(response => {
+                console.log(response.data);
                 this.transactsMaked = response.data 
                 this.pageInfoSP.available_page = response.data.available_pages;
                 this.pageInfoSP.actualPage = response.data.actual_page;
+                console.log(this.transactsMaked)
             })
             .catch(error => {
                 console.log(error)
@@ -682,6 +688,7 @@ justify-content: flex-start;
     margin: -10px;
     overflow: auto;
 }
+
 
 .slider-item {
     height: 320px;
