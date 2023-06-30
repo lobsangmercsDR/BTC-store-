@@ -587,12 +587,11 @@ class TransactsView(viewsets.ModelViewSet):
 
     def delete_transact(self, request, *args, **kwargs):
         transact = self.get_object()
-        userPermision = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin, IsSeller, IsBuyer], oneObj=True,obj=transact)
-        print(userPermision)
-        if not any(value for value in userPermision.values()):
-            return JsonResponse({'message':'No tiene permiso para realizar esta accion'}, status=403)
-        self.perform_destroy(transact)
-        return JsonResponse({'message':'Transaccion eliminada exitosamente'},status=204)
+        if transact.status == 'Procesando':
+            self.perform_destroy(transact)
+            return JsonResponse({'message':'Transaccion eliminada exitosamente'},status=204)
+        else:
+            return JsonResponse({'mE':'No puedes borrar esto'})
 
 class GroupsView(viewsets.ModelViewSet):
 
