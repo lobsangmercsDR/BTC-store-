@@ -1,11 +1,12 @@
 <template>
   <div class="bg-white rounded shadow">
     <div class="px-4 py-3 border-b">
-      <h2 class="text-lg font-semibold">Órdenes de venta</h2>
+      <h2 class="text-lg font-semibold">Órdenes de venta </h2>
     </div>
     <div class="p-4">
+      
       <div v-if="physicalOrders.length === 0 && digitalOrders.length === 0" class="text-gray-600">
-        No hay órdenes disponibles.
+        No hay órdenes disponibles. 
       </div>
       <div>
         <div>
@@ -14,7 +15,7 @@
             <span v-if="isOrderSectionOpen('physical')" class="text-sm ml-2">[-]</span>
             <span v-else class="text-sm ml-2">[+]</span>
           </h3>
-          <ul v-show="isOrderSectionOpen('physical')">
+          <ul v-show="isOrderSectionOpen('physical')" style="margin-bottom: 1rem !important;">
             <li v-for="order in physicalOrders" :key="order.id" class="border-b py-3">
               <div @click="toggleOrderDetails(order)" class="cursor-pointer">
                 <div class="flex items-center justify-between">
@@ -22,7 +23,7 @@
                     <span class="font-semibold">ID de orden:</span> {{ order.id }}
                   </div>
                   <div>
-                    <span class="font-semibold">Fecha:</span> {{ order.date }}
+                    <span class="font-semibold">Fecha:</span> {{ order.dateTransact }}
                   </div>
                   <div>
                     <span class="font-semibold">Estado:</span> {{ order.status }}
@@ -59,6 +60,8 @@
                       </tr>
                       <tr>
                         <td class="border px-4 py-2 font-semibold">Total:</td>
+                        
+                        
                         <td class="border px-4 py-2 font-semibold">{{ calculateTotalPrice(order.products) }}</td>
                       </tr>
                     </tbody>
@@ -76,6 +79,17 @@
               </div>
             </li>
           </ul>
+          <section  class="nav-arrows" v-show="isOrderSectionOpen('physical')">
+              <svg xmlns="http://www.w3.org/2000/svg" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 18l-6-6 6-6"/>
+              </svg> 
+              <div  class="pageCounter"> <span> asdasd</span></div>
+ 
+              <svg xmlns="http://www.w3.org/2000/svg" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18l6-6-6-6"/>
+              </svg>
+        </section>
+      </div>
         </div>
         <div>
           <h3 @click="toggleOrderSection('digital')" class="text-lg font-semibold mt-4 cursor-pointer">
@@ -83,7 +97,7 @@
             <span v-if="isOrderSectionOpen('digital')" class="text-sm ml-2">[-]</span>
             <span v-else class="text-sm ml-2">[+]</span>
           </h3>
-          <ul v-show="isOrderSectionOpen('digital')">
+          <ul v-show="isOrderSectionOpen('digital')" style="margin-bottom: 1rem !important;">
             <li v-for="order in digitalOrders" :key="order.id" class="border-b py-3">
               <div @click="toggleOrderDetails(order)" class="cursor-pointer">
                 <div class="flex items-center justify-between">
@@ -91,7 +105,7 @@
                     <span class="font-semibold">ID de orden:</span> {{ order.id }}
                   </div>
                   <div>
-                    <span class="font-semibold">Fecha:</span> {{ order.date }}
+                    <span class="font-semibold">Fecha:</span> {{ order.dateTransact }}
                   </div>
                   <div>
                     <span class="font-semibold">Estado:</span> Completada
@@ -106,20 +120,30 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="product in order.products" :key="product.id">
+                      <!-- <tr v-for="product in order.products" :key="product.id">
                         <td class="border px-4 py-2">{{ product.name }}</td>
                         <td class="border px-4 py-2">{{ product.price }}</td>
                       </tr>
                       <tr>
                         <td class="border px-4 py-2 font-semibold">Total:</td>
-                        <td class="border px-4 py-2 font-semibold">{{ calculateTotalPrice(order.products) }}</td>
-                      </tr>
+                        <td class="border px-4 py-2 font-semibold">{{ calculateTotalPrice(order.product) }}</td>
+                      </tr> -->
                     </tbody>
                   </table>
                 </div>
               </div>
             </li>
           </ul>
+          <section  class="nav-arrows" v-show="isOrderSectionOpen('digital')">
+              <svg xmlns="http://www.w3.org/2000/svg" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 18l-6-6 6-6"/>
+              </svg> 
+              <div  class="pageCounter"> <span> asdasd</span></div>
+ 
+              <svg xmlns="http://www.w3.org/2000/svg" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18l6-6-6-6"/>
+              </svg>
+        </section>
         </div>
       </div>
     </div>
@@ -143,55 +167,25 @@
         </div>
       </div>
     </transition>
-  </div>
 </template>
 
 <script>
+import axios from 'axios';
+import Cookies from 'js-cookie'; 
+
+
 export default {
+
+  created() {
+    this.renderOrders('fisics')
+    this.renderOrders()
+  },
+
   data() {
     return {
-      orders: [
-        {
-          id: 1,
-          date: "2023-05-24",
-          status: "Pendiente aprobación de vendedor",
-          type: "física",
-          shippingAddress: "Dirección 1",
-          deliveryZone: "Zona 1",
-          products: [
-            { id: 1, name: "Producto 1", price: "$10.00" },
-            { id: 2, name: "Producto 2", price: "$15.00" },
-          ],
-          buyerUsername: "comprador1",
-          showDetails: false,
-        },
-        {
-          id: 2,
-          date: "2023-05-23",
-          status: "Completada",
-          type: "digital",
-          products: [
-            { id: 3, name: "Producto 3", price: "$20.00" },
-            { id: 4, name: "Producto 4", price: "$12.00" },
-          ],
-          buyerUsername: "comprador2",
-          showDetails: false,
-        },
-        {
-          id: 3,
-          date: "2023-05-22",
-          status: "Pendiente aprobación de vendedor",
-          type: "física",
-          shippingAddress: "Dirección 2",
-          deliveryZone: "Zona 2",
-          products: [
-            { id: 5, name: "Producto 5", price: "$8.00" },
-            { id: 6, name: "Producto 6", price: "$18.00" },
-          ],
-          buyerUsername: "comprador3",
-          showDetails: false,
-        },
-      ],
+      ordersFisics: [],
+      ordersDigits: [],
+      
       openOrderSections: [],
       showModal: false,
       currentOrder: null,
@@ -204,13 +198,45 @@ export default {
   },
   computed: {
     physicalOrders() {
-      return this.orders.filter((order) => order.type === "física");
+      return this.ordersFisics
     },
     digitalOrders() {
-      return this.orders.filter((order) => order.type === "digital");
+      return this.ordersDigits
     },
   },
   methods: {
+    async renderOrders(type, page=1) {
+      let uri = ``
+      if(type=='fisics') {
+        uri = `http://127.0.0.1:8000/api/transacts?fisics=true&page=${page}&pw=5`
+      }
+      else {
+         uri = `http://127.0.0.1:8000/api/transacts?digitals=true&page=${page}&pw=5`
+      }
+
+      await axios.get(uri, {
+        headers: {
+          Authorization:`Token ${Cookies.get('token')}`
+        }
+      })
+      .then(response => {
+        if(type=='fisics') {
+          this.ordersFisics = response.data.data
+          console.log(this.orderFisics);
+        }
+        else{
+          this.ordersDigits = response.data.data
+          console.log(this.ordersDigits)
+        }
+      })
+      .catch(error => {
+        console.log(error.response.data)
+      })
+
+      
+    },
+
+
     toggleOrderDetails(order) {
       order.showDetails = !order.showDetails;
     },
@@ -247,12 +273,12 @@ export default {
       order.status = "Declinada";
     },
     calculateTotalPrice(products) {
+      console.log(products)
+      let price =15
       let totalPrice = 0;
-      products.forEach((product) => {
-        const price = parseFloat(product.price.replace("$", ""));
-        totalPrice += price;
-      });
-      return "$" + totalPrice.toFixed(2);
+      totalPrice += price;
+      console.log(totalPrice)
+      return "$" 
     },
   },
 };
@@ -261,6 +287,24 @@ export default {
 <style>
 .table-auto {
   width: auto;
+}
+
+.nav-arrows {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: auto;
+}
+.pageCounter {
+  display: flex;
+  align-items: center;
+  padding: 1px 10px;
+  border: 2px gray solid;
+  border-radius: 5px;
+}
+
+.arrow-icon {
+  height: 35px;
+  user-select: none;
 }
 
 .fade-enter-active,
