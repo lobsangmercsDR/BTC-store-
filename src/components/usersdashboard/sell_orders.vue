@@ -66,7 +66,7 @@
                       </tr>
                     </tbody>
                   </table>
-                  <div v-if="order.status === 'Pendiente aprobación de vendedor'" class="mt-4">
+                  <div v-if="order.status === 'Procesando'" class="mt-4">
                     <button @click="openModal(order)" class="px-4 py-2 bg-green-500 text-white rounded">Aceptar</button>
                     <button @click="declineOrder(order)" class="px-4 py-2 bg-red-500 text-white rounded">Declinar</button>
                   </div>
