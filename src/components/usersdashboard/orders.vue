@@ -171,8 +171,8 @@ export default {
           available_page:0
         },
       orderSections: {
-        physical: true,
-        virtual: true,
+        physical: false,
+        virtual: false,
       },
       detailsModalOpen: false,
       textlength:0,

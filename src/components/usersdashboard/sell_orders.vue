@@ -80,12 +80,12 @@
             </li>
           </ul>
           <section  class="nav-arrows" v-show="isOrderSectionOpen('physical')">
-              <svg xmlns="http://www.w3.org/2000/svg" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" :style="{color:previousArrowColor}" @click="handleChangePage('fisics',-1)" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 18l-6-6 6-6"/>
               </svg> 
-              <div  class="pageCounter"> <span> asdasd</span></div>
+              <div  class="pageCounter"> <span> {{ pageInfo.actualPage }}</span></div>
  
-              <svg xmlns="http://www.w3.org/2000/svg" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" :style="{color:nextArrowColor}" @click="handleChangePage('fisics',1)" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 18l6-6-6-6"/>
               </svg>
         </section>
@@ -135,12 +135,12 @@
             </li>
           </ul>
           <section  class="nav-arrows" v-show="isOrderSectionOpen('digital')">
-              <svg xmlns="http://www.w3.org/2000/svg" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" :style="{color:previousArrowColorD}" @click="handleChangePage('digitals',-1)" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 18l-6-6 6-6"/>
               </svg> 
-              <div  class="pageCounter"> <span> asdasd</span></div>
+              <div  class="pageCounter"> <span> {{ pageInfoD.actualPage }}</span></div>
  
-              <svg xmlns="http://www.w3.org/2000/svg" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" :style="{color:nextArrowColorD}" @click="handleChangePage('digitals',1)" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 18l6-6-6-6"/>
               </svg>
         </section>
@@ -185,6 +185,14 @@ export default {
     return {
       ordersFisics: [],
       ordersDigits: [],
+      pageInfo: {
+        actualPage: 0, 
+        available_page:0
+      },
+      pageInfoD: { 
+        actualPage: 2, 
+        available_page: 0
+      },
       
       openOrderSections: [],
       showModal: false,
@@ -203,6 +211,35 @@ export default {
     digitalOrders() {
       return this.ordersDigits
     },
+
+    previousArrowColor() {
+      const page = this.pageInfo.actualPage 
+      const color = (page ===1) ? '#c2c2c2' : ''
+      console.log(page, color);
+      return color
+    },
+
+    previousArrowColorD() {
+      const page = this.pageInfoD.actualPage 
+      const color = (page ===1) ? '#c2c2c2' : ''
+      console.log(page, color);
+      return color
+    },
+
+    nextArrowColor() {
+      const page = this.pageInfo.available_page 
+      const color = (page ===0) ? '#c2c2c2' : ''
+      console.log(page, color);
+      return color
+    },
+
+    nextArrowColorD() {
+      const page = this.pageInfoD.available_page 
+      const color = (page ===0) ? '#c2c2c2' : ''
+      console.log(page, color);
+      return color
+    },
+
   },
   methods: {
     async renderOrders(type, page=1) {
@@ -222,18 +259,33 @@ export default {
       .then(response => {
         if(type=='fisics') {
           this.ordersFisics = response.data.data
+          this.pageInfo.actualPage = response.data.actual_page
+          this.pageInfo.available_page = response.data.available_pages
+          console.log(this.pageInfo);
           console.log(this.orderFisics);
         }
         else{
           this.ordersDigits = response.data.data
+          this.pageInfoD.actualPage = response.data.actual_page
+          this.pageInfoD.available_page = response.data.available_pages
           console.log(this.ordersDigits)
         }
       })
       .catch(error => {
         console.log(error.response.data)
-      })
+      }) 
+    },
 
-      
+    async handleChangePage(type,steps) {
+      console.log(type);
+      if(type=='fisics') {
+        if(this.pageInfo.actualPage+steps != 0) {
+          this.renderOrders(type,this.pageInfo.actualPage+steps)
+        }
+      }
+      else {
+        this.renderOrders(type, this.pageInfoD.actualPage+steps)
+      }
     },
 
 
