@@ -44,25 +44,25 @@
                       </tr>
                       <tr>
                         <td class="border px-4 py-2 font-semibold">Comprador:</td>
-                        <td class="border px-4 py-2">{{ order.buyerUsername }}</td>
+                        <td class="border px-4 py-2">{{ order.buyers.name }}</td>
                       </tr>
                       <tr>
                         <td class="border px-4 py-2 font-semibold">Dirección de envío del comprador:</td>
-                        <td class="border px-4 py-2">{{ order.shippingAddress }}</td>
+                        <td class="border px-4 py-2">{{ order.sendDirection }}</td>
                       </tr>
                       <tr>
                         <td class="border px-4 py-2 font-semibold">Zona de entrega:</td>
-                        <td class="border px-4 py-2">{{ order.deliveryZone }}</td>
+                        <td class="border px-4 py-2">{{ order.productFisic.address_direction }}</td>
                       </tr>
-                      <tr v-for="product in order.products" :key="product.id">
-                        <td class="border px-4 py-2">{{ product.name }}</td>
-                        <td class="border px-4 py-2">{{ product.price }}</td>
+                      <tr>
+                        <td class="border px-4 py-2">{{order.productFisic.nameProduct}}</td>
+                        <td class="border px-4 py-2">{{ order.productFisic.price}}</td>
                       </tr>
                       <tr>
                         <td class="border px-4 py-2 font-semibold">Total:</td>
                         
                         
-                        <td class="border px-4 py-2 font-semibold">{{ calculateTotalPrice(order.products) }}</td>
+                        <td class="border px-4 py-2 font-semibold">{{ order.productFisic.price }}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -120,14 +120,14 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <!-- <tr v-for="product in order.products" :key="product.id">
-                        <td class="border px-4 py-2">{{ product.name }}</td>
-                        <td class="border px-4 py-2">{{ product.price }}</td>
+                     <tr>
+                        <td class="border px-4 py-2">{{ order.productDigit.name}}</td>
+                        <td class="border px-4 py-2">{{ order.productDigit.price}}</td>
                       </tr>
                       <tr>
                         <td class="border px-4 py-2 font-semibold">Total:</td>
-                        <td class="border px-4 py-2 font-semibold">{{ calculateTotalPrice(order.product) }}</td>
-                      </tr> -->
+                        <td class="border px-4 py-2 font-semibold">{{ parseInt(order.productDigit.price) + parseInt(order.productDigit.comisionCheck) }}</td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
@@ -245,7 +245,7 @@ export default {
     async renderOrders(type, page=1) {
       let uri = ``
       if(type=='fisics') {
-        uri = `http://127.0.0.1:8000/api/transacts?fisics=true&page=${page}&pw=5`
+        uri = `http://127.0.0.1:8000/api/transacts?fisics=true&page=${page}&pw=5&pt=true`
       }
       else {
          uri = `http://127.0.0.1:8000/api/transacts?digitals=true&page=${page}&pw=5`
@@ -258,6 +258,7 @@ export default {
       })
       .then(response => {
         if(type=='fisics') {
+          console.log(uri, response.data)
           this.ordersFisics = response.data.data
           this.pageInfo.actualPage = response.data.actual_page
           this.pageInfo.available_page = response.data.available_pages
@@ -293,6 +294,7 @@ export default {
       order.showDetails = !order.showDetails;
     },
     toggleOrderSection(section) {
+      console.log(section);
       if (this.isOrderSectionOpen(section)) {
         this.openOrderSections = this.openOrderSections.filter((s) => s !== section);
       } else {
@@ -321,8 +323,15 @@ export default {
         this.closeModal();
       }
     },
-    declineOrder(order) {
-      order.status = "Declinada";
+     async declineOrder(order) {
+      await axios.put(`http://127.0.0.1:8000/api/transacts/${order.id}`, {status:"Rechazado"})
+      .then(response => {
+        this.renderOrders('fisics',this.pageInfo.actualPage)
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.log(error.response)
+      })
     },
     calculateTotalPrice(products) {
       console.log(products)

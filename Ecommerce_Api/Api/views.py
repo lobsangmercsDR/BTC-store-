@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from django.http import response
+from django.db.models import Case, When
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from rest_framework import viewsets,permissions, authentication,mixins, exceptions
@@ -97,7 +98,7 @@ class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):
         work_route=  r'C:\Users\TI\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
         local_route= r'C:\Users\alan8\OneDrive\Documentos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
-        complete_path = os.path.join(local_route, image_name)
+        complete_path = os.path.join(work_route, image_name)
         
         if os.path.exists(complete_path):
             return FileResponse(open(complete_path,'rb'),content_type='image/jpeg')
@@ -533,19 +534,31 @@ class AuthenticationView(ObtainAuthToken):
 class TransactsView(viewsets.ModelViewSet):
     queryset = Transacts.objects.all()
     serializer_class = TransactsSerializer
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = []
     
 
     def get_all_transacts(self, request):
         isDigital = request.GET.get('digitals',None)
         isFisic = request.GET.get('fisics',None)
         widthPage = request.GET.get('pw', 12)
-        print(isFisic)
-
-        if isDigital:
-            transacts = Transacts.objects.filter(productDigit__isnull=False, buyers=request.user.id).order_by('-dateTransact')
+        pTransact = request.GET.get('pt',None)
+        print(isFisic, pTransact)
+        if isFisic and pTransact:
+            print(request.user.id,548)
+            transacts = Transacts.objects.filter(productBuyers__isnull=False, buyers=request.user.id).order_by(
+                Case(
+                    When(status='Procesando',then=1),
+                    When(status='Aprobado',then=2),
+                    When(status='Rechazado',then=3),
+                    default=4
+                )
+            )
+        elif isDigital and not pTransact:
+            print(2)
+            transacts = Transacts.objects.filter(productDigit__isnull=False).order_by('-dateTransact')
         elif isFisic:
             transacts = Transacts.objects.filter(productFisic__isnull=False,buyers=request.user.id).order_by('-dateTransact')
-            print(transacts)
         else: 
             transacts = Transacts.objects.all()
         # userPermision = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin])
@@ -585,6 +598,22 @@ class TransactsView(viewsets.ModelViewSet):
         print(serializer.data)
         return JsonResponse(serializer.data, status=201)
 
+    def put_transact(self, request, pk): 
+        try:
+            obj = Transacts.objects.get(id=pk)
+            print(obj)
+            serializer = TransactsSerializer(obj, data=request.data, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+            else:
+                return JsonResponse({'error':'Sintaxis incorrecta'}, status=400)
+            
+            return JsonResponse(serializer.data, status=200)
+            
+        except Exception as e: 
+            print(e)
+            return JsonResponse({'error':'El producto no existe'}, status=404)
+            
     def delete_transact(self, request, *args, **kwargs):
         transact = self.get_object()
         if transact.status == 'Procesando':

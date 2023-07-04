@@ -26,13 +26,13 @@
                         </tr>
                     </tbody>
                 </table>
-                <section class="nav-arrows">
+                <section class="nav-arrowHV">
             <md-icon class="arrow-icon" @click="changePageSP" :style="{color:previousArrowColorSP}" name="previous-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                     </svg>
                 </md-icon>
-                <md-icon class="nav-arrows" @click="changePageSP" :style="{color:nextArrowColorSP}" name="next-arrow">
+                <md-icon class="arrow-icon" @click="changePageSP" :style="{color:nextArrowColorSP}" name="next-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                     </svg>
@@ -79,7 +79,7 @@
                         </tr>
                     </tbody>
                 </table> -->
-                <section class="nav-arrows">
+                <section class="nav-arrowHV">
             <md-icon class="arrow-icon" @click="changePageSMP" name="previous-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
@@ -120,7 +120,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <section class="nav-arrows">
+                <section class="nav-arrowHV">
             <md-icon class="arrow-icon" :style="{color:previousArrowColor}" name="previous-arrow" @click="changePageAP">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
@@ -372,10 +372,7 @@ export default {
 
         async getLast24HTransacts(page=1) { 
             console.log(333);
-            await axios.get(`http://127.0.0.1:8000/api/transacts?digitals=true&page=${page}`, {
-            headers: {
-                Authorization: `Token ${Cookies.get('token')}`
-            }})
+            await axios.get(`http://127.0.0.1:8000/api/transacts?digitals=true&page=${page}`)
             .then(response => {
                 console.log(response.data);
                 this.transactsMaked = response.data 
@@ -560,7 +557,7 @@ export default {
 
 /* Estilos para dispositivos móviles */
 
-.nav-arrows {
+.nav-arrowHV {
     display: flex;
     justify-content: center;
     margin-top: auto;

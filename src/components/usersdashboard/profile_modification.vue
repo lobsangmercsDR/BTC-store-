@@ -80,16 +80,7 @@ export default {
         headers:{
           Authorization: `Token ${Cookies.get('token')}`
       }})
-      .then(response => {
-        const filtered = Object.keys(response.data).reduce((resultado, clave) => {
-          if (this.user[clave]) {
-            resultado[clave] = this.user[clave];
-          }
-          return resultado;
-        }, {});
-        this.user = filtered;
-        console.log(filtered)
-      })
+      .then(response => {this.user = response.data})
       .catch(error => {console.log(error.response.data)})
 
       await axios.get(`http://127.0.0.1:8000/api/userbased/invitation/${Cookies.get('svg')}`, {
