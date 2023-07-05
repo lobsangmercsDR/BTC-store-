@@ -84,6 +84,15 @@ export default {
     };
   },
   methods: {
+    async getUserData() { 
+      await axios.get(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`, {
+        headers:{
+          Authorization: `Token ${Cookies.get('token')}`
+      }})
+      .then(response => {this.user = response.data})
+      .catch(error => {console.log(error.response.data)})
+    },
+
     approveWithdrawal(transaction) {
       transaction.status = "completed";
       // Realiza acciones adicionales para aprobar el retiro, como enviar fondos a la billetera de destino.

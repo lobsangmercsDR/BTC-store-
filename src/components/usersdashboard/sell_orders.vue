@@ -72,10 +72,10 @@
                   </div>
                 </div>
               </div>
-              <div v-if="order.status === 'Aceptada' && order.company && order.trackingNumber" class="mt-4">
+              <div v-if="order.status === 'Aceptado' && order.company && order.noSeguimiento && order.showDetails" class="mt-4">
                 <h3 class="text-lg font-semibold">Detalles de envío:</h3>
                 <p><strong>Compañía de envío:</strong> {{ order.company }}</p>
-                <p><strong>Número de seguimiento:</strong> {{ order.trackingNumber }}</p>
+                <p><strong>Número de seguimiento:</strong> {{ order.noSeguimiento }}</p>
               </div>
             </li>
           </ul>
@@ -149,19 +149,19 @@
     </div>
 
     <transition name="fade">
-      <div class="fixed inset-0 flex items-center justify-center z-50" v-if="showModal">
-        <div class="bg-white rounded shadow p-4">
+      <div class="fixed inset-0 flex items-center justify-center z-50 modal"  v-if="showModal">
+        <div class="bg-white rounded shadow p-4" style="width: 369px;">
           <h3 class="text-lg font-semibold mb-4">Ingresar detalles de envío</h3>
           <div class="mb-4">
             <label class="block text-sm font-semibold mb-1">Compañía de envío:</label>
-            <input v-model="shippingDetails.company" type="text" class="w-full border-gray-300 rounded p-2" />
+            <input v-model="shippingDetails.company" type="text" class="inputModals w-full border-gray-300 rounded p-2" />
           </div>
           <div class="mb-4">
             <label class="block text-sm font-semibold mb-1">Número de seguimiento:</label>
-            <input v-model="shippingDetails.trackingNumber" type="text" class="w-full border-gray-300 rounded p-2" />
+            <input v-model="shippingDetails.trackingNumber" type="text" class=" inputModals w-full border-gray-300 rounded p-2" />
           </div>
           <div class="flex justify-end">
-            <button @click="acceptOrderWithDetails()" class="px-4 py-2 bg-green-500 text-white rounded">Aceptar</button>
+            <button @click="acceptOrderWithDetails(this.currentOrder.id)" class="px-4 py-2 bg-green-500 text-white rounded">Aceptar</button>
             <button @click="closeModal()" class="px-4 py-2 bg-red-500 text-white rounded">Cancelar</button>
           </div>
         </div>
@@ -305,23 +305,43 @@ export default {
       return this.openOrderSections.includes(section);
     },
     openModal(order) {
+      console.log(order);
       this.currentOrder = order;
       this.showModal = true;
     },
     closeModal() {
-      this.currentOrder = null;
       this.showModal = false;
+      this.shippingDetails.company = "";
+      this.shippingDetails.trackingNumber = "";
     },
-    acceptOrderWithDetails() {
-      if (this.shippingDetails.company && this.shippingDetails.trackingNumber) {
-        this.currentOrder.status = "Aceptada";
+    async acceptOrderWithDetails(id) {
+      await axios.put(`http://127.0.0.1:8000/api/transacts/${id}`, {
+        status: 'Aceptado',
+        company: this.shippingDetails.company,
+        noSeguimiento: this.shippingDetails.trackingNumber 
+      })
+      .then(response => {
+        this.currentOrder.status = response.data.status;
         this.currentOrder.showDetails = true;
-        this.currentOrder.shippingStatus = "Enviado";
-        this.currentOrder.company = this.shippingDetails.company;
-        this.currentOrder.trackingNumber = this.shippingDetails.trackingNumber;
+        this.currentOrder.shippingStatus = "En camino";
+        this.currentOrder.company = response.data.company;
+        this.currentOrder.trackingNumber = response.data.noSeguimiento;
         this.acceptedOrder = Object.assign({}, this.currentOrder);
         this.closeModal();
-      }
+      })
+      .catch(error => {
+        console.log(error)
+      })
+
+      // if (this.shippingDetails.company && this.shippingDetails.trackingNumber) {
+      //   this.currentOrder.status = "Aceptada";
+      //   this.currentOrder.showDetails = true;
+      //   this.currentOrder.shippingStatus = "Enviado";
+      //   this.currentOrder.company = this.shippingDetails.company;
+      //   this.currentOrder.trackingNumber = this.shippingDetails.trackingNumber;
+      //   this.acceptedOrder = Object.assign({}, this.currentOrder);
+      //   this.closeModal();
+      // }
     },
      async declineOrder(order) {
       await axios.put(`http://127.0.0.1:8000/api/transacts/${order.id}`, {status:"Rechazado"})
@@ -355,6 +375,12 @@ export default {
     justify-content: flex-end;
     margin-top: auto;
 }
+
+.inputModals {
+  border: 1px solid;
+  border-radius: 8px;
+}
+
 .pageCounter {
   display: flex;
   align-items: center;

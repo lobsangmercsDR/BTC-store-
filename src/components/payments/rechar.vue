@@ -5,19 +5,19 @@
       <h2 class="text-2xl font-bold mb-4">Wallet Panel</h2>
       <div class="mb-2">
         <span class="font-bold">Username:</span>
-        <span>{{ username }}</span>
+        <span>{{ user.name }}</span>
       </div>
       <div class="mb-2">
         <span class="font-bold">Current Balance:</span>
-        <span class="text-green-500"> {{ balanceInUSD }} USD</span>
+        <span class="text-green-500"> {{ user.userBalance }} USD</span>
       </div>
       <div class="mb-2">
         <span class="font-bold">Pending Balance:</span>
-        <span class="text-yellow-500"> {{ pendingBalanceInUSD }} USD</span>
+        <span class="text-yellow-500"> {{ user.pendingUserBalance }} USD</span>
       </div>
       <div>
         <span class="font-bold">Wallet Address:</span>
-        <span>{{ walletAddress }}</span>
+        <span>{{ user.wallet_address }}</span>
       </div>
       <div class="flex flex-col items-center mt-8">
         <h3 class="text-xl font-bold mb-4">QR Code for deposit:</h3>
@@ -105,32 +105,20 @@ import Cookies from 'js-cookie';
 export default {
   data() {
     return {
-      username: "", // Empty string as default value for username
-      balance: 5, // Example: initial balance of 5 BTC
-      balanceInUSD: 0,
-      pendingBalance: 0, 
-      pendingBalanceInUSD: 0,
-      amountBTC: 0,
-      amountUSD: 0,
-      walletAddress: "Example_wallet_address", // Own wallet address
-      destinationWalletAddress: "", // Destination wallet address
-      qrCodeURL: "",
-      transactionHistory: [],
-      isWithdrawing: false,
-      btcValue: 0,
-      withdrawalOrderNumber: null,
+      user: null,
     };
   },
+  created() {
+    this.getUserData()
+  },
   methods: {
-    async fetchBTCValue() {
-      try {
-        const response = await axios.get("https://api.coindesk.com/v1/bpi/currentprice/BTC.json");
-        this.btcValue = parseFloat(response.data.bpi.USD.rate.replace(',', ''));
-        this.balanceInUSD = this.balance * this.btcValue;
-        this.pendingBalanceInUSD = this.pendingBalance * this.btcValue;
-      } catch (error) {
-        console.error("Error fetching BTC value:", error);
-      }
+    async getUserData() { 
+      await axios.get(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`, {
+        headers:{
+          Authorization: `Token ${Cookies.get('token')}`
+      }})
+      .then(response => {this.user = response.data; console.log(response.data)})
+      .catch(error => {console.log(error.response.data)})
     },
     async requestWithdrawal() {
       if (
@@ -181,8 +169,6 @@ export default {
     },
   },
   async mounted() {
-    this.username = Cookies.get('username') || '';
-    await this.fetchBTCValue();
     this.qrCodeURL = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${this.walletAddress}`;
   },
 };

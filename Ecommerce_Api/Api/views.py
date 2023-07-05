@@ -546,10 +546,10 @@ class TransactsView(viewsets.ModelViewSet):
         print(isFisic, pTransact)
         if isFisic and pTransact:
             print(request.user.id,548)
-            transacts = Transacts.objects.filter(productBuyers__isnull=False, buyers=request.user.id).order_by(
+            transacts = Transacts.objects.filter(productFisic__isnull=False, buyers=request.user.id).order_by(
                 Case(
                     When(status='Procesando',then=1),
-                    When(status='Aprobado',then=2),
+                    When(status='Aceptado',then=2),
                     When(status='Rechazado',then=3),
                     default=4
                 )

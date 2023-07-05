@@ -517,7 +517,7 @@ class TransactsSerializer(serializers.ModelSerializer):
     
     class Meta:
         model  = Transacts 
-        fields = ['id','dateTransact','quantity_asked','status','sendDirection','productDigit','productFisic','buyers', 'productDigit_id']
+        fields = ['id','dateTransact','quantity_asked','status','sendDirection','productDigit','productFisic','buyers', 'productDigit_id', 'sendDirection','noSeguimiento','company']
 
     def create(self, validated_data):
         print(validated_data)
