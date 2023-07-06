@@ -67,6 +67,21 @@ class SubCategory(models.Model):
     userCreator = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
+class Withdrawals(models.Model):
+    OPTIONS = (
+    ('Pendiente','Pendiente'),
+    ('Aprobada','Aprobada'),
+    ('Rechazada','Rechazada')
+    )
+    
+    no_orden = models.IntegerField()
+    amount = models.DecimalField(max_digits=10,decimal_places=2)
+    status = models.CharField(max_length=50,choices=OPTIONS)
+    fecha_solicitud = models.DateField(auto_now_add=True)
+    fecha_review = models.DateField()
+    walletRequested = models.CharField(max_length=50)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
 
 
 class Stores(models.Model):

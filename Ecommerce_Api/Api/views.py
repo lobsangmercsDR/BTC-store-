@@ -21,12 +21,13 @@ import os
 from .utils import services as uti
 from django.core import serializers
 from django.http import HttpResponse
-from .models import ProductFisic,MethodProducts,ReportTransacts,CheckerSolic,TransactCategories,ProductDigit,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
+from .models import ProductFisic,MethodProducts,Withdrawals,ReportTransacts,CheckerSolic,TransactCategories,ProductDigit,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
 from .serializers import (TransactsSerializer,
                           TransactCategorySerializer,
                           ReportSerializer,
                           SolicCheckerSerializer,
                           CategorySerializer,
+                          WithDrawSerializer,
                           ProductDigitSerializer,
                           CategoryWithoutProductsSerializer, 
                           ProductSerializer,
@@ -93,6 +94,30 @@ def validate_group(user, groups):
         return False
     else:
         return True
+    
+
+class WithDrawView(viewsets.ModelViewSet):
+    queryset = Withdrawals.objects.all()
+    serializer_class = WithDrawSerializer
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = []
+
+    
+    def get_withdraws(self, request):
+        objects = Withdrawals.objects.filter(user=request.user.id)
+        serializer = WithDrawSerializer(objects, many=True)
+        return JsonResponse(serializer.data, status=200, safe=False)
+
+    def post_new_withdraw(self, request):
+        data = request.data
+        user = request.user
+        serializer = WithDrawSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        if user.balance < data['amount']:
+            return JsonResponse({'message':'No tiene balance suficiente para este retiro'})
+        else:
+            return JsonResponse(serializer.data, status=400)
+
 
 class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):

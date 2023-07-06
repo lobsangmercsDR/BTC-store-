@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import  ProductView,ReportView, ProductsDigitView,TransactSubcategoryView, CategoryView,TransactsView,UserView, SolicCheckerView, AuthenticationView, GroupsView, LogoutView, InvitationCodeView, RoleRequestsView,Img_view
+from .views import  ProductView,ReportView, ProductsDigitView,TransactSubcategoryView,WithDrawView, CategoryView,TransactsView,UserView, SolicCheckerView, AuthenticationView, GroupsView, LogoutView, InvitationCodeView, RoleRequestsView,Img_view
 
 urlpatterns = [
     path('transactscategories',TransactSubcategoryView.as_view({'get':'get', 'post':'post'}),name="CheckerSOLIC"),
@@ -14,6 +14,7 @@ urlpatterns = [
     path('productos/transacts/methods', TransactsView.as_view({ 'post':'post_new_transacts_method'}, name="MethodsRN")),
     path('productos/transacts/digits', TransactsView.as_view({ 'post':'post_transact_digits'}, name="CreateDigitTransact")),
     path('productos/methods/<int:pk>', ProductView.as_view({'get':'get_method'}, name="godHelpMe")),
+    path('withdraws',WithDrawView.as_view({'get':'get_withdraws','post':'post_new_withdraw'}), name="Withdraws"),
     # path('productos/stores', StoresView.as_view({'get':'get_digit_products'}, name="Digital_Products")),
     path('productos',ProductView.as_view({'get':'nested_list_products','post':'post_product'}), name='listOfProducts' ),
     path('productos/<int:pk>',ProductView.as_view({'get':'get_product', 'delete':'delete_product','put':'update_product'}), name='listOfProducts' ),

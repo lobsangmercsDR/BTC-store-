@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 
 from rest_framework import serializers,exceptions
-from .models import Category, ProductFisic, ProductDigit,ReportTransacts, TransactCategories, CheckerSolic, Transacts,MethodProducts,User,InvitationCodes,RoleRequests, SubCategory, Stores
+from .models import Category, ProductFisic, ProductDigit,ReportTransacts, Withdrawals, TransactCategories, CheckerSolic, Transacts,MethodProducts,User,InvitationCodes,RoleRequests, SubCategory, Stores
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
@@ -50,6 +50,12 @@ class ProductDigitSerializer(serializers.ModelSerializer):
             result['no_solicitudes'] = product.solic_count
             return result
             
+
+
+class WithDrawSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Withdrawals
+        fields = ['id','no_orden','amount','status','fecha_solicitud','fecha_review','walletRequested','user']
 
 
 

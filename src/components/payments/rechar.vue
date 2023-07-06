@@ -20,7 +20,7 @@
         <p style="word-wrap: break-word;">{{ user.wallet_address}}</p>
       </div>
       <div class="flex flex-col items-center mt-8">
-        <h3 class="text-xl font-bold mb-4">QR Code for deposit:</h3>
+        <h3 class="text-xl font-bold mb-4">QR Code para depositos:</h3>
         <div class="w-48 h-48">
           <img :src="qrCodeURL" alt="QR Code" v-if="qrCodeURL" class="mx-auto" />
         </div>
@@ -39,6 +39,15 @@
           placeholder="Enter the amount in USD"
           @input="convertUSDtoBTC"
         />
+
+         <label for="destinationWalletAddress" class="block mt-4 mb-2">Wallet a Depositar</label>
+         <input
+          type="text"
+          id="destinationWalletAddress"
+          v-model="destinationWalletAddress"
+          class="py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-blue-500"
+          placeholder="Enter the destination wallet address"
+        />
         <button
           class="mt-4 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors duration-300 ease-in-out"
           @click="requestWithdrawal"
@@ -53,24 +62,24 @@
   </div>
 
   <div class="mt-8">
-    <h3 class="text-xl font-bold mb-4">Withdrawal Request History</h3>
+    <h3 class="text-xl font-bold mb-4">Historial de retiros</h3>
     <table class="table min-w-full border border-gray-300">
       <thead>
         <tr>
-          <th class="py-2 px-4 bg-gray-100 border-b">Withdrawal Order Number</th>
-          <th class="py-2 px-4 bg-gray-100 border-b">Amount (BTC)</th>
-          <th class="py-2 px-4 bg-gray-100 border-b">Amount (USD)</th>
-          <th class="py-2 px-4 bg-gray-100 border-b">Status</th>
-          <th class="py-2 px-4 bg-gray-100 border-b">Date</th>
+          <th class="py-2 px-4 bg-gray-100 border-b">No. de orden</th>
+          <th class="py-2 px-4 bg-gray-100 border-b">Monto</th>
+          <th class="py-2 px-4 bg-gray-100 border-b">Estado</th>
+          <th class="py-2 px-4 bg-gray-100 border-b">Fecha de Solicitud</th>
+          <th class="py-2 px-4 bg-gray-100 border-b">Fecha de Respuesta</th>
           <th class="py-2 px-4 bg-gray-100 border-b">Wallet</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="transaction in transactionHistory" :key="transaction.id">
           <td class="py-2 px-4 border-b">{{ transaction.withdrawalOrderNumber }}</td>
-          <td class="py-2 px-4 border-b">{{ transaction.amount }}</td>
           <td class="py-2 px-4 border-b">{{ transaction.amountInUSD }}</td>
-          <td class="py-2 px-4 border-b" :class="{'text-green-500': transaction.status === 'pending', 'text-red-500': transaction.status === 'completed'}">{{ transaction.status }}</td>
+          <td class="py-2 px-4 border-b" :class="{'text-black-500': transaction.status === 'Pendiente', 'text-red-500': transaction.status === 'Rechazada', 'text-green-500':transaction.status=== 'Aprobada'}">{{ transaction.status }}</td>
+          <td class="py-2 px-4 border-b">{{ transaction.date }}</td>
           <td class="py-2 px-4 border-b">{{ transaction.date }}</td>
           <td class="py-2 px-4 border-b">{{ transaction.wallet }}</td>
         </tr>
@@ -111,7 +120,7 @@ export default {
 
       try {
         console.log('lelgo')
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        // await new Promise((resolve) => setTimeout(resolve, 2000));
 
         const withdrawalOrderNumber = generateWithdrawalOrderNumber(); // Generate a withdrawal order number
         this.withdrawalOrderNumber = withdrawalOrderNumber;
@@ -121,7 +130,7 @@ export default {
           withdrawalOrderNumber: withdrawalOrderNumber,
           amount: this.amountBTC,
           amountInUSD: this.amountUSD,
-          status: "pending",
+          status: "Rechazada",
           date: new Date().toLocaleDateString(),
           wallet: this.destinationWalletAddress,
         });
