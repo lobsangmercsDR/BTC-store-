@@ -72,7 +72,7 @@
                   </div>
                 </div>
               </div>
-              <div v-if="order.status === 'Aceptado' && order.company && order.noSeguimiento && order.showDetails" class="mt-4">
+              <div v-if="order.status === 'Aceptado'&& order.showDetails" class="mt-4">
                 <h3 class="text-lg font-semibold">Detalles de envío:</h3>
                 <p><strong>Compañía de envío:</strong> {{ order.company }}</p>
                 <p><strong>Número de seguimiento:</strong> {{ order.noSeguimiento }}</p>
@@ -323,10 +323,10 @@ export default {
       .then(response => {
         this.currentOrder.status = response.data.status;
         this.currentOrder.showDetails = true;
-        this.currentOrder.shippingStatus = "En camino";
         this.currentOrder.company = response.data.company;
-        this.currentOrder.trackingNumber = response.data.noSeguimiento;
+        this.currentOrder.noSeguimiento = response.data.noSeguimiento;
         this.acceptedOrder = Object.assign({}, this.currentOrder);
+        console.log(response.data.noSeguimiento)
         this.closeModal();
       })
       .catch(error => {

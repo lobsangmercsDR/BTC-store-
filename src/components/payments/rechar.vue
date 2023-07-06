@@ -5,15 +5,15 @@
       <h2 class="text-2xl font-bold mb-4">Wallet Panel</h2>
       <div class="mb-2">
         <span class="font-bold">Username:</span>
-        <span>{{ user.name }}</span>
+        <span>{{ user }}</span>
       </div>
       <div class="mb-2">
         <span class="font-bold">Current Balance:</span>
-        <span class="text-green-500"> {{ user.userBalance }} USD</span>
+        <span class="text-green-500"> {{ user }} USD</span>
       </div>
       <div class="mb-2">
         <span class="font-bold">Pending Balance:</span>
-        <span class="text-yellow-500"> {{ user.pendingUserBalance }} USD</span>
+        <span class="text-yellow-500"> {{ user }} USD</span>
       </div>
       <div>
         <span class="font-bold">Wallet Address:</span>
