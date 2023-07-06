@@ -111,19 +111,17 @@ class WithDrawView(viewsets.ModelViewSet):
     def post_new_withdraw(self, request):
         data = request.data
         user = request.user
-        serializer = WithDrawSerializer(data=data)
+        serializer = WithDrawSerializer(data=data, context={'request':request})
         serializer.is_valid(raise_exception=True)
-        if user.balance < data['amount']:
-            return JsonResponse({'message':'No tiene balance suficiente para este retiro'})
-        else:
-            return JsonResponse(serializer.data, status=400)
+        serializer.save()
+        return JsonResponse(serializer.data, status=200)
 
 
 class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):
         work_route=  r'C:\Users\TI\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
         local_route= r'C:\Users\alan8\OneDrive\Documentos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
-        complete_path = os.path.join(local_route, image_name)
+        complete_path = os.path.join(work_route, image_name)
         
         if os.path.exists(complete_path):
             return FileResponse(open(complete_path,'rb'),content_type='image/jpeg')

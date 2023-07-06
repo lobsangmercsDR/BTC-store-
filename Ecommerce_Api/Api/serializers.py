@@ -52,10 +52,7 @@ class ProductDigitSerializer(serializers.ModelSerializer):
             
 
 
-class WithDrawSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Withdrawals
-        fields = ['id','no_orden','amount','status','fecha_solicitud','fecha_review','walletRequested','user']
+
 
 
 
@@ -113,6 +110,26 @@ class UserSerializer(serializers.ModelSerializer):
             return False
         else:  
             return list(obj.groups.values_list('name',flat=True))[0]
+
+class WithDrawSerializer(serializers.ModelSerializer):
+    user = UserSerializer(required=False)
+
+
+    def validate_amount(self, obj):
+        user = self.context.get('request').user
+        if user.userBalance < int(obj):
+            raise serializers.ValidationError('No tiene suficiente balance para esta transaccion')
+        return obj
+
+    class Meta:
+        model = Withdrawals
+        fields = ['id','no_orden','amount','status','fecha_solicitud','fecha_review','walletRequested','user']
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context.get('request').user
+        validated_data['status'] = 'Pendiente'
+        return super().create(validated_data)
+
 
 
     

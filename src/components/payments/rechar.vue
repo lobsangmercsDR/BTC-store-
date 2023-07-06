@@ -34,7 +34,7 @@
         <input
           type="number"
           id="amountUSD"
-          v-model="amountUSD"
+          v-model="amount"
           class="py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-blue-500"
           placeholder="Enter the amount in USD"
           @input="convertUSDtoBTC"
@@ -54,9 +54,6 @@
         >
           Solicitar Retiro
         </button>
-        <p v-if="withdrawalOrderNumber" class="mt-2">
-          Withdrawal order number: {{ withdrawalOrderNumber }}
-        </p>
       </div>
     </div>
   </div>
@@ -76,15 +73,25 @@
       </thead>
       <tbody>
         <tr v-for="transaction in transactionHistory" :key="transaction.id">
-          <td class="py-2 px-4 border-b">{{ transaction.withdrawalOrderNumber }}</td>
-          <td class="py-2 px-4 border-b">{{ transaction.amountInUSD }}</td>
+          <td class="py-2 px-4 border-b">{{ transaction.no_orden }}</td>
+          <td class="py-2 px-4 border-b">{{ transaction.amount }}</td>
           <td class="py-2 px-4 border-b" :class="{'text-black-500': transaction.status === 'Pendiente', 'text-red-500': transaction.status === 'Rechazada', 'text-green-500':transaction.status=== 'Aprobada'}">{{ transaction.status }}</td>
-          <td class="py-2 px-4 border-b">{{ transaction.date }}</td>
-          <td class="py-2 px-4 border-b">{{ transaction.date }}</td>
-          <td class="py-2 px-4 border-b">{{ transaction.wallet }}</td>
+          <td class="py-2 px-4 border-b">{{ transaction.fecha_solicitud }}</td>
+          <td class="py-2 px-4 border-b">{{ transaction.fecha_review }}</td>
+          <td class="py-2 px-4 border-b">{{ transaction.walletRequested }}</td>
         </tr>
       </tbody>
     </table>
+    <section  class="nav-arrows" v-show="2==2">
+      <svg xmlns="http://www.w3.org/2000/svg" :style="{color:previousArrowColor}" @click="handleChangePage('fisics',-1)" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg> 
+      <div  class="pageCounter"> <span> {{ 422 }}</span></div>
+
+      <svg xmlns="http://www.w3.org/2000/svg" :style="{color:nextArrowColor}" @click="handleChangePage('fisics',1)" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 18l6-6-6-6"/>
+      </svg>
+    </section>
   </div>
 </template>
 
@@ -100,11 +107,14 @@ export default {
         userBalance: 0,
         wallet_address: ''
       },
+      amount:0,
+      destinationWalletAddress:'',
       transactionHistory: []
     };
   },
   created() {
     this.getUserData()
+    this.getTransactHistory()
   },
   methods: {
     async getUserData() { 
@@ -115,34 +125,57 @@ export default {
       .then(response => {this.user = response.data; console.log(response.data)})
       .catch(error => {console.log(error.response.data)})
     },
+
+    async getTransactHistory() {
+      await axios.get(`http://127.0.0.1:8000/api/withdraws`, {
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      })
+      .then(response => {
+        this.transactionHistory = response.data
+        console.log(response.data, this.transactionHistory)
+      })
+      .catch(error =>  {
+        console.log(error)
+      })
+    },
+
     async requestWithdrawal() {
       this.isWithdrawing = true;
-
-      try {
-        console.log('lelgo')
         // await new Promise((resolve) => setTimeout(resolve, 2000));
 
         const withdrawalOrderNumber = generateWithdrawalOrderNumber(); // Generate a withdrawal order number
         this.withdrawalOrderNumber = withdrawalOrderNumber;
+        await axios.post(`http://127.0.0.1:8000/api/withdraws`,{
+        no_orden: withdrawalOrderNumber,
+        amount: this.amount,
+        walletRequested: this.destinationWalletAddress
+      },
+      {
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      })
+      .then(response => {
+        console.log(response.data)
+        this.getTransactHistory()
+      })
+      .catch(error => {
+        console.log(error.response.data)
+      } )
+        
 
-        this.transactionHistory.push({
-          id: Date.now(),
-          withdrawalOrderNumber: withdrawalOrderNumber,
-          amount: this.amountBTC,
-          amountInUSD: this.amountUSD,
-          status: "Rechazada",
-          date: new Date().toLocaleDateString(),
-          wallet: this.destinationWalletAddress,
-        });
 
-        // Reset form fields
-        this.amountBTC = 0;
-        this.amountUSD = 0;
-        this.destinationWalletAddress = "";
-      } catch (error) {
-        console.error("Error requesting Bitcoin withdrawal:", error);
-      }
-
+        // this.transactionHistory.push({
+        //   id: Date.now(),
+        //   withdrawalOrderNumber: withdrawalOrderNumber,
+        //   amount: this.amountBTC,
+        //   amountInUSD: this.amountUSD,
+        //   status: "Pendiente",
+        //   date: new Date().toLocaleDateString(),
+        //   wallet: this.destinationWalletAddress,
+        // });
       this.isWithdrawing = false;
     },
     convertBTCToUSD() {
@@ -166,5 +199,11 @@ function generateWithdrawalOrderNumber() {
 <style scoped>
 .table {
   border-collapse: collapse;
+}
+
+.nav-arrows {
+  display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }
 </style>
