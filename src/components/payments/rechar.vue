@@ -1,23 +1,23 @@
 <template>
   <div class="flex">
     <!-- Side panel -->
-    <div class="flex flex-col w-1/4 bg-gray-200 p-4">
+    <div class="flex flex-col w-1/4 bg-gray-200 p-4" style="width: 295px;">
       <h2 class="text-2xl font-bold mb-4">Wallet Panel</h2>
       <div class="mb-2">
-        <span class="font-bold">Username:</span>
-        <span>{{ user }}</span>
+        <span class="font-bold">Username: </span>
+        <span>{{ user.name }}</span>
       </div>
       <div class="mb-2">
-        <span class="font-bold">Current Balance:</span>
-        <span class="text-green-500"> {{ user }} USD</span>
+        <span class="font-bold">Balance Actual: </span>
+        <span class="text-green-500"> {{ user.userBalance }} USD</span>
       </div>
       <div class="mb-2">
-        <span class="font-bold">Pending Balance:</span>
-        <span class="text-yellow-500"> {{ user }} USD</span>
+        <span class="font-bold">Balance Pendiente:</span>
+        <span class="text-yellow-500"> {{ user.userBalance }} USD</span>
       </div>
       <div>
-        <span class="font-bold">Wallet Address:</span>
-        <span>{{ user.wallet_address }}</span>
+        <p class="font-bold">Wallet Address: </p>
+        <p style="word-wrap: break-word;">{{ user.wallet_address}}</p>
       </div>
       <div class="flex flex-col items-center mt-8">
         <h3 class="text-xl font-bold mb-4">QR Code for deposit:</h3>
@@ -28,9 +28,9 @@
     </div>
     <!-- Withdrawal form -->
     <div class="flex flex-col items-center w-3/4 p-4">
-      <h2 class="text-2xl font-bold mb-4">Bitcoin Withdrawal Request</h2>
+      <h2 class="text-2xl font-bold mb-4">Enviar Solicitud de Retiro</h2>
       <div class="w-full max-w-xs">
-        <label for="amountUSD" class="block mt-4 mb-2">Amount (USD):</label>
+        <label for="amountUSD" class="block mt-4 mb-2">Cantidad en dolares:</label>
         <input
           type="number"
           id="amountUSD"
@@ -39,30 +39,11 @@
           placeholder="Enter the amount in USD"
           @input="convertUSDtoBTC"
         />
-        <label for="amountBTC" class="block mb-2">Amount (BTC):</label>
-        <input
-          type="number"
-          id="amountBTC"
-          v-model="amountBTC"
-          class="py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-blue-500"
-          placeholder="Enter the amount of Bitcoin to withdraw"
-          @input="convertBTCToUSD"
-        />
-       
-        <label for="destinationWalletAddress" class="block mt-4 mb-2">Destination Wallet Address:</label>
-        <input
-          type="text"
-          id="destinationWalletAddress"
-          v-model="destinationWalletAddress"
-          class="py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-blue-500"
-          placeholder="Enter the destination wallet address"
-        />
         <button
           class="mt-4 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors duration-300 ease-in-out"
           @click="requestWithdrawal"
-          :disabled="isWithdrawing || amountBTC <= 0 || amountBTC > balance || amountUSD <= 0 || destinationWalletAddress === '' || destinationWalletAddress === walletAddress"
         >
-          {{ isWithdrawing ? 'Pending' : 'Request Withdrawal' }}
+          Solicitar Retiro
         </button>
         <p v-if="withdrawalOrderNumber" class="mt-2">
           Withdrawal order number: {{ withdrawalOrderNumber }}
@@ -105,7 +86,12 @@ import Cookies from 'js-cookie';
 export default {
   data() {
     return {
-      user: null,
+      user: {
+        name: '',
+        userBalance: 0,
+        wallet_address: ''
+      },
+      transactionHistory: []
     };
   },
   created() {
@@ -121,21 +107,10 @@ export default {
       .catch(error => {console.log(error.response.data)})
     },
     async requestWithdrawal() {
-      if (
-        this.isWithdrawing ||
-        this.amountBTC <= 0 ||
-        this.amountBTC > this.balance ||
-        this.amountUSD <= 0 ||
-        this.destinationWalletAddress === "" ||
-        this.destinationWalletAddress === this.walletAddress
-      ) {
-        return;
-      }
-
       this.isWithdrawing = true;
 
       try {
-        // Placeholder for the actual withdrawal request process, replace it with the actual process.
+        console.log('lelgo')
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
         const withdrawalOrderNumber = generateWithdrawalOrderNumber(); // Generate a withdrawal order number

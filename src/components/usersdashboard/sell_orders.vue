@@ -72,7 +72,7 @@
                   </div>
                 </div>
               </div>
-              <div v-if="order.status === 'Aceptado'&& order.showDetails" class="mt-4">
+              <div v-if="order.status === 'Aceptado'&& order.showDetails  && order.company && order.noSeguimiento" class="mt-4">
                 <h3 class="text-lg font-semibold">Detalles de envío:</h3>
                 <p><strong>Compañía de envío:</strong> {{ order.company }}</p>
                 <p><strong>Número de seguimiento:</strong> {{ order.noSeguimiento }}</p>
