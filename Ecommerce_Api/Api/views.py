@@ -315,9 +315,17 @@ class CategoryView(viewsets.ModelViewSet):
 
     #GET all Categories
     def nested_list_categories(self, request):
+        formC = request.GET.get('formC', None)
         categories = Category.objects.all()
-        print(categories)
         serializer = CategorySerializer(categories, many=True,context={'request':request})
+        newSubC=[]
+        if formC:
+            for item in serializer.data:
+                for subC in item['subCategories']:
+                    if subC['purchased']:
+                        newSubC.append(subC)
+                item['subCategories'] = newSubC
+                newSubC = []
         return JsonResponse(serializer.data, status=200, safe=False)   
 
 

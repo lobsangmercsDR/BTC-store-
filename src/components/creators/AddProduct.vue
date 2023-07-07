@@ -79,11 +79,9 @@
           <label for="productDetails" class="text-lg font-semibold">Detalles Adicionales:</label>
           <textarea v-model="newProduct.aditional_details" id="productDetails" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="4" ></textarea>
         </div>
-        <div class="col-span-2">
-          <button @click="CreateProduct" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 self-end">
+        <button @click="CreateProduct" style="margin:auto" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 self-end">
             Agregar Producto
           </button>
-        </div>
       </form>
     </div>
   </div>
@@ -135,7 +133,7 @@ export default {
     },
 
     async fetchCategoriesForCreate() {
-      await axios.get("http://127.0.0.1:8000/api/categorias", {
+      await axios.get("http://127.0.0.1:8000/api/categorias?formC=true", {
         headers: {
           Authorization: `Token ${Cookies.get('token')}`
         }

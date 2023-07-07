@@ -43,32 +43,15 @@
                 </button>
               </td>
             </tr>
-            <tr class="add-subcategory">
-              <td colspan="5">
-                <button @click="showCreateSubcategoryModal(category)" class="add-button">
-                  Agregar Subcategoría
-                </button>
-              </td>
-            </tr>
           </tbody>
         </table>
       </div>
       <div class="category-actions">
-        <button @click="editCategory(category)" class="edit-button">
-          Editar
-        </button>
-        <button @click="deleteCategory(category)" class="delete-button">
-          Eliminar
-        </button>
         <button @click="showCreateSubcategoryModal(category)" class="add-button">
           Agregar Subcategoría
         </button>
       </div>
     </div>
-
-    <button @click="showCreateCategoryModal" class="add-button">
-      Agregar Categoría
-    </button>
 
     <div v-if="showModal" class="modal">
       <div class="modal-content">

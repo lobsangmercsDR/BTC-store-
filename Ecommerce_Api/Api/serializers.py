@@ -318,9 +318,7 @@ class SubCategorySerializer(serializers.ModelSerializer):
 
     def get_purchased(self, obj):
         idUser = self.context['request'].user.id
-        print(idUser)
         hasPurchased = TransactCategories.objects.filter(user_id=idUser, subCategory=obj.id).exists()
-        print(hasPurchased)
         if hasPurchased:
             return True
         else:
@@ -379,6 +377,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
     def get_subCategories(self, obj):
+        request = self.context.get('request', None)
         subCategories = SubCategory.objects.filter(category=obj.id)
         return SubCategorySerializer(subCategories, many=True,context=self.context).data
 
@@ -402,10 +401,30 @@ class ProductSerializer(serializers.ModelSerializer):
     seller = UserNestedSerializer(read_only=True)
     category = CategoryNestedSerializer(read_only=True)
     description = serializers.CharField(required=True)
-    price = serializers.SerializerMethodField()
     priceProduct = serializers.DecimalField(max_digits=10,decimal_places=2,write_only=True)
-    image_product = serializers.ImageField(required=False)
+    image_product = serializers.ImageField(required=True)
     subCategory = serializers.SerializerMethodField()
+    subCat_id = serializers.IntegerField(write_only=True)
+
+    def validate_subCat_id(self, value):
+        print(value, 31)
+        if not value: 
+            raise serializers.ValidationError("No se proporcionó ninguna subcategoría")
+        subObj = SubCategory.objects.filter(id=value).first()
+        if not subObj:
+            print("test")
+            raise serializers.ValidationError("La sub categoria planteada no existe")
+        return value
+
+    def validate_quantity(self, value): 
+        if value==0:
+            raise serializers.ValidationError("El numero no puede ser 0")
+        return value
+    
+    def validate_priceProduct(self, value):
+        if value==0:
+            raise serializers.ValidationError("Ingrese un valor valido")
+        return value
 
     def get_price(self, obj):
         print(obj.priceProduct)
@@ -424,7 +443,6 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = [
                     'id',
                     'nameProduct',
-                    'price',
                     'image_product',
                     'dateReleased',
                     'active',
@@ -437,6 +455,8 @@ class ProductSerializer(serializers.ModelSerializer):
                     'address_direction',
                     'description',
                     'category',
+                    'subCat_id',
+                    'store',
                     'subCategory',
                     'aditional_details',
                     'priceProduct'
@@ -449,38 +469,25 @@ class ProductSerializer(serializers.ModelSerializer):
     #         raise serializers.ValidationError("Debe ingresar una descripcion valida del producto")
     #     return value
 
-    def validate_subCategory(self, value):
-        print(value, 31)
-        if value == 0: 
-            raise serializers.ValidationError("No se proporcionó ninguna subcategoría")
-        subObj = SubCategory.objects.filter(id=value).first()
-        print(len(subObj))
-        if len(subObj) == 0:
-            print("test")
-            raise serializers.ValidationError("La sub categoria planteada no existe")
-        return value
-
-    def validate_quantity(self, value): 
-        if value==0:
-            raise serializers.ValidationError("El numero no puede ser 0")
-        return value
-    
-    def validate_priceProduct(self, value):
-        if value==0:
-            raise serializers.ValidationError("Ingrese un valor valido")
-        return value
 
     
 
     def create(self, validated_data):
         request = self.context.get('request')
         validated_data = request.data
-        category_id = validated_data.pop('subCategory', None)
+        category_id = validated_data.pop('subCat_id', None)
         print(category_id, 222)
         price = validated_data.pop('priceProduct', None)
         seller = User.objects.get(id=request.user.id)
-        subCategory = SubCategory.objects.get(id=category_id)
-        product = Product.objects.create(seller=seller, priceProduct=price, subCategory=subCategory, **validated_data)
+        subCategory = SubCategory.objects.get(id=category_id[0])
+        transformed_data = {}
+        for key, value in validated_data.items():
+            if not key=='image_product':
+                transformed_data[key] = value
+
+        image = validated_data['image_product']
+        store = Stores.objects.get(id=transformed_data.pop('store')[0])
+        product = ProductFisic.objects.create(seller=seller, priceProduct=price[0], subCategory=subCategory,image_product=image,store=store,  **transformed_data)
         return product
 
     def update(self, instance, validated_data):
