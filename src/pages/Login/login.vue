@@ -121,7 +121,7 @@ export default {
                 })
                 Cookies.set('token', response.data.token, {expires: 1, secure:true, sameSite: 'strict'}, null, null, true)
                 Cookies.set('svg', response.data.user,  {expires: 1, secure:true, sameSite: 'strict'}, null, null, true)
-                this.$router.push('/')
+                this.$router.push('/homePageEcommerce')
             }
             catch(error) {
                 this.error = error.response.data

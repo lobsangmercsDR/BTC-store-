@@ -52,7 +52,7 @@
           });
           Cookies.remove('token');
           Cookies.remove('svg')
-          this.$router.push('/login');
+          this.$router.push('/homePageEcommerce');
         } catch (error) {
           console.log(error);
         }

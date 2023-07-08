@@ -1,5 +1,11 @@
 <template>
+        <h1 style="    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 32px;
+    text-decoration: underline;"><b>¡Compra una de nuestras categorias!</b></h1>
     <div class="category-cards">
+
+
       <div
         v-for="category in categories"
         :key="category.id"

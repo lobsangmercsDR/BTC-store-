@@ -6,7 +6,7 @@
       <div class="flex" style="margin-top: 80px;">
         <!-- Barra lateral -->
         <aside class="flex w-72 flex-col space-y-2 border-r-2 border-gray-200 bg-white p-2" :class="{ 'hidden': !asideOpen }" style="min-height: 1000px">
-          <a href="#" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'home'">
+          <a href="#"  class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'home'">
             <span class="text-2xl"><i class="bx bx-home"></i></span>
             <span>Editar Perfil</span>
           </a>
@@ -19,7 +19,7 @@
             <span class="text-2xl"><i class="bx bx-home"></i></span>
             <span>Ordenes de compra</span>
           </a>
-          <a href="#" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'sells_orders'">
+          <a href="#" v-show="this.typeUser != 'buyers'" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'sells_orders'">
             <span class="text-2xl"><i class="bx bx-home"></i></span>
             <span>Ordenes de venta</span>
           </a>
@@ -27,15 +27,15 @@
             <span class="text-2xl"><i class="bx bx-home"></i></span>
             <span>Comprar Categorias de Venta</span>
           </a>
-          <a href="#" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'checker_panel'">
+          <a href="#" v-show="this.typeUser != 'buyers' && this.typeUser != 'sellers'" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'checker_panel'">
             <span class="text-2xl"><i class="bx bx-home"></i></span>
             <span>Checker Panel</span>
           </a>
-          <a href="#" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'p_product_add'">
+          <a href="#" v-show="this.typeUser != 'buyers'" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'p_product_add'">
             <span class="text-2xl"><i class="bx bx-home"></i></span>
             <span>Subir Producto</span>
           </a>
-          <a href="#" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'd_product_add'">
+          <a href="#" v-show="this.typeUser != 'buyers'" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'd_product_add'">
             <span class="text-2xl"><i class="bx bx-home"></i></span>
             <span>Subir Producto Digital</span>
           </a>
@@ -88,6 +88,7 @@ import orders from './orders.vue';
 import sell_orders from './sell_orders.vue';
 import buy_categories from './buy_categories.vue';
 import user_checker from './user_checker.vue';
+import { validateGroup } from '../../../utils/auth';
   
   export default {
     created() {
@@ -100,11 +101,20 @@ import user_checker from './user_checker.vue';
       }
     },
 
+
+    created() {
+      let Obj = this.$route.query
+      this.selectedOption = Obj.option
+      console.log(this.selectedOption)
+
+      this.IsAuthorized()
+    }, 
     data() {
       return {
         profileOpen: false,
         asideOpen: true,
         selectedOption: 'home',
+        typeUser:""
       };
     },
     components: {
@@ -125,6 +135,10 @@ import user_checker from './user_checker.vue';
         const newUrl = window.location.origin + window.location.pathname + '?option=checker_panel';
         window.location.href = newUrl;
       }
+    },
+    async IsAuthorized() {
+      let result = await validateGroup()
+      this.typeUser = result
     }
   }
   };

@@ -99,7 +99,7 @@
             <div class="component-container component-container-color1">
                 <table class="table  text-gray-400 border-separate space-y-4 text-sm">
                     <thead class="" style="
-                        background: #c65a03;
+                        background: rgb(122 0 160);
                         color: #fff;">
                         <tr>
                             <th class="p-2">Producto</th>
@@ -652,7 +652,7 @@ justify-content: flex-start;
 }
 
 .component-container-color1 {
-    background-color: #f66305;
+    background-color: #ab16be;
     color: white;
     height: 100%;
     min-height: 970px; 

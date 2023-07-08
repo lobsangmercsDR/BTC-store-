@@ -138,7 +138,7 @@ import deposit_coins from '../pages/Dashboard/wallet_cripto/deposit_coins.vue'
       path: '/profile',
       component:profile,
       children: [
-        { path: 'checker',name:'asasd', component: user_checker },
+        { name:'asasd', path: '/checkerP', component: user_checker },
       ]
     },
 

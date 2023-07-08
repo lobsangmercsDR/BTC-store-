@@ -121,7 +121,7 @@ class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):
         work_route=  r'C:\Users\TI\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
         local_route= r'C:\Users\alan8\OneDrive\Documentos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
-        complete_path = os.path.join(local_route, image_name)
+        complete_path = os.path.join(work_route, image_name)
         
         if os.path.exists(complete_path):
             return FileResponse(open(complete_path,'rb'),content_type='image/jpeg')
@@ -142,6 +142,12 @@ class TransactSubcategoryView(viewsets.ModelViewSet):
 
     def post(self, request):
        serializer = TransactCategorySerializer(data=request.data, context={'request':request})
+       user = User.objects.get(id=request.user.id)
+       if UserSerializer(user).data['group'] == "buyers":
+            userSer = UserCreatorSerializer(user, data={'change_group':'seller'}, partial=True,context={'update':True}) 
+            userSer.is_valid(raise_exception =True)
+            self.perform_update(userSer)
+            print("Con exito")
        serializer.is_valid(raise_exception=True)
        self.perform_create(serializer=serializer)
        return JsonResponse(serializer.data, status=200)
@@ -279,8 +285,9 @@ class ProductsDigitView(viewsets.ModelViewSet):
 
     def post_product_digit(self, request):
         data = request.data
-        serializer = ProductDigitSerializer(data=data)
+        serializer = ProductDigitSerializer(data=data, context={'request':request})
         serializer.is_valid(raise_exception=True)
+        serializer.save()
         return JsonResponse(serializer.data, status=200)
     
     def put_Product_state(self, request,pkS,pk):
@@ -323,7 +330,7 @@ class CategoryView(viewsets.ModelViewSet):
     def nested_list_categories(self, request):
         formC = request.GET.get('formC', None)
         categories = Category.objects.all()
-        serializer = CategorySerializer(categories, many=True,context={'request':request})
+        serializer = CategorySerializer(categories, many=True, context={'request':request})
         newSubC=[]
         if formC:
             for item in serializer.data:
@@ -605,8 +612,10 @@ class TransactsView(viewsets.ModelViewSet):
         page_number= request.GET.get('page',1)
         if int(page_number) > paginator.num_pages:
             return JsonResponse({"error":"No hay mas paginas"}, status=404)
-        paginated_data = paginator.get_page(page_number) 
-        serializer= TransactsSerializer(paginated_data, many=True) 
+        paginated_data = paginator.get_page(page_number)
+        print(paginated_data[0]) 
+        serializer= TransactsSerializer(paginated_data, many=True, context={'request':request})
+        print(paginated_data,2)
         dicc = {
             "actual_page": int(page_number),
             "available_pages":  paginator.num_pages - int(page_number),

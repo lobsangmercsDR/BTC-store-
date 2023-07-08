@@ -23,39 +23,6 @@ class StoreSerializer(serializers.ModelSerializer):
         count = obj.product_count 
 
 
-class ProductDigitSerializer(serializers.ModelSerializer):
-    dateCreated = serializers.DateTimeField(format="%d/%m/%Y %I:%M %p")
-
-    class Meta:
-        model = ProductDigit
-        fields = ['id', 'name', 'price','no_solicitud', 'description','comisionCheck','additional_details','needChecker','orgQuantity','actQuantity', 'dateCreated','store_id']
-
-
-
-    def to_representation(self, instance):
-        try:
-            product = ProductDigit.objects.filter(id=instance['id']).first()
-            store = Stores.objects.get(id=instance['store_id'])
-            serializer = StoreSerializer(store)
-            instance['store_id'] = serializer.data
-            result=super().to_representation(instance)
-            result['no_solicitudes'] = product.solic_count 
-            return result
-        except:
-            store = Stores.objects.get(id=instance.store_id)
-            product = ProductDigit.objects.filter(id=instance.id).first()
-            serializer = StoreSerializer(store)
-            result = super().to_representation(instance)
-            result['store_id'] = serializer.data
-            result['no_solicitudes'] = product.solic_count
-            return result
-            
-
-
-
-
-
-
 class GroupsSerializer(serializers.Serializer): 
     class Meta:
         model = Group
@@ -318,11 +285,37 @@ class SubCategorySerializer(serializers.ModelSerializer):
 
     def get_purchased(self, obj):
         idUser = self.context['request'].user.id
+        print(idUser)
         hasPurchased = TransactCategories.objects.filter(user_id=idUser, subCategory=obj.id).exists()
         if hasPurchased:
             return True
         else:
             return False
+
+class ProductDigitSerializer(serializers.ModelSerializer):
+    dateCreated = serializers.DateTimeField(format="%d/%m/%Y %I:%M %p", required=False)
+    subCategory = SubCategorySerializer(read_only=True)
+    subCategory_id = serializers.IntegerField(required=True)
+
+    def validate_price(self, value):
+        if value == 0:
+            raise serializers.ValidationError("El precio no puede ser 0")
+        return value
+
+    class Meta:
+        model = ProductDigit
+        fields = ['id', 'name', 'price','no_solicitud','subCategory', 'subCategory_id', 'description','comisionCheck','additional_details','needChecker','orgQuantity','actQuantity', 'dateCreated','store_id','checkerText']
+
+    def create(self, validated_data):
+        request = self.context.get('request',None)
+        subC_id = validated_data.pop('subCategory_id')
+        print(subC_id,312)
+        subObj = SubCategory.objects.get(id=subC_id)
+        print(request.user.id,23)
+        store = Stores.objects.get(seller=request.user.id)
+        instance = ProductDigit.objects.create(store=store, subCategory=subObj, **validated_data)
+        return instance
+
 
 class TransactCategorySerializer(serializers.ModelSerializer):
     dateTransact = serializers.DateTimeField(format=dateFormat, required=False)

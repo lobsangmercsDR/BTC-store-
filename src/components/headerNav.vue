@@ -22,14 +22,15 @@
           <!-- Menú -->
           <div class="flex items-center mr-6">
             <Button label="Home" class="mr-6 p-button-text" style="color: white !important;" @click="redirect(1)"></Button>
-            <Button label="Become Seller" class="mr-6 p-button-text" style="color: white !important;" @click="redirect(2)"></Button>
-            <Button label="Categorías" class="mr-6 p-button-text" style="color: white !important;" @click="redirect(3)"></Button>
-            <Button label="FAQ" class="mr-6 p-button-text" style="color: white !important;" @click="redirect(4)"></Button>
+            <Button label="¡Unete a nosotros!" v-show="authenticated != true" class="mr-6 p-button-text" style="color: white !important;" @click="redirect(2)"></Button>
+            <Button label="¡Vuelvete Seller!" v-show="authenticated"  @click="redirect(3)" class="mr-6 p-button-text" style="color: white !important;"></Button>
+            <Button label="Contacto" class="mr-6 p-button-text" style="color: white !important;" @click="redirect(4)"></Button>
+            
           </div>
         </div>
 
         <!-- Iconos -->
-        <div class="flex items-center relative">
+        <div class="flex items-center relative" v-show="authenticated">
 
           <!-- Icono de usuario -->
           <div class="relative flex items-center">
@@ -57,6 +58,18 @@
             
           </div>
         </div>
+        <div class="flex items-center relative" v-show="authenticated != true">
+          <div class="relative flex items-center">
+            <Button class="flex items-center ml-4 p-button-text" @click="handleUserAnon(1)">
+              <span class="ml-2 text-white"> Iniciar Sesión </span>
+            </Button>
+            <span class="ml-2 text-white"> | </span>
+            <Button class="flex items-center ml-4 p-button-text" @click="handleUserAnon(2)">
+              <span class="ml-2 text-white"> Registrarse </span>
+            </Button>
+
+        </div>
+</div>
       </div>
     </nav>
   </div>
@@ -68,6 +81,7 @@ import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import { isAuthenticated } from '../../utils/auth';
 
 export default {
   components: {
@@ -77,6 +91,7 @@ export default {
   },
   created() {
     this.takeUserInfo()
+    this.authenticated = isAuthenticated()
   },
   
   data() {
@@ -85,6 +100,7 @@ export default {
       logoImage: '',
       categories: [],
       selectedCategory: null,
+      authenticated: false,
       searchText: '',
       cartOpen: false,
       userMenuOpen: false,
@@ -124,6 +140,15 @@ export default {
         .catch(error => {console.log(2)})
       }
       
+    },
+
+    handleUserAnon(type) {
+      if(type==1) {
+        this.$router.push('/login')
+      }
+      else {
+        this.$router.push('/signup')
+      }
     },
 
     toggleCart() {
@@ -167,6 +192,15 @@ export default {
       if(id==1) {
         this.$router.push('/homePageEcommerce')
       }
+      if(id==2) {
+        this.$router.push('/signup')
+      }
+      if(id==3) {
+        this.$router.push({
+          path: '/profile',
+          query: {option: 'buy_categories'}
+        })
+      } 
     }
   }
 };
