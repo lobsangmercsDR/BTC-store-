@@ -2,7 +2,7 @@
   <div class="container">
     <div class="bg-white rounded-lg shadow-md p-8" style="max-width: 1100px; max-height: 900px;">
       <h2 class="text-3xl font-semibold mb-4">Agregar Nuevo Producto Digital</h2>
-      <form @submit.prevent="addProduct" class="grid grid-cols-2 gap-4">
+      <form class="grid grid-cols-2 gap-4">
         <div>
           <label for="productName" class="text-lg font-semibold">Nombre del Producto:</label>
           <input v-model="newProduct.name" id="productName" type="text" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" required>
@@ -11,42 +11,38 @@
         <div>
           <label for="productPriceUSD" class="text-lg font-semibold">Precio del Producto:</label>
           <div class="flex items-center">
-            <input v-model="newProduct.price_PD" id="productPriceUSD" type="number" step="0.01" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20" min="0" required @input="updatePriceBTC">
+            <input v-model="newProduct.price" id="productPriceUSD" type="number" step="0.01" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20" min="0" required @input="updatePriceBTC">
           </div>
         </div>
 
         <div>
           <label for="productCategories" class="text-lg font-semibold">Subcategorías del Producto:</label>
-          <select v-model="subCategories" id="productCategories" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" multiple required>
-            <option v-for="subCategory in subCategories" :key="subCategory.id" :value="subCategory.id">{{ subCategory.namesubCategory }}</option>
+          <select v-model="newProduct.subCategory" id="productCategories" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" multiple required>
+            <option v-for="subCategory in ListsubCategories" :key="subCategory.id" :value="subCategory.id">{{ subCategory.nameSubCategory }}</option>
           </select>
         </div>
-
-        <div v-for="category in newProduct.categories" :key="category.id">
-          <label :for="`productSubcategories_${category.id}`" class="text-lg font-semibold">Subcategorías de {{ category.name }}:</label>
-          <select v-model="category.subcategories" :id="`productSubcategories_${category.id}`" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" multiple required>
-            <option v-for="subcategory in category.subcategories" :key="subcategory">{{ subcategory }}</option>
-          </select>
+        <div>
+          <label for="productPlainText" class="text-lg font-semibold">Descripcion:</label>
+          <textarea v-model="newProduct.description" id="productPlainText" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
         </div>
 
         <div>
+          <label for="productPlainText" class="text-lg font-semibold">Muestra de checker:</label>
+          <textarea v-model="newProduct.checkerText" id="productPlainText" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
+        </div>
+        <div>
           <label for="productPlainText" class="text-lg font-semibold">Texto Plano:</label>
-          <textarea v-model="newProduct.plainText" id="productPlainText" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
+          <textarea v-model="newProduct.additional_details" id="productPlainText" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
         </div>
 
         <div>
           <label class="text-lg font-semibold">Vista Previa del Texto:</label>
           <div class="bg-gray-100 p-2 rounded-lg border border-gray-300 overflow-auto text-left" style="max-height: 200px; white-space: pre-line">{{ getPreviewText() }}</div>
-          <p v-if="!hasPurchased" class="text-red-500 text-sm mt-2">Solo se mostraan el la web las primeras 10 lineas del contenido</p>
-        </div>
-
-        <div>
-          <label for="productQuantity" class="text-lg font-semibold">Cantidad:</label>
-          <input v-model="newProduct.quantity" id="productQuantity" type="number" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" required>
+          <p v-if="!hasPurchased" class="text-red-500 text-sm mt-2">Solo se mostraran en la web las primeras 10 lineas del contenido</p>
         </div>
 
         <div class="col-span-2">
-          <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 self-end">
+          <button @click="addProduct()" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 self-end">
             Agregar Producto
           </button>
         </div>
@@ -57,6 +53,7 @@
 
 <script>
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 export default {
   data() {
@@ -64,65 +61,46 @@ export default {
       newProduct: {
         name: '',
         description: '',
-        priceBTC: 0,
-        priceUSD: 0,
-        image: '',
-        brand: '',
-        variants: '',
-        categories: [],
-        subcategories: [],
-        plainText: '',
-        quantity: 0,
+        checkerText: '',
+        additional_details: '',
+        price: 0,
+        subCategory: null,
       },
+      ListsubCategories: null,
       btcPrice: 0,
       hasPurchased: false,
     };
   },
-  mounted() {
-    this.fetchBTCPrice();
+
+  created() {
+    this.fetchSubCategories()
   },
   methods: {
-    async fetchBTCPrice() {
-      try {
-        const response = await axios.get('https://api.coinbase.com/v2/prices/spot?currency=USD');
-        this.btcPrice = parseFloat(response.data.data.amount);
-      } catch (error) {
-        console.error('Error al obtener el precio del BTC:', error);
-      }
-    },
     addProduct() {
       console.log('Agregando nuevo producto:', this.newProduct);
-      this.newProduct = {
-        name: '',
-        description: '',
-        priceBTC: 0,
-        priceUSD: 0,
-        image: '',
-        categories: [],
-        subcategories: [],
-        plainText: '',
-        quantity: 0,
-        checker_needed_product: false,
-      };
+      this.createDigitalProduct()
     },
-    updatePriceUSD() {
-      const btcPriceUSD = this.btcPrice * this.newProduct.priceBTC;
-      this.newProduct.priceUSD = btcPriceUSD.toFixed(2);
+
+    async fetchSubCategories() {
+      await axios.get(`http://127.0.0.1:8000/api/categorias?formC=true`, {
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      })
+      .then(response => {
+        this.ListsubCategories = response.data[1].subCategories
+        console.log(this.subCategories)
+      })
     },
-    updatePriceBTC() {
-      const usdPriceBTC = this.newProduct.priceUSD / this.btcPrice;
-      this.newProduct.priceBTC = usdPriceBTC.toFixed(8);
+    
+    async createDigitalProduct() {
+      await axios.post(`http://127.0.0.1:8000/api/productos/digit`, this.newProduct)
+      .then(response => console.log(response.data))
+      .catch(error => {console.log(error.response.data)})
     },
-    handleImageUpload(event) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.newProduct.image = reader.result;
-      };
-      reader.readAsDataURL(file);
-    },
+
     getPreviewText() {
-      const lines = this.newProduct.plainText.split('\n');
+      const lines = this.newProduct.additional_details.split('\n');
       return lines.slice(0, 5).join('\n');
     },
   },

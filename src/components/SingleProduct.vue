@@ -50,7 +50,7 @@
             <span class="text-lg">{{ productFisic.address_direction }}</span>
           </div>
           <div class="flex mb-2">
-            <p class="text-2xl font-semibold mr-2"> Precio: {{ productFisic.price }}</p>
+            <p class="text-2xl font-semibold mr-2"> Precio: {{ productFisic.priceProduct }}</p>
           </div>
           <div class="mt-8">
             <h3 class="text-xl font-semibold mb-2 text-left">Detalles adicionales:</h3>

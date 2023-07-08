@@ -401,19 +401,26 @@ class ProductSerializer(serializers.ModelSerializer):
     seller = UserNestedSerializer(read_only=True)
     category = CategoryNestedSerializer(read_only=True)
     description = serializers.CharField(required=True)
-    priceProduct = serializers.DecimalField(max_digits=10,decimal_places=2,write_only=True)
-    image_product = serializers.ImageField(required=True)
+    priceProduct = serializers.DecimalField(max_digits=10,decimal_places=2)
+    image_product = serializers.ImageField(required=True, write_only=False)
     subCategory = serializers.SerializerMethodField()
     subCat_id = serializers.IntegerField(write_only=True)
+    brand = serializers.CharField(required=True)
+    aditional_details = serializers.CharField(required=True)
 
     def validate_subCat_id(self, value):
-        print(value, 31)
         if not value: 
             raise serializers.ValidationError("No se proporcionó ninguna subcategoría")
         subObj = SubCategory.objects.filter(id=value).first()
         if not subObj:
             print("test")
             raise serializers.ValidationError("La sub categoria planteada no existe")
+        return value
+    
+    def validate_image_product(self, value):
+        print(value)
+        if value==None:
+            raise serializers.ValidationError("Este campo no debería estar vacío")
         return value
 
     def validate_quantity(self, value): 
@@ -476,8 +483,6 @@ class ProductSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         validated_data = request.data
         category_id = validated_data.pop('subCat_id', None)
-        print(category_id, 222)
-        price = validated_data.pop('priceProduct', None)
         seller = User.objects.get(id=request.user.id)
         subCategory = SubCategory.objects.get(id=category_id[0])
         transformed_data = {}
@@ -487,7 +492,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
         image = validated_data['image_product']
         store = Stores.objects.get(id=transformed_data.pop('store')[0])
-        product = ProductFisic.objects.create(seller=seller, priceProduct=price[0], subCategory=subCategory,image_product=image,store=store,  **transformed_data)
+        product = ProductFisic.objects.create(seller=seller, subCategory=subCategory,image_product=image,store=store,  **transformed_data)
         return product
 
     def update(self, instance, validated_data):

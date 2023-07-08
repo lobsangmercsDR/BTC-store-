@@ -121,7 +121,7 @@ class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):
         work_route=  r'C:\Users\TI\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
         local_route= r'C:\Users\alan8\OneDrive\Documentos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
-        complete_path = os.path.join(work_route, image_name)
+        complete_path = os.path.join(local_route, image_name)
         
         if os.path.exists(complete_path):
             return FileResponse(open(complete_path,'rb'),content_type='image/jpeg')
@@ -277,6 +277,12 @@ class ProductsDigitView(viewsets.ModelViewSet):
         serializer = ProductDigitSerializer(paginated_data, many=True)
         return JsonResponse({'available_pages':paginator.num_pages-int(page_number),'page':int(page_number),'data':serializer.data}, status=200, safe=False)
 
+    def post_product_digit(self, request):
+        data = request.data
+        serializer = ProductDigitSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        return JsonResponse(serializer.data, status=200)
+    
     def put_Product_state(self, request,pkS,pk):
         try:
             product = ProductDigit.objects.get(id=pk)
