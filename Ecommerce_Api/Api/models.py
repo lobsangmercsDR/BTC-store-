@@ -39,7 +39,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     wallet_address = models.CharField(max_length=50)
     direction = models.CharField(max_length=50)
     phoneNumber = models.CharField(max_length=50)
-    userBalance = models.DecimalField(max_digits=50, decimal_places=2)
+    userBalance = models.DecimalField(max_digits=50, decimal_places=2, default=0)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     createdAt = models.DateTimeField(auto_now_add=True)

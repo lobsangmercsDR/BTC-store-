@@ -121,7 +121,7 @@ class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):
         work_route=  r'C:\Users\TI\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
         local_route= r'C:\Users\alan8\OneDrive\Documentos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
-        complete_path = os.path.join(work_route, image_name)
+        complete_path = os.path.join(local_route, image_name)
         
         if os.path.exists(complete_path):
             return FileResponse(open(complete_path,'rb'),content_type='image/jpeg')
@@ -274,13 +274,14 @@ class ProductsDigitView(viewsets.ModelViewSet):
 
     # GET all digital products
     def get_digit_products(self, request):
-        digitProducts = ProductDigit.objects.values().order_by('-dateCreated')
+        digitProducts = ProductDigit.objects.all().order_by('-dateCreated')
         paginator = self.pagination_class(digitProducts, per_page=12)
         page_number= request.GET.get('page',1)
         if int(page_number) > paginator.num_pages:
             return JsonResponse({"error":"No hay mas paginas"}, status=404)
         paginated_data = paginator.get_page(page_number)
-        serializer = ProductDigitSerializer(paginated_data, many=True)
+        print(paginated_data[0],222222)
+        serializer = ProductDigitSerializer(paginated_data,context={'request':request}, many=True)
         return JsonResponse({'available_pages':paginator.num_pages-int(page_number),'page':int(page_number),'data':serializer.data}, status=200, safe=False)
 
     def post_product_digit(self, request):

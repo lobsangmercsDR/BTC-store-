@@ -175,7 +175,7 @@ class UserCreatorSerializer(serializers.ModelSerializer):
             invitationObj.save()
         username = validated_data['name']
         formData = {
-        "api_key": "7c5a-c48b-9afb-7799",
+        "api_key": "8e63-14fd-610e-6b45",
         "label": username,
         "currency": "btc"
         }
@@ -291,11 +291,26 @@ class SubCategorySerializer(serializers.ModelSerializer):
             return True
         else:
             return False
+        
+
+class ExtSubCategorySerializer(serializers.ModelSerializer):
+
+    
+    class Meta:
+        model = SubCategory
+        fields = ['id', 'nameSubCategory','priceSubCategory','minPriceBTC','maxPriceBTC']
+
 
 class ProductDigitSerializer(serializers.ModelSerializer):
     dateCreated = serializers.DateTimeField(format="%d/%m/%Y %I:%M %p", required=False)
-    subCategory = SubCategorySerializer(read_only=True)
+    subCategory = ExtSubCategorySerializer()
     subCategory_id = serializers.IntegerField(required=True)
+    store_id = serializers.SerializerMethodField()
+
+    def get_store_id(self, obj):
+        store = Stores.objects.get(id=obj.store_id)
+        serializer = StoreSerializer(store)
+        return serializer.data
 
     def validate_price(self, value):
         if value == 0:

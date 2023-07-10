@@ -384,6 +384,10 @@ export default {
       this.removeFromCart(product.id);
     },
     buyNow() {
+      if(Cookies.get('token') == null) {
+        console.log(2222)
+        this.$router.push('/login')
+      }
       this.showPaymentModal = true;
     },
     processFisicPayment() {

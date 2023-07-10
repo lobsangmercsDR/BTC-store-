@@ -10,7 +10,7 @@
                   <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-300 border-0 loginContainer">
                     <div class="rounded-t mb-0 px-6 py-6">
                       <div class="text-center mb-3">
-                        <h6 class="text-gray-600 text-sm font-bold">
+                        <h6 class="text-gray-600 text-sm font-bold" >
                           Register
                         </h6>
                       </div>
@@ -183,11 +183,7 @@
             invitation_code: this.invitation_code,
           });
   
-          this.registrationData = {
-            ...response.data,
-            walletAddress,
-            walletBalance,
-          }; // Almacenar los datos del registro exitoso
+          this.$router.push('/login') 
           this.registrationSuccess = true; // Mostrar el segundo modal
         } catch (error) {
           this.error = error;

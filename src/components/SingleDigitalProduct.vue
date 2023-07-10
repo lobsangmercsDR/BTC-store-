@@ -272,6 +272,10 @@ export default {
     },
 
     buyNow() {
+      if(Cookies.get('token') == null) {
+        console.log(2222)
+        this.$router.push('/login')
+      }
       this.showPaymentModal = true;
     },
     confirmPayment(id) {
