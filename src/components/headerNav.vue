@@ -13,11 +13,27 @@
 
           <!-- Buscador -->
           <div class="relative mr-6 flex w-550px border rounded-lg overflow-hidden">
-            <Dropdown v-model="selectedCategory" :options="categories" option-label="name" option-value="value"
-              placeholder="Selecciona una categoría" class="h-12 rounded -l-lg text-sm focus:outline-none"></Dropdown>
-            <InputText v-model="searchText" class="h-12  rounded-r-lg text-sm focus:outline-none flex-grow"
-              placeholder="Buscar..."></InputText>
+            <Dropdown v-model="selectedCategory" :options="categories" option-label="name" option-value="name"
+              placeholder="Categorias" class="h-12 rounded -l-lg text-sm focus:outline-none"></Dropdown>
+            <InputText v-model="searchText" @input="this.isOpenAcc=true; seek()" class="h-12  rounded-r-lg text-sm focus:outline-none flex-grow"
+              placeholder=""></InputText>
+              
           </div>
+          <div class="accordion-dfg" v-show="isOpenAcc"  @blur="this.isOpenAcc=false">
+            <p v-show="results==0" style="color: black;">No hay productos con ese nombre</p>
+            <tr v-for="result in results">
+              <td><span>{{ result.name }}</span></td>
+              <td><button class="mt-0" @click="openModal(result.id, 'digits',result)">Ver</button></td>
+            </tr>
+          </div>
+          <button class="button-top mt-0" @click="isOpenAcc=false">
+              x
+            </button>
+          
+
+
+            
+
 
           <!-- Menú -->
           <div class="flex items-center mr-6">
@@ -96,9 +112,16 @@ export default {
   
   data() {
     return {
+      isOpenAcc:false ,
       hasToken: false,
       logoImage: '',
-      categories: [],
+      categories: [
+        {id: 0, name:"Todas"},
+        {id: 1, name:"Fisicas"},
+        {id: 2, name:"Digitales"},
+        {id: 3, name:"Metodos"}
+      ],
+      results: [],
       selectedCategory: null,
       authenticated: false,
       searchText: '',
@@ -108,6 +131,7 @@ export default {
         name: '',
         balance: ''
       }, 
+      showAccordion:false,
       physicalProducts: [],
       digitalProducts: [],
       userOptions: [
@@ -120,6 +144,49 @@ export default {
     };
   },
   methods: {
+    openModal(id, type,obj) {
+      if(obj.hasOwnProperty('comisionCheck')) {
+        type = 'digits'
+      }
+      else if(obj.hasOwnProperty('variants')) {
+        type='fisic'
+      }
+      else {
+        console.log(obj)
+        type='method'
+      }
+      this.$emit('open-modal',{id:id, type:type});
+    },
+    async seek() {
+    let url = 'http://127.0.0.1:8000/api/seeker?query=' + this.searchText;
+    if (this.selectedCategory) {
+      url += '&tip=' + this.selectedCategory;
+    }
+  await axios.get(url)
+    .then(response=> {
+      const data = response.data;
+      const responseData =data.slice(0, 10).map(item => {
+        if(item.hasOwnProperty('nameProduct')) {   
+      return {
+        ...item,
+        name: item.nameProduct,
+      };
+    } else {
+      return item
+    }
+    }); 
+      this.results =  responseData
+      console.log(responseData);
+    })
+
+    .catch(error => {
+      console.error(error)
+    })
+    
+    // Manipular los datos obtenidos en la respuesta
+
+    },
+
     async takeUserInfo() {
       console.log("aaa");
       let token = Cookies.get('token')
@@ -157,13 +224,6 @@ export default {
     },
     closeCart() {
       this.cartOpen = false;
-    },
-    toggleUserMenu() {
-      this.userMenuOpen = !this.userMenuOpen;
-      if (this.cartOpen) this.cartOpen = false;
-    },
-    closeUserMenu() {
-      this.userMenuOpen = false;
     },
     handleUserOption(option) {
       if(option.id == 3) {
@@ -245,7 +305,54 @@ export default {
   width: 5000px !important;
 }
 
-.button {
-  background-color: #d9d9d9 !important;
+.button-top {
+  margin-top: 0 rem !important;
+    background-color: #e55a00;
+    padding: 11px 9px;
+    border-radius: 10px;
+    /* border: 2px #ffaf7b solid; */
+    margin-left: -12px;
+    margin-right: 42px;
+}
+
+.accordion-dfg {
+  position: absolute;
+    top: 93%;
+    left: 0;
+    width: 409px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    margin-left: 80px;
+    padding: 1rem;
+    border-radius: 7px;
+    display: block;
+}
+
+.accordion-dfg tr {
+  color:black;
+  margin-top: 8px;
+  text-align: left;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+.accordion-dfg tr td button {
+  padding:5px 12px;
+  border-radius: 10px;
+  background-color: #e55a00;
+  color: #fff;
+  font-weight: bold;
+}
+
+
+
+.show-accordion .accordion-dfg {
+  display: block;
+}
+
+
+.button-top:hover {
+  transition: all 0.1s ease-out;
+  scale: 1.09;
 }
 </style>

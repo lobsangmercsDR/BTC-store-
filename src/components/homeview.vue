@@ -176,7 +176,8 @@
         <SingleDigitalProduct :modalInfo="modalData"> </SingleDigitalProduct>
     </div>
 </template>
-  
+
+
 <script>
 import axios from 'axios';
 import SingleProduct from '@/components/SingleProduct.vue'
@@ -242,7 +243,7 @@ export default {
                         slidesToScroll: 4,
 
                     }
-            }]
+            }]      
             },
 
             productsTable2: [],
@@ -295,6 +296,9 @@ export default {
                 return ''
             }
         },
+
+        //responsive design
+
         nextArrowColorSP() {
             const pageNext = this.pageInfoSP.available_page
             if (pageNext == 0) {
@@ -662,7 +666,7 @@ justify-content: flex-start;
 .component-container-color2 {
     background-color: #ab16be;
     color: white;
-    min-height: 970px; 
+    min-height: 1022px; 
     min-width: 500px;
 }
 
@@ -720,7 +724,7 @@ justify-content: flex-start;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     padding: 20px;
-    margin: 15px;
+    margin: 19px;
     transition: transform 0.3s ease;
     overflow: hidden;
     box-sizing: border-box;

@@ -1,8 +1,8 @@
 <template>
   <div class="bg-light-gray homepage-container">
-    <TopBar />
+    <TopBar @open-modal="receivEmit"/>
     <div>
-      <homeview />
+      <homeview ref="homeViewRef" />
       <div class="espacio"></div>
 
     </div>
@@ -106,6 +106,11 @@ export default {
     };
   },
   methods: {
+    receivEmit(params) {
+      console.log(params)
+      this.$refs.homeViewRef.openModal(params.id, params.type);
+    },
+
     addToCart(product) {
       console.log('Product added to cart:', product);
       // Implementar la lógica para agregar el producto al carrito aquí
