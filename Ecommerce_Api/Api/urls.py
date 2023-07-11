@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import  ProductView,ReportView, ProductsDigitView,TransactSubcategoryView,WithDrawView, CategoryView,TransactsView,UserView, SolicCheckerView, AuthenticationView, GroupsView, LogoutView, InvitationCodeView, RoleRequestsView,Img_view
+from .views import  ProductView,ReportView,SearchAPIView, ProductsDigitView,TransactSubcategoryView,WithDrawView, CategoryView,TransactsView,UserView, SolicCheckerView, AuthenticationView, GroupsView, LogoutView, InvitationCodeView, RoleRequestsView,Img_view
 
 urlpatterns = [
     path('transactscategories',TransactSubcategoryView.as_view({'get':'get', 'post':'post'}),name="CheckerSOLIC"),
+    path('seeker',SearchAPIView.as_view({'get':'get'}),name="busc"),
     path('reports/<int:pkP>', ReportView.as_view({'post':'post_report'})),
     path('solicChecker',SolicCheckerView.as_view({'get':'get_solic_checker'},name="CheckerSOLIC")),
     path('solicChecker/<int:pk>',SolicCheckerView.as_view({'post':'post_solic_checker'},name="CheckerSOLIC")),

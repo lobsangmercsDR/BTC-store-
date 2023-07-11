@@ -94,7 +94,45 @@ def validate_group(user, groups):
         return False
     else:
         return True
-    
+
+class SearchAPIView(viewsets.ModelViewSet):
+    def get(self, request):
+        search_query = request.GET.get('query', '')
+        product_type = request.GET.get('tip', '')  # Obtener el parámetro 'tip'
+        print(product_type)
+        if product_type.lower() == 'digitales':
+            # Buscar coincidencias en ProductDigit
+            digit_results = ProductDigit.objects.filter(name__icontains=search_query)
+            digit_serializer = ProductDigitSerializer(digit_results, many=True)
+            return JsonResponse(digit_serializer.data, safe=False)
+        
+        if product_type.lower() == 'fisicas':
+            # Buscar coincidencias en ProductFisic
+            fisic_results = ProductFisic.objects.filter(nameProduct__icontains=search_query)
+            fisic_serializer = ProductSerializer(fisic_results, many=True)
+            return JsonResponse(fisic_serializer.data, safe=False)
+        
+        if product_type.lower() == 'metodos':
+            # Buscar coincidencias en MethodProduct
+            method_results = MethodProducts.objects.filter(nameProduct__icontains=search_query)
+            method_serializer = MethodSerializer(method_results, many=True)
+            return JsonResponse(method_serializer.data,safe=False)
+        
+        # Buscar coincidencias en todos los tipos de productos
+        fisic_results = ProductFisic.objects.filter(nameProduct__icontains=search_query)
+        digit_results = ProductDigit.objects.filter(name__icontains=search_query)
+        method_results = MethodProducts.objects.filter(nameProduct__icontains=search_query)
+        
+        fisic_serializer = ProductSerializer(fisic_results, many=True)
+        digit_serializer = ProductDigitSerializer(digit_results, many=True)
+        method_serializer = MethodSerializer(method_results, many=True)
+        
+        # Unir los resultados en una lista de diccionarios
+        results = fisic_serializer.data + digit_serializer.data + method_serializer.data
+        
+        return JsonResponse(results, safe=False)
+
+
 
 class WithDrawView(viewsets.ModelViewSet):
     queryset = Withdrawals.objects.all()
@@ -119,9 +157,8 @@ class WithDrawView(viewsets.ModelViewSet):
 
 class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):
-        work_route=  r'C:\Users\TI\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
-        local_route= r'C:\Users\alan8\OneDrive\Documentos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
-        complete_path = os.path.join(local_route, image_name)
+        work_route= r"C:\Users\TI\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\Api\images"
+        complete_path = os.path.join(work_route, image_name)
         
         if os.path.exists(complete_path):
             return FileResponse(open(complete_path,'rb'),content_type='image/jpeg')

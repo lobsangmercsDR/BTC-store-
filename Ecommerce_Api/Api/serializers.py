@@ -477,7 +477,6 @@ class ProductSerializer(serializers.ModelSerializer):
                     'priceProduct'
                 ]
 
-
     # def validate_description(self, value):
     #     print(value,22)
     #     if value=='':
