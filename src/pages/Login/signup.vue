@@ -4,10 +4,8 @@
       <main>
         <section class="absolute w-full h-full">
           <div class="absolute top-0 w-full h-full bg-gray-900" style="background-size: 100%; background-repeat: no-repeat;">
-            <div class="container mx-auto px-4 h-full">
-              <div class="flex content-center items-center justify-center h-full loginContainer">
-                <div class="w-full lg:w-4/12 px-4">
-                  <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-300 border-0 loginContainer">
+            <div class="container-s">
+              <div class="relative flex flex-col min-w-0 break-words  mb-6 shadow-lg rounded-lg bg-gray-300 border-0 loginContainer">
                     <div class="rounded-t mb-0 px-6 py-6">
                       <div class="text-center mb-3">
                         <h6 class="text-gray-600 text-sm font-bold" >
@@ -69,7 +67,7 @@
                             <small>{{ captchaResult }}</small>
                           </div>
                         </div>
-                        <div class="flex justify-between items-center mb-3">
+                        <div class="flex justify-between items-center mb-3 HandT">
                           <div>
                             <label class="inline-flex items-center cursor-pointer">
                               <input id="customCheckRegister" type="checkbox" class="form-checkbox border-0 rounded text-gray-800 ml-1 w-5 h-5" style="transition: all 0.15s ease 0s;" />
@@ -90,8 +88,6 @@
                       </form>
                     </div>
                   </div>
-                </div>
-              </div>
             </div>
             <footer-component></footer-component>
           </div>
@@ -244,6 +240,22 @@
     border-radius: 5px;
   }
   
+  @media (max-width: 768px) {
+  /* Estilos para dispositivos móviles */
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+
+}
+
+@media (min-width: 1025px) {
+  .HandT div{
+    padding: 0px 9px;
+  }
+}
+
+
+
   .spinner {
     width: 50px;
     height: 50px;
@@ -262,6 +274,14 @@
     }
   }
   
+  .container-s {
+    /* padding: 2rem; */
+    background: #111827;
+    display: flex;
+    justify-content: center;
+    align-items: start !important;
+    min-height: 100vh; 
+  }
   .modal h2 {
     font-size: 1.5rem;
     margin-bottom: 1rem;

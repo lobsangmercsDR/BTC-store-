@@ -4,12 +4,14 @@
       <div class="flex items-center justify-between p-6">
         <div class="flex items-center">
           <!-- Logo del sitio -->
+          
           <div v-if="logoImage">
             <img :src="logoImage" alt="logo" class="h-10 w-10 mr-2" />
           </div>
           <div v-else>
             <p class="font-semibold text-xl mr-2">Logo</p>
           </div>
+
 
           <!-- Buscador -->
           <div class="relative mr-6 flex w-550px border rounded-lg overflow-hidden">
@@ -29,6 +31,9 @@
           <button class="button-top mt-0" @click="isOpenAcc=false">
               x
             </button>
+            <button class="block  ml-auto p-button-text menu" @click="toggleMenu">
+          <i class="pi pi-bars text-white h-6 w-6"></i>
+        </button>
           
 
 
@@ -268,6 +273,18 @@ export default {
 
 
 <style>
+
+.menu {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .menu {
+    display: block;
+  }
+}
+
+
 .navbar {
   position: fixed;
   top: 0;

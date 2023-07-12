@@ -14,8 +14,8 @@ module.exports = {
         }
       },
     },
-    // devServer: {
-    //   "host": 'localhost',
-    // }
+    devServer: {
+      "host": 'localhost',
+    }
   };
   
