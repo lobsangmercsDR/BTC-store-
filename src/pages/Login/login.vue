@@ -4,14 +4,12 @@
     <div>
         <navbar-component></navbar-component>
         <main>
-            <section class="absolute w-full h-full">
-                <div class="absolute top-0 w-full h-full bg-gray-900"
-                    style="background-size: 100%; background-repeat: no-repeat;"></div>
-                <div class="container mx-auto px-4 h-full">
-                    <div class="flex content-center items-center justify-center h-full  loginContainer">
-                        <div class="w-full lg:w-4/12 px-4">
+            <section class="pgae">
+                <div class="div-P"
+                    style="background-size: 100%; background-repeat: no-repeat;">
+                    <div class="container-s">
                             <div
-                                class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-300 border-0 loginContainer ">
+                                class="loginContainer ">
                                 <div class="rounded-t mb-0 px-6 py-6">
                                     <div class="text-center mb-3">
                                         <h6 class="text-gray-600 text-sm font-bold">
@@ -35,7 +33,7 @@
                                                 class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
                                                 placeholder="Email" v-model="email" style="transition: all 0.15s ease 0s;" :class="{'errorInput' : error && error.hasOwnProperty('email')}"/>
                                         </div>
-                                            <div class="relative w-full mb-3">
+                                        <div class="relative w-full mb-3">
                                             <label class="block uppercase text-gray-700 text-xs font-bold mb-2"
                                                 for="grid-password">Password</label>
                                             <div v-if="error && error.hasOwnProperty('password')" class="text-red-500 errorText"> 
@@ -59,13 +57,11 @@
                                                     style="transition: all 0.15s ease 0s;">
                                                     Reset Password
                                                 </router-link>
-
-
                                             </div>
                                         </div>
                                         <div v-if="error && error.hasOwnProperty('non_field_errors')" class="text-red-500 errorLoginBox"> 
-                                                {{ error.non_field_errors[0] }}
-                                            </div>
+                                            {{ error.non_field_errors[0] }}
+                                        </div>
                                         <div class="text-center">
                                             <button
                                                 class="bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
@@ -77,27 +73,18 @@
                                                 style="transition: all 0.15s ease 0s;">
                                                 Register
                                             </router-link>
-
                                         </div>
                                     </form>
                                 </div>
                             </div>
-                            <div class="flex flex-wrap mt-6">
-                                <div class="w-1/2">
-                                    <a href="#forgot-password" class="text-gray-500"><small>Forgot password?</small></a>
-                                </div>
-                                <div class="w-1/2 text-right">
-                                    <a href="#register" class="text-gray-500"><small>Create new account</small></a>
-                                </div>
-                            </div>
                         </div>
-                    </div>
-                </div>
                 <footer-component></footer-component>
+            </div>
             </section>
         </main>
     </div>
 </template>
+
 
 
 <script>
@@ -132,3 +119,42 @@ export default {
 };
 </script>
   
+
+<style>
+.container-s {
+    /* padding: 2rem; */
+    background: #111827;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+
+}
+
+.loginContainer {
+    background-color: #d1d5db;
+    border-radius: 11px;
+}
+
+@media (max-width: 768px) {
+    .loginContainer {
+    max-width: 500px !important;
+    min-width: 360px !important;
+    justify-content: initial !important;
+    display: center;
+    justify-content: center;
+    background-color: #d1d5db;
+
+}
+
+
+}
+@media (min-width: 769px) and (max-width: 1024px) {
+  
+}
+
+@media (min-width: 1025px) {
+  /* Estilos para pantallas de escritorio */
+}
+
+</style>
