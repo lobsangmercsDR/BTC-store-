@@ -130,12 +130,10 @@ export default {
 }
 
 .homepage-container {
-  width: 1900px;
-  /* Ajusta el ancho máximo del contenedor según tus necesidades */
-  margin: 0 auto;
-  /* Centra el contenedor horizontalmente */
-  padding: 20px;
-  /* Agrega un espacio de relleno alrededor del contenedor */
+  max-width: 900px;
+    min-width: 1160px;
+    margin: 0 auto;
+    padding: 20px;  
 }
 
 .grid-container {

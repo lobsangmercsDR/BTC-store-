@@ -2,7 +2,7 @@
   <div>
     <nav class="navbar bg-orange-500 text-white fixed w-full">
       <div class="flex items-center justify-between p-6">
-        <div class="flex items-center">
+        <div class="firsSNav flex items-center">
           <!-- Logo del sitio -->
           
           <div v-if="logoImage">
@@ -31,9 +31,7 @@
           <button class="button-top mt-0" @click="isOpenAcc=false">
               x
             </button>
-            <button class="block  ml-auto p-button-text menu" @click="toggleMenu">
-          <i class="pi pi-bars text-white h-6 w-6"></i>
-        </button>
+
           
 
 
@@ -49,7 +47,61 @@
             
           </div>
         </div>
+        <button class="block   p-button-text menu" @click="menuOpen = !menuOpen">
+          <i class="pi pi-bars text-white h-6 w-6"></i>
+        </button>
+            <div v-show="menuOpen" class="">
+          <div class="fixed inset-0 flex z-50">
+            <!-- Fondo oscuro -->
+            <div class="fixed inset-0 bg-black opacity-50"></div>
+    
+            <!-- Menú lateral -->
+            <div class="relative latnav"  style="background-color: white; margin-top: 80px;" :class="{'latnav-showed': menuOpen}">
+              <!-- Botón para cerrar el menú -->
+              <button class="absolute top-0 right-0 mt-4 mr-4 p-button-text" @click="menuOpen=false">
+                <i class="pi pi-times text-orange-500 h-6 w-6"></i>
+              </button>
+    
+              <!-- Contenido del menú -->
+              <div class="p-6 flex flex-col" >
+                <!-- Buscador -->
+                <div class="relative mb-6 flex w-full border rounded-lg overflow-hidden" style="top:20px">
+                  <Dropdown v-model="selectedCategory" :options="categories" option-label="name" option-value="name"
+              placeholder="Categorias" class="h-12 rounded -l-lg text-sm focus:outline-none"></Dropdown>
+            <InputText v-model="searchText" @input="this.isOpenAcc=true; seek()" class="h-12  rounded-r-lg text-sm focus:outline-none flex-grow"
+              placeholder=""></InputText>
+                </div>
 
+                <div class="accordion-lat" v-show="isOpenAcc"  @blur="this.isOpenAcc=false">
+            <p v-show="results==0" style="color: black;">No hay productos con ese nombre</p>
+            <tr v-for="result in results">
+              <td><span>{{ result.name }}</span></td>
+              <td><button class="mt-0" @click="openModal(result.id, 'digits',result); ">Ver</button></td>
+            </tr>
+            <p style="color: #000; cursor: pointer;" @click="this.isOpenAcc=false"><b>X</b></p>
+          </div>
+    
+                <!-- Menú principal -->
+                <div class="flex flex-col">
+                  <Button label="Home" class="mb-2 p-button-text" style="color: black;"></Button>
+                  <Button label="¡Unete a nosotros!" v-show="authenticated != true" class="mb-2 p-button-text" style="color: black;"></Button>
+                  <Button label="¡Vuelvete Seller!" v-show="authenticated" class="mb-2 p-button-text" style="color: black;"></Button>
+                  <Button label="Contacto" class="mb-2 p-button-text" style="color: black;"></Button>
+                </div>
+    
+                <!-- Botones de inicio de sesión y registro -->
+                <div class="mt-auto flex flex-col">
+                  <Button class="mb-2 p-button-text" v-show="authenticated != true" @click="handleUserAnon(1)">
+                    <span class="p-button-label">Iniciar Sesión</span>
+                  </Button>
+                  <Button class="p-button-text" v-show="authenticated != true" @click="handleUserAnon(2)">
+                    <span class="p-button-label">Registrarse</span>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <!-- Iconos -->
         <div class="flex items-center relative" v-show="authenticated">
 
@@ -126,6 +178,7 @@ export default {
         {id: 2, name:"Digitales"},
         {id: 3, name:"Metodos"}
       ],
+      menuOpen: false,
       results: [],
       selectedCategory: null,
       authenticated: false,
@@ -150,6 +203,8 @@ export default {
   },
   methods: {
     openModal(id, type,obj) {
+      this.isOpenAcc = false
+      this.menuOpen = false
       if(obj.hasOwnProperty('comisionCheck')) {
         type = 'digits'
       }
@@ -279,11 +334,52 @@ export default {
 }
 
 @media (max-width: 640px) {
+
+}
+
+@media (min-width: 769px) and (max-width: 1160px) {
   .menu {
     display: block;
   }
+  .firsSNav {
+    display: none !important;
+  }
+
+  .latnav {
+    opacity: 9;
+  }
+
+  .accordion-lat {
+    position: absolute;
+    top: 97px;
+    left: 23px;
+    width: 334px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    /* margin-left: 80px; */
+    padding: 1rem;
+    border-radius: 7px;
+    display: block;
+    z-index: 2;
 }
 
+.accordion-lat tr {
+  color:black;
+  margin-top: 8px;
+  text-align: left;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+.accordion-lat tr td button {
+  padding:5px 12px;
+  border-radius: 10px;
+  background-color: #e55a00;
+  color: #fff;
+  font-weight: bold;
+}
+
+}
 
 .navbar {
   position: fixed;
