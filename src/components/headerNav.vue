@@ -4,12 +4,9 @@
       <div class="flex items-center justify-between p-6">
         <div class="firsSNav flex items-center">
           <!-- Logo del sitio -->
-          
-          <div v-if="logoImage">
-            <img :src="logoImage" alt="logo" class="h-10 w-10 mr-2" />
-          </div>
-          <div v-else>
-            <p class="font-semibold text-xl mr-2">Logo</p>
+  
+          <div>
+            <p class="font-semibold text-xl mr-2 icon-log">Logo</p>
           </div>
 
 
@@ -47,9 +44,14 @@
             
           </div>
         </div>
+        <div class="Resp-day">
         <button class="block   p-button-text menu" @click="menuOpen = !menuOpen">
           <i class="pi pi-bars text-white h-6 w-6"></i>
         </button>
+                <div>
+            <p class="font-semibold text-xl ml-2 icon-log-ext">Logo</p>
+          </div>
+        </div>
             <div v-show="menuOpen" class="">
           <div class="fixed inset-0 flex z-50">
             <!-- Fondo oscuro -->
@@ -337,9 +339,13 @@ export default {
 
 }
 
-@media (min-width: 769px) and (max-width: 1160px) {
+@media (max-width: 1160px) {
   .menu {
     display: block;
+  }
+
+  .Resp-day {
+    display: flex;
   }
   .firsSNav {
     display: none !important;
@@ -363,6 +369,11 @@ export default {
     z-index: 2;
 }
 
+.icon-log-ext {
+  display: block !important;
+  margin-top: 10px;
+}
+
 .accordion-lat tr {
   color:black;
   margin-top: 8px;
@@ -379,6 +390,10 @@ export default {
   font-weight: bold;
 }
 
+}
+
+.icon-log-ext {
+  display: none;
 }
 
 .navbar {
