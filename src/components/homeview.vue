@@ -47,13 +47,13 @@
                 
                 <div v-for="(product,index) in methodCreated" :key="index" class="method-item"> 
                     <img :src="'http://127.0.0.1:8000/api'+ product.image" alt="Product Image" class="product-table-img">
+                    <div class="title3 title">{{ product.nameProduct}}</div>
                     <div class="description">
                         <div class="FRow">
-                        <div class="title3 title">{{ product.nameProduct}}</div>
-                        <div style="margin-top: -8px;">({{ product.dateCreated }})</div>
-                        <div class="quantity_buy"><b>No. de compras:</b> {{ product.transacts_count }}</div>
-                        <div class="price"><b>Precio:</b> {{ product.price }}</div>
-                        <div class="tienda"><b>Tienda:</b> {{ product.store.nameStore }}</div>
+                            <div style="margin-top: -8px;">({{ product.dateCreated }})</div>
+                            <div class="quantity_buy"><b>No. de compras:</b> {{ product.transacts_count }}</div>
+                            <div class="price"><b>Precio:</b> {{ product.price }}</div>
+                            <div class="tienda"><b>Tienda:</b> {{ product.store.nameStore }}</div>
                         </div>
                     </div>
                     <div class="quantity"><span>{{ product.description }}</span></div>

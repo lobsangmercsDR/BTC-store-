@@ -130,8 +130,7 @@ export default {
 }
 
 .homepage-container {
-  max-width: 900px;
-    min-width: 1160px;
+
     margin: 0 auto;
     padding: 20px;  
 }
