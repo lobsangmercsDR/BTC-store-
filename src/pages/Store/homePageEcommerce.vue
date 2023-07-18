@@ -1,8 +1,10 @@
 <template>
+  <TopBar @open-modal="receivEmit"/>
+  <homeview ref="homeViewRef" />
   <div class="bg-light-gray homepage-container">
-    <TopBar @open-modal="receivEmit"/>
+    
     <div>
-      <homeview ref="homeViewRef" />
+      
       <div class="espacio"></div>
 
     </div>

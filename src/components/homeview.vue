@@ -47,38 +47,20 @@
                 
                 <div v-for="(product,index) in methodCreated" :key="index" class="method-item"> 
                     <img :src="'http://127.0.0.1:8000/api'+ product.image" alt="Product Image" class="product-table-img">
-                    <div class="title3 title">{{ product.nameProduct}}</div>
-                    <div class="description">
-                        <div class="FRow">
-                            <div style="margin-top: -8px;">({{ product.dateCreated }})</div>
-                            <div class="quantity_buy"><b>No. de compras:</b> {{ product.transacts_count }}</div>
-                            <div class="price"><b>Precio:</b> {{ product.price }}</div>
-                            <div class="tienda"><b>Tienda:</b> {{ product.store.nameStore }}</div>
+                    <section class="method-content">
+                        <div class="title3 title">{{ product.nameProduct}}</div>
+                        <div class="description">
+                            <div class="FRow">
+                                <div style="margin-top: -8px;">({{ product.dateCreated }})</div>
+                                <div class="quantity_buy"><b>No. de compras:</b> {{ product.transacts_count }}</div>
+                                <div class="price"><b>Precio:</b> {{ product.price }}</div>
+                                <div class="tienda"><b>Tienda:</b> {{ product.store.nameStore }}</div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="quantity"><span>{{ product.description }}</span></div>
+                        <div class="quantity"><span>{{ product.description }}</span></div>
                         <div class="details"><button @click="openModal(product.id, 'method')" class="product-button">Comprar</button></div>
+                    </section>
                 </div>
-                <!-- <table class="table text-gray-400 border-separate space-y-4 text-sm">
-                     <thead class="bg-gray-800 text-gray-500">
-                        <tr>
-                            <th class="p-2">Producto</th>
-                            <th class="p-2">Cantidad Disponibles</th>
-                            <th class="p-2">Fecha de Publicación</th>
-                            <th class="p-2">Precio</th>
-                        </tr>
-                    </thead> 
-                    <tbody>
-                        <tr v-for="(product, index) in displayedProductsTable1_5" :key="index"
-                            class="bg-gray-200 text-gray-700">
-                            <td class="p-2">{{ product.name }}</td>
-                            <td class="p-2">{{ product.quantityAvailable }}</td>
-                            <td class="p-2">{{ product.datePublished }}</td>
-                            <td class="p-2">{{ product.price }}</td>
-
-                        </tr>
-                    </tbody>
-                </table> -->
                 <section class="nav-arrowHV">
             <md-icon class="arrow-icon" @click="changePageSMP" name="previous-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
