@@ -8,29 +8,6 @@
       <div class="espacio"></div>
 
     </div>
-    <!-- <user_shopVue /> -->
-    <!-- <digital_product_view />
-    <productCard />
-    <users_profile_component />
-
-
-
-    
-
-
-
-    <AddDigitalProduct />
-    <AddProduct />
-    <DigitalCategoriesCreator />
-    <invitationcodetool />
-    <usermanages />
-    <rechar />
-    <inventory />
-    <homeview />
-    <users_profile_component />
-    <digital_product_view />
-     -->
-
   </div>
 </template>
 

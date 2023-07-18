@@ -3,7 +3,7 @@
         <div class="div2">
             <!-- Table 2 -->
             <h1>Últimos productos digitales Vendidos</h1>
-            <div class="component-container component-container-color2" :style="{height: (heightContainer +28) + 'px'}">
+            <div class="component-container component-container-color2">
                 <table class="table text-gray-400 border-separate space-y-4 text-sm">
                     <thead class="" style="
                         background: rgb(122 0 160);
@@ -60,7 +60,7 @@
                         <div class="quantity"><span>{{ product.description }}</span></div>
                         <div class="details"><button @click="openModal(product.id, 'method')" class="product-button">Comprar</button></div>
                     </section>
-                </div>
+                        </div>
                 <section class="nav-arrowHV">
             <md-icon class="arrow-icon" @click="changePageSMP" name="previous-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -75,7 +75,7 @@
         </section>
             </div>
         </div>
-        <div class="div1 grid-limitada" ref="container" :style="{height: (heightContainer +28) + 'px'}">
+        <div class="div1 grid-limitada" ref="container">
             <!-- Table 1 -->
             <h1>Últimos productos digitales agregados </h1>
             <div class="component-container component-container-color1">
@@ -516,6 +516,44 @@ export default {
 </script>
   
 <style>
+
+
+@media (max-width: 768px) {
+    .parent {
+        flex-direction: column;
+        align-items: center !important;
+    }
+
+
+    .method-item .method-content {
+        display: block;
+    }
+    .method-content .description {
+        display: none;
+    }
+    .method-item {
+        flex-direction: column;
+        max-width: 500px;
+    }
+    .component-container-color1 {
+        height: auto !important;
+    }
+
+    .component-container-color2 {
+        max-width: 500px;
+        margin: auto;
+        height: auto !important;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  
+}
+
+@media (min-width: 1025px) {
+  /* Estilos para pantallas de escritorio */
+}
+
 .parent {
     margin-top: 85px;
     padding: 0;
@@ -540,6 +578,17 @@ export default {
     display: flex;
 }
 
+.method-content {
+    display: grid; 
+    grid-auto-columns: 1fr; 
+    grid-template-columns: 1.5fr 1fr 1fr; 
+    grid-template-rows: 0.3fr 0.09fr; 
+    gap: 0px 0px; 
+    grid-template-areas: 
+    "title title title"
+    "description qunatity details";
+}
+
 
 /* Estilos para dispositivos móviles */
 
@@ -553,6 +602,7 @@ export default {
 display: flex;
 margin: 0px 25px;
 text-align: left;
+grid-area: description;
 }
 
 .description .title3 {
@@ -564,10 +614,12 @@ text-align: left;
     word-wrap: break-word;
     width: 190px;
     margin: 10px;
+    grid-area: qunatity
 }
 
 .details {
     flex-grow: 1;
+    grid-area: details;
 }
 
 
@@ -581,6 +633,7 @@ justify-content: flex-start;
     font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 0 !important;
+    grid-area: title;
 }
 /* Estilos para tabletas */
 @media (min-width: 769px) and (max-width: 1024px) {
