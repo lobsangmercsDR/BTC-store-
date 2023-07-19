@@ -600,7 +600,7 @@ export default {
 
 .description {
 display: flex;
-margin: 0px 25px;
+margin: 0px 0px 0px 25px;
 text-align: left;
 grid-area: description;
 }
@@ -634,6 +634,8 @@ justify-content: flex-start;
     font-weight: bold;
     margin-bottom: 0 !important;
     grid-area: title;
+    text-align: left;
+    margin: 0px 25px;
 }
 /* Estilos para tabletas */
 @media (min-width: 769px) and (max-width: 1024px) {
@@ -701,7 +703,9 @@ justify-content: flex-start;
 .component-container-color2 {
     background-color: #ab16be;
     color: white;
-    min-height: 1022px; 
+    min-height: 1022px;
+    max-height: 1022px;
+    overflow:auto; 
     min-width: 500px;
 }
 
