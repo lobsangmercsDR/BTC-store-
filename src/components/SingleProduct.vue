@@ -1,25 +1,21 @@
 <template >
-      
   <div class="modal" v-show="showFisicModal" :class="{'modal-transition':showFisicModal}" >
-    <div class="bg-white rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto" style="padding: 20px 32px;">
-      <button @click="closeModal" class="close-button">
+    <div class="bg-white rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto card-container" style="padding: 20px 32px; max-height: 645px;  min-width: 435px;">
+      <div class="close-button-cont">
+        <button @click="closeModal" class="close-button">
           <svg class="w-6 h-6 fill-current text-gray-500 hover:text-gray-700" xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24">
             <path
               d="M18.364 5.636a2 2 0 0 0-2.828 0L12 9.172 8.464 5.636a2 2 0 1 0-2.828 2.828L9.172 12l-3.536 3.536a2 2 0 1 0 2.828 2.828L12 14.828l3.536 3.536a2 2 0 1 0 2.828-2.828L14.828 12l3.536-3.536a2 2 0 0 0 0-2.828z" />
           </svg>
         </button>
-      <div v-if="productFisic" class="flex flex-col md:flex-row" style="    height: 500px;
-    width: 875px;">
-
+      </div>
+      <div v-if="productFisic" class="flex flex-col md:flex-row" >
         <div class="w-full md:w-1/2">
           <div class="max-w-[200px] mx-auto md:max-w-none">
             <div class="bg-gray-200 rounded-lg h-[250px] md:h-[500px]" style="display: flex;">
               <img class="container-img" :src="'http://127.0.0.1:8000/api' + productFisic.image_product"  alt="">
             </div>
-          </div>
-          <div class="flex justify-center mt-4 space-x-2 overflow-x-auto scrollbar-hide">
-
           </div>
         </div>
         <div class="w-full md:w-1/2 md:pl-8" style="overflow: auto;">
@@ -122,7 +118,7 @@
           <p>Producto: {{ productFisic.nameProduct}}</p>
           <p>Marca: {{ productFisic.brand }}</p>
           <p>Tienda: {{ productFisic.seller.name }}</p>
-          <p>Cantidad: {{ quantity }}</p>
+          <p>Cantidad: {{quantity }}</p>
           <p>Precio total: {{  (productFisic.price * quantity)}} </p>
           <hr class="my-4">
           <p>Username: {{ user.username }}</p>
@@ -523,6 +519,9 @@ export default {
     animation: modalT 0.4s forwards;
 }
 
+
+
+
 @keyframes modalT{
   0% {
     opacity: 0;
@@ -530,6 +529,11 @@ export default {
   100% {
     opacity: 1;
   }
+}
+
+.card-container {
+  max-width: 951px;
+  overflow: auto;
 }
 .container-img {
       width: 100%;
@@ -554,9 +558,12 @@ export default {
 }
 
 .close-button {
-  margin-left: 53.5em;
     margin-bottom: 20px;
-    margin-top: 0px;
+}
+
+.close-button-cont {
+  display: flex;
+  justify-content: flex-end;
 }
 
 
