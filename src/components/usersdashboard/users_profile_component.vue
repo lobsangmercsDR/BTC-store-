@@ -4,8 +4,24 @@
  
       <!-- Contenido principal -->
       <div class="flex" style="margin-top: 80px;">
+        <section @click="this.showAsideMenu=!this.showAsideMenu" v-show="!this.showAsideMenu" style="margin: 20px;">
+          <svg width="30" height="30" id="icoOpen">
+            <path d="M0,5 30,5" stroke="#000" stroke-width="5"/>
+            <path d="M0,14 30,14" stroke="#000" stroke-width="5"/>
+            <path d="M0,23 30,23" stroke="#000" stroke-width="5"/>
+          </svg>
+        </section>
         <!-- Barra lateral -->
-        <aside class="flex w-72 flex-col space-y-2 border-r-2 border-gray-200 bg-white p-2" :class="{ 'hidden': !asideOpen }" style="min-height: 1000px">
+        <aside v-show="this.showAsideMenu" class="flex w-72 flex-col space-y-2 border-r-2 border-gray-200 bg-white p-2" :class="{ 'hidden': !asideOpen }" style="min-height: 1000px">
+          <div class="close-button-cont">
+            <button @click="this.showAsideMenu = false" class="close-button">
+              <svg class="w-6 h-6 fill-current text-gray-500 hover:text-gray-700" xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24">
+                <path
+                  d="M18.364 5.636a2 2 0 0 0-2.828 0L12 9.172 8.464 5.636a2 2 0 1 0-2.828 2.828L9.172 12l-3.536 3.536a2 2 0 1 0 2.828 2.828L12 14.828l3.536 3.536a2 2 0 1 0 2.828-2.828L14.828 12l3.536-3.536a2 2 0 0 0 0-2.828z" />
+              </svg>
+            </button>
+          </div>
           <a href="#"  class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'home'">
             <span class="text-2xl"><i class="bx bx-home"></i></span>
             <span>Editar Perfil</span>
@@ -114,7 +130,8 @@ import { validateGroup } from '../../../utils/auth';
         profileOpen: false,
         asideOpen: true,
         selectedOption: 'home',
-        typeUser:""
+        typeUser:"",
+        showAsideMenu:false
       };
     },
     components: {

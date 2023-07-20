@@ -85,7 +85,7 @@
     
                 <!-- Menú principal -->
                 <div class="flex flex-col">
-                  <Button label="Home" class="mb-2 p-button-text" style="color: black;"></Button>
+                  <Button label="Home" @click="this.$router.push('/homePageEcommerce')" class="mb-2 p-button-text" style="color: black;"></Button>
                   <Button label="¡Unete a nosotros!" v-show="authenticated != true" class="mb-2 p-button-text" style="color: black;"></Button>
                   <Button label="¡Vuelvete Seller!" v-show="authenticated" class="mb-2 p-button-text" style="color: black;"></Button>
                   <Button label="Contacto" class="mb-2 p-button-text" style="color: black;"></Button>
@@ -219,6 +219,11 @@ export default {
       }
       this.$emit('open-modal',{id:id, type:type});
     },
+
+    closeUserMenu() {
+      this.userMenuOpen = false
+    },
+
     async seek() {
     let url = 'http://127.0.0.1:8000/api/seeker?query=' + this.searchText;
     if (this.selectedCategory) {
@@ -250,9 +255,7 @@ export default {
     },
 
     async takeUserInfo() {
-      console.log("aaa");
       let token = Cookies.get('token')
-      console.log(token);
       if (token != null) {
         this.hasToken = true 
         await axios.get(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`, {
@@ -261,8 +264,6 @@ export default {
           }
         })
         .then(response => {
-          console.log("aaaee");
-          console.log(response);
           this.user.name = response.data.name; 
           this.user.balance = response.data.userBalance
         })
@@ -278,6 +279,10 @@ export default {
       else {
         this.$router.push('/signup')
       }
+    },
+
+    toggleUserMenu() {
+      this.userMenuOpen = !this.userMenuOpen
     },
 
     toggleCart() {

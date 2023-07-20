@@ -232,15 +232,12 @@ export default {
   },
   watch: {
     modalInfo(newValue) {
-      console.log(1);
       this.showFisicModal = newValue.showFisicModal
-      console.log(this.showFisicModal);
       if (newValue.typeProd == 'fisic') {
         this.renderProductFisicData(newValue.objID)
         
       }
       else if(newValue.typeProd== 'method') {
-        console.log("llegue")
         this.renderMethodData(newValue.objID)
       }
     }
@@ -306,7 +303,6 @@ export default {
       await axios.get(`http://127.0.0.1:8000/api/productos/${id}`)
         .then(response => {
           this.productFisic = response.data;
-          console.log(this.productFisic)
           this.transactInfo.productDigit_id = response.data.id
         })
         .catch(error => console.log(error.response.data))
@@ -317,7 +313,7 @@ export default {
         .then(response => {
           this.method = response.data;
           this.transactInfo.productDigit_id = response.data.id
-          console.log(response.data);
+
         })
         .catch(error => console.log(error.response.data))
     },
@@ -333,7 +329,6 @@ export default {
         .then(response => {
           this.user.username = response.data.name; 
           this.user.balance = response.data.userBalance
-          console.log(this.user)
         })
         .catch(error => {})
       }

@@ -126,7 +126,7 @@
 
 
     </div>
-    <div class="div4">
+    <div class="PF-slideshow">
             <section id="header_icons">
                 <h1 style="flex-grow: 1;">Ultimos Productos Fisicos vendidos</h1>
                 <span class="arrow-icon" @click="changePageSlP" :style="{color: previousArrowColorSlP}" name="previous-arrow">
@@ -320,8 +320,6 @@ export default {
 
 
         openModal(id, type) {
-            console.log(id)
-            console.log(type);
             if(type == "digits") {
                 this.modalData = {showDigitModal: true,typeProd: type, objID: id }
             } else {
@@ -577,10 +575,11 @@ export default {
     
 }
 
-.div4{
+.PF-slideshow{
     max-width: 1330px;
     margin: auto;
     margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 .nav-arrows:hover {
@@ -675,7 +674,7 @@ justify-content: flex-start;
   }
 
   .div3,
-  .div4 {
+  .PF-slideshow {
     grid-area: auto;
   }
 

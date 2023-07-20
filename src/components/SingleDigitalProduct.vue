@@ -190,13 +190,12 @@ export default {
   
   watch : {
     modalInfo(newValue) {
-
-      console.log(newValue)
-      this.showModal = newValue.showDigitModal
-      this.status = newValue.status
-      this.orderS = newValue.order
-      console.log(this.status)
-      this.renderDigitProductData(newValue.objID, newValue.typeProd)
+      if (newValue.typeProd == 'digits') {
+        this.showModal = newValue.showDigitModal
+        this.status = newValue.status
+        this.orderS = newValue.order
+        this.renderDigitProductData(newValue.objID, newValue.typeProd)
+      }  
     }
   },
 
@@ -298,7 +297,6 @@ export default {
     async renderDigitProductData(id,type) {
       await axios.get(`http://127.0.0.1:8000/api/productos/digit/${id}`)
       .then(response => {
-        console.log(type);
         if( type == 'checker') { 
           this.checkerView = true
         }
@@ -335,7 +333,6 @@ export default {
         .then(response => {
           this.user.username = response.data.name; 
           this.user.balance = response.data.userBalance
-          console.log(this.user)
         })
         .catch(error => {})
       }
