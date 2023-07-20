@@ -18,7 +18,7 @@
             </div>
           </div>
         </div>
-        <div class="w-full md:w-1/2 md:pl-8" style="overflow: auto;">
+        <div class="w-full md:w-1/2 md:pl-8 modCont" style="overflow: auto;">
           <div class="content">
           <h2 class="text-3xl font-semibold mb-4 text-orange-600 hover:text-purple-800 transition-colors duration-300 ">
             {{ productFisic.nameProduct }}
@@ -73,7 +73,7 @@
 
           </div>
         </div>
-        <div class="w-full md:w-1/2 md:pl-8" style="overflow: auto;">
+        <div class="w-full md:w-1/2 md:pl-8 modCont" style="overflow: auto;">
           <div class="content">
           <h2 class="text-3xl font-semibold mb-4 text-orange-600 hover:text-purple-800 transition-colors duration-300 ">
             {{ method.nameProduct }}
@@ -274,7 +274,6 @@ export default {
       },
       shippingAddress: '',
       orderNumber: '',
-      formattedDate: '',
       liked: false,
       disliked: false,
     };
@@ -553,6 +552,9 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
+}
+.modCont::-webkit-scrollbar {
+  width: 0;
 }
 
 .bg-white {

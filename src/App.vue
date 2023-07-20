@@ -1,8 +1,6 @@
 <template>
   <div id="app">
     <router-view />
-    <ProductCard  v-if="ShowCard"/> 
-    <homeview v-if="NewProductSlider"/>
   </div>
 </template>
 

@@ -26,18 +26,19 @@
                         </tr>
                     </tbody>
                 </table>
+                <!-- Flechas  -->
                 <section class="nav-arrowHV">
-            <md-icon class="arrow-icon" @click="changePageSP" :style="{color:previousArrowColorSP}" name="previous-arrow">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-                    </svg>
-                </md-icon>
-                <md-icon class="arrow-icon" @click="changePageSP" :style="{color:nextArrowColorSP}" name="next-arrow">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                    </svg>
-            </md-icon>
-        </section>
+                    <span class="arrow-icon" @click="changePageSP" :style="{color:previousArrowColorSP}" name="previous-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                        </svg>
+                    </span>
+                    <span class="arrow-icon" @click="changePageSP" :style="{color:nextArrowColorSP}" name="next-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                        </svg>
+                    </span>
+                </section>
             </div>
         </div>
         <div class="div2 grid-limitada" style="width:840px;">
@@ -62,16 +63,16 @@
                     </section>
                         </div>
                 <section class="nav-arrowHV">
-            <md-icon class="arrow-icon" @click="changePageSMP" name="previous-arrow">
+            <span class="arrow-icon" @click="changePageSMP" name="previous-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                     </svg>
-                </md-icon>
-                <md-icon class="arrow_icon" @click="changePageSMP" name="next-arrow">
+                </span>
+                <span class="arrow_icon" @click="changePageSMP" name="next-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                     </svg>
-            </md-icon>
+            </span>
         </section>
             </div>
         </div>
@@ -103,16 +104,16 @@
                     </tbody>
                 </table>
                 <section class="nav-arrowHV">
-            <md-icon class="arrow-icon" :style="{color:previousArrowColor}" name="previous-arrow" @click="changePageAP">
+            <span class="arrow-icon" :style="{color:previousArrowColor}" name="previous-arrow" @click="changePageAP">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                     </svg>
-                </md-icon>
-                <md-icon class="arrow-icon" @click="changePageAP" :style="{color: nextArrowColor}" name="next-arrow">
+                </span>
+                <span class="arrow-icon" @click="changePageAP" :style="{color: nextArrowColor}" name="next-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                     </svg>
-            </md-icon>
+            </span>
         </section>
             </div>
         </div>
@@ -128,16 +129,16 @@
     <div class="div4">
             <section id="header_icons">
                 <h1 style="flex-grow: 1;">Ultimos Productos Fisicos vendidos</h1>
-                <md-icon class="arrow-icon" @click="changePageSlP" :style="{color: previousArrowColorSlP}" name="previous-arrow">
+                <span class="arrow-icon" @click="changePageSlP" :style="{color: previousArrowColorSlP}" name="previous-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                     </svg>
-                </md-icon>
-                <md-icon  @click="changePageSlP" name="next-arrow" :style="{color: nextArrowColorSlP}">
+                </span>
+                <span  @click="changePageSlP" name="next-arrow" :style="{color: nextArrowColorSlP}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                     </svg>
-                </md-icon>
+                </span>
             </section>
             <div class="slider-container hidden md:block" id="slideshow" >
                     <div v-for="(product, index) in displayedProductsTableSlider()" :key="index" class="slider-item">
@@ -175,6 +176,7 @@ export default {
     data() {
         return {
             modalData: null,
+            pagesFisic: 5,
             heightContainer: 0,
             showModal1: false,
             showModal2: false,
@@ -299,8 +301,19 @@ export default {
         }
     },
 
+    mounted() {
+        this.handleResize()
+    },
+
+
+
 
     methods: {
+    handleResize() {
+        const sizeScr = window.innerWidth;
+        this.pagesFisic = (sizeScr < 768) ? 1 : 5 
+    },
+
         async adaptTableHeight() {
            this.heightContainer = this.$refs.variable_container.offsetHeight
         },
@@ -324,8 +337,6 @@ export default {
                 this.productsAdded = response.data.data
                 this.pageInfo.available_page = response.data.available_pages;
                 this.pageInfo.actualPage = response.data.page;
-                console.log(this.modalData);
-                console.log(response.data);
             })
             .catch(error => {
                 console.log(error.response.data)
@@ -333,7 +344,7 @@ export default {
         },
 
         async getLast24HFisicProducts(page=1) {
-            await axios.get(`http://127.0.0.1:8000/api/productos?page=${page}`)
+            await axios.get(`http://127.0.0.1:8000/api/productos?page=${page}&p_size=${this.pagesFisic}`)
             .then(response => {
                 this.pageInfoSlP.actualPage = response.data.actual_page
                 this.pageInfoSlP.available_page = response.data.available_pages
@@ -357,14 +368,11 @@ export default {
         },
 
         async getLast24HTransacts(page=1) { 
-            console.log(333);
             await axios.get(`http://127.0.0.1:8000/api/transacts?digitals=true&page=${page}`)
             .then(response => {
-                console.log(response.data);
                 this.transactsMaked = response.data 
                 this.pageInfoSP.available_page = response.data.available_pages;
                 this.pageInfoSP.actualPage = response.data.actual_page;
-                console.log(this.transactsMaked)
             })
             .catch(error => {
                 console.log(error)
@@ -537,6 +545,11 @@ export default {
     }
     .component-container-color1 {
         height: auto !important;
+    }
+
+    .title {
+        margin-top: 15px !important;
+        text-align: center  !important;
     }
 
     .component-container-color2 {

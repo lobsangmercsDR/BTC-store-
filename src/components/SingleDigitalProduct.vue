@@ -3,13 +3,15 @@
 
   <div class="modal modal-transition" v-show="showModal" >
     <div class="bg-white product-card card rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto">
-      <button @click="closeModal" class="close-button">
+      <div class="close-button-cont">
+        <button @click="closeModal" class="close-button">
           <svg class="w-6 h-6 fill-current text-gray-500 hover:text-gray-700" xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24">
             <path
               d="M18.364 5.636a2 2 0 0 0-2.828 0L12 9.172 8.464 5.636a2 2 0 1 0-2.828 2.828L9.172 12l-3.536 3.536a2 2 0 1 0 2.828 2.828L12 14.828l3.536 3.536a2 2 0 1 0 2.828-2.828L14.828 12l3.536-3.536a2 2 0 0 0 0-2.828z" />
           </svg>
         </button>
+      </div>
       <div v-if="productDigit" class="flex flex-col md:flex-row">
         <div class="w-full md:w-1/2" >
           <div class="bg-gray-200 rounded-lg h-[250px] md:h-[500px]" style="height: 460px;">
@@ -92,6 +94,7 @@
                 Comprar ahora
               </button> 
             </div>
+            <div class="espacio"></div>
           </div>
         </div>
         </div>
@@ -205,6 +208,7 @@ export default {
 
   data() {
     return {
+      pagesFisic: 0,
       orderS:0,
       status:"",
       showModal:false,
@@ -245,7 +249,6 @@ export default {
       seller_username: "",
       checkerPrice: 0, // Precio adicional del checker
     };
-    this.productPriceBTC = this.product.price * this.btcPrice;
   },
   methods: {
     async makeActionInChecking(id, type,ordID) {
@@ -393,8 +396,14 @@ export default {
   align-items: center;
   height: 100vh;
 }
+
+.close-button-cont {
+  display: flex;
+  justify-content: flex-end ;
+}
+
 .close-button {
-    margin-bottom: 20px;
+    margin-bottom: 8px;
     margin-top: 0px;
 }
 
@@ -404,6 +413,17 @@ export default {
     max-height: 750px;
     margin-top: 78px !important;
     overflow: auto;
+  }
+
+  .product-card::-webkit-scrollbar {
+    width: 0;
+  }
+  .component-container-color2::-webkit-scrollbar {
+    width: 0;
+  }
+
+  .slider-container {
+    max-width: 277px !important;
   }
 
   .card-content { 
@@ -641,6 +661,7 @@ export default {
 .text-3xl {
   font-size: 1.875rem;
   line-height: 2.25rem;
+  margin-top:20px ;
 }
 
 .text-purple-800 {

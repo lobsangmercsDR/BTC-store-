@@ -157,13 +157,15 @@ class WithDrawView(viewsets.ModelViewSet):
 
 class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):
-        work_route=  r'C:\Users\TI\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
-        local_route= r'C:\Users\alan8\OneDrive\Documentos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
-        complete_path = os.path.join(local_route, image_name)
+        localD = os.getenv('USERPROFILE')
+        TP_route=  f'{localD}\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
+        print(TP_route)
+        complete_path = os.path.join(TP_route, image_name)
         
         if os.path.exists(complete_path):
             return FileResponse(open(complete_path,'rb'),content_type='image/jpeg')
         else:
+            print('ruta')
             return JsonResponse({'error':'No se encuentra la imagen'})
 
 
@@ -226,6 +228,7 @@ class ProductView(viewsets.ModelViewSet):
         user_products= request.GET.get('userProducts','false')
         last_products= request.GET.get('lately','false')
         digital=request.GET.get('digital','false')
+        pSize = request.GET.get('p_size', 5)
         start_time= datetime.now()-timedelta(hours=24)
         filters = {
             'seller_id': None if user_products =='false' else request.user.id,
@@ -239,7 +242,7 @@ class ProductView(viewsets.ModelViewSet):
                 products = products.filter(Q(**{key: value}))
         if not products:
             return JsonResponse({"Message": "No se encontraron productos con los presentes requerimientos"})
-        paginator = Paginator(products, per_page=5)
+        paginator = Paginator(products, per_page=pSize)
         page_number= request.GET.get('page',1)
         if int(page_number) > paginator.num_pages:
             return JsonResponse({"error":"No hay mas paginas"}, status=404)
