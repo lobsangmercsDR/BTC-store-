@@ -2,7 +2,7 @@
 
 
   <div class="modal modal-transition" v-show="showModal" >
-    <div class="bg-white card rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto">
+    <div class="bg-white product-card card rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto">
       <button @click="closeModal" class="close-button">
           <svg class="w-6 h-6 fill-current text-gray-500 hover:text-gray-700" xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24">
@@ -18,7 +18,7 @@
             <p v-if="!hasPurchased" class="text-red-500 text-sm mt-2">For complete view buy the product</p>
           </div>
         </div>
-        <div class="w-full md:w-1/2 md:pl-8 text-left" style="overflow: auto; height: 460px;">
+        <div class="w-full md:w-1/2 md:pl-8 text-left card-content" style="overflow: auto; height: 460px;">
           <div style="box-sizing: border-box;">
           <h2 class="text-3xl font-semibold mb-4 text-orange-600 hover:text-purple-800 transition-colors duration-300">
             {{ productDigit.name}}
@@ -394,9 +394,21 @@ export default {
   height: 100vh;
 }
 .close-button {
-  margin-left: 53.5em;
     margin-bottom: 20px;
     margin-top: 0px;
+}
+
+@media (max-width: 768px) {
+  .product-card {
+    max-width: 500px;
+    max-height: 750px;
+    margin-top: 78px !important;
+    overflow: auto;
+  }
+
+  .card-content { 
+    overflow: unset !important;
+  }
 }
 
 
@@ -977,6 +989,7 @@ export default {
     opacity: 0;
     animation: modalT 0.4s forwards;
 }
+
 
 @keyframes modalT{
 0%{

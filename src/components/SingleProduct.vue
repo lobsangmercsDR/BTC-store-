@@ -61,8 +61,7 @@
           </div>
         </div>
       </div>
-      <div v-if="method" class="flex flex-col md:flex-row" style="    height: 500px;
-    width: 875px;">
+      <div v-if="method" class="flex flex-col md:flex-row" style="    height: 500px;">
 
         <div class="w-full md:w-1/2">
           <div class="max-w-[200px] mx-auto md:max-w-none">
@@ -93,7 +92,7 @@
           </div>
           <div class="mt-8">
             <h3 class="text-xl font-semibold mb-2 text-left">Detalles adicionales:</h3>
-            <p class="text-gray-600 text-lg text-left">{{ method.description}}</p>
+            <p class="text-gray-600 text-lg text-left" style="word-wrap: break-word;">{{ method.description}}</p>
           </div>
           <div class="flex mb-4 space-x-4 justify-end">
             <button @click="buyNow"
@@ -530,6 +529,13 @@ export default {
     opacity: 1;
   }
 }
+
+@media (max-width: 768px){
+  .card-container {
+    max-width: 475px !important;
+  }
+}
+
 
 .card-container {
   max-width: 951px;
