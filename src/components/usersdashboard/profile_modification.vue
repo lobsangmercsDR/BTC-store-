@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto py-8">
     <div class="max-w-4xl mx-auto">
-      <div class="bg-white shadow-md rounded-lg p-6">
+      <div class="bg-white shadow-md rounded-lg p-6 formCont">
         <div class="mb-4 allie">
           <label for="name" class="text-lg">Nombre:</label>
           <input v-model="user.name" id="name" type="text" class="form-input">
@@ -96,6 +96,14 @@ export default {
 </script>
 
 <style>
+
+@media (max-width:650px) {
+    .formCont  {
+      max-width: 345px;
+    }
+}
+
+
 .btn-save-changes {
   background-color: #4C51BF;
   color: white;

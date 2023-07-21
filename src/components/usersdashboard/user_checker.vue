@@ -204,10 +204,8 @@ import SingleDigitalProduct from '../SingleDigitalProduct.vue';
   }
   .order-review {
     max-width: 800px;
-    /* margin: 0 auto; */
     padding: 2rem;
-    /* justify-content: space-around !important; */
-    display: flex;
+    display: grid;
     min-width: 100%;
     gap: 46px;
   }

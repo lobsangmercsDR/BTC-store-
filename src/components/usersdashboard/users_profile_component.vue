@@ -4,7 +4,7 @@
  
       <!-- Contenido principal -->
       <div class="flex" style="margin-top: 80px;">
-        <section @click="this.showAsideMenu=!this.showAsideMenu" v-show="!this.showAsideMenu" style="margin: 20px;">
+        <section @click="this.showAsideMenu=!this.showAsideMenu" v-show="!this.showAsideMenu" style="margin: 20px; position: absolute;">
           <svg width="30" height="30" id="icoOpen">
             <path d="M0,5 30,5" stroke="#000" stroke-width="5"/>
             <path d="M0,14 30,14" stroke="#000" stroke-width="5"/>
@@ -12,7 +12,7 @@
           </svg>
         </section>
         <!-- Barra lateral -->
-        <aside v-show="this.showAsideMenu" class="flex w-72 flex-col space-y-2 border-r-2 border-gray-200 bg-white p-2" :class="{ 'hidden': !asideOpen }" style="min-height: 1000px">
+        <aside v-show="this.showAsideMenu" class="flex w-72 flex-col space-y-2 border-r-2 border-gray-200 bg-white p-2" :class="{ 'hidden': !asideOpen }" style="min-height: 1165px; position: absolute; z-index: 2;">
           <div class="close-button-cont">
             <button @click="this.showAsideMenu = false" class="close-button">
               <svg class="w-6 h-6 fill-current text-gray-500 hover:text-gray-700" xmlns="http://www.w3.org/2000/svg"
@@ -120,7 +120,14 @@ import { validateGroup } from '../../../utils/auth';
 
     created() {
       let Obj = this.$route.query
-      this.selectedOption = Obj.option
+      if(Obj.option == null) {
+        console.log(1);
+        this.selectedOption = 'home'
+      }
+      else {
+        this.selectedOption = Obj.option
+      }
+
       console.log(this.selectedOption)
 
       this.IsAuthorized()

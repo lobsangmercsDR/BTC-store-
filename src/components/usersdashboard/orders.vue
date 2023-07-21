@@ -7,19 +7,19 @@
       <div v-if="ordersPhisics.length === 0" class="text-gray-600">
         No hay órdenes disponibles.
       </div>
-      <div v-for="(orderList, orderType) in ordersByType" :key="orderType" >
-        <h3 @click="toggleOrderSection(orderType)" class="text-lg font-semibold mt-4 cursor-pointer">
+       <div v-for="(orderList, orderType) in ordersByType" :key="orderType" >
+        <h3 @click="toggleOrderSection(orderType)" class="text-lg font-semibold mt-4 mb-4 cursor-pointer">
           Órdenes de productos {{ orderType === 'physical' ? 'físicos' : 'digitales' }}
           <span v-if="isOrderSectionOpen(orderType)" class="text-sm ml-2">[-]</span>
           <span v-else class="text-sm ml-2">[+]</span>
         </h3>
-        <table v-show="isOrderSectionOpen(orderType)" class="table-auto w-full text-left">
+        <table v-show="isOrderSectionOpen(orderType)" class="table-auto w-full text-left responsive-table">
           <thead>
             <tr>
               <th class="px-4 py-2">ID de orden</th>
               <th class="px-4 py-2">Fecha</th>
               <th class="px-4 py-2">Estado</th>
-              <th class="px-4 py-2">Acciones</th>
+              <th class="px-4 py-2" id="actions">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -27,11 +27,11 @@
               <td class="border px-4 py-2">{{ order.id }}</td>
               <td class="border px-4 py-2">{{ order.dateTransact }}</td>
               <td class="border px-4 py-2">{{ order.status }}</td>
-              <td class="border px-4 py-2">
+              <td class="border px-4 py-2 actions-tr">
                 
                 <button @click.stop="openReportModal(order)" class="px-2 py-1 bg-orange-500 text-white rounded mt-0">Reportar problema</button>
-                <button @click.stop="openDetailsModal(order)" class="px-2 py-1 bg-blue-500 text-white rounded ml-2 mt-0">Ver detalles</button>
-                <button class="px-2 py-1 bg-red-500 text-white rounded ml-2 mt-0" @click="removeOrder(order.id)" v-show="orderType  != 'virtual'">Retirar</button>
+                <button @click.stop="openDetailsModal(order)" class="px-2 py-1 bg-blue-500 text-white rounded  mt-0">Ver detalles</button>
+                <button class="px-2 py-1 bg-red-500 text-white rounded  mt-0 retire-button" @click="removeOrder(order.id)" v-show="orderType  != 'virtual'">Retirar</button>
               </td>
             </tr>
           </tbody>
@@ -59,6 +59,7 @@
                 <path d="M9 18l6-6-6-6"/>
               </svg>
         </section>
+        <hr>
       </div>
       
     </div>
@@ -357,6 +358,43 @@ export default {
 
 
 <style scoped>
+
+.actions-tr {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-gap: 15px;
+}
+
+@media (max-width: 855px) and (min-width: 768px), (max-width: 435px) {
+  .retire-button {
+    margin-top: 14px;
+    margin-left: 0px;
+  }
+}
+
+@media (max-width: 768px) {
+  .responsive-table tbody tr {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: 0.5fr 1fr;
+  }
+  .responsive-table thead tr {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+  }
+  #actions {
+    display: none;
+  }
+
+
+  .actions-tr {
+    grid-column: 1/-1;
+    display: grid;
+    grid-template-columns:  repeat(auto-fit, minmax(150px, 1fr));
+    grid-gap: 15px;
+  }
+}
+
 
 .nav-arrows {
     display: flex;

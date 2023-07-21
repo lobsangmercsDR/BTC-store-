@@ -1,8 +1,9 @@
 <template>
-        <h1 style="    margin-top: 20px;
+        <h1 style="    margin-top: 35px;
     margin-bottom: 20px;
     font-size: 32px;
-    text-decoration: underline;"><b>¡Compra una de nuestras categorias!</b></h1>
+    text-decoration: underline;
+    "><b>¡Compra una de nuestras categorias!</b></h1>
     <div class="category-cards">
 
 
@@ -205,9 +206,13 @@
   </script>
   
   <style scoped>
+
+  .subcategory-card {
+    
+  }
   .category-cards {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     grid-gap: 20px;
   }
   
@@ -222,6 +227,7 @@
     margin: 0;
     font-size: 18px;
     display: flex;
+    justify-content: center;
     align-items: center;
   }
   
@@ -266,11 +272,16 @@
     grid-template-columns: 1fr;
     grid-gap: 10px;
     margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   
   .subcategory-card {
     background-color: #fff;
     padding: 10px;
+    max-width: 320px;
+    min-width: 320px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
