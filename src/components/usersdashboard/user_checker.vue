@@ -206,8 +206,9 @@ import SingleDigitalProduct from '../SingleDigitalProduct.vue';
     max-width: 800px;
     padding: 2rem;
     display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(561px, 1fr));
+    grid-gap: 49px;
     min-width: 100%;
-    gap: 46px;
   }
   
   .table {

@@ -25,6 +25,7 @@
     "path-browserify": "^1.0.1",
     "primeicons": "^6.0.1",
     "primevue": "^3.29.2",
+    "resize-event": "^2.0.0",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "swiper": "^9.3.2",

@@ -1,8 +1,7 @@
 <template>
-  <div class="container">
-    <div class="bg-white rounded-lg shadow-md p-8" style="max-width: 1100px; max-height: 900px;">
+      <div class="bg-white rounded-lg shadow-md p-8" style="max-width: 1100px;">
       <h2 class="text-3xl font-semibold mb-4">Agregar Nuevo Producto Digital</h2>
-      <form class="grid grid-cols-2 gap-4">
+      <form class="grid grid-cols-2 gap-4 form-add">
         <div>
           <label for="productName" class="text-lg font-semibold">Nombre del Producto:</label>
           <input v-model="newProduct.name" id="productName" type="text" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" :class="{'errorInput': error && error.hasOwnProperty('name')}">
@@ -65,7 +64,6 @@
           </button>
         </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -144,6 +142,12 @@ export default {
 
 .bg-white {
   margin: 0 auto;
+}
+
+@media (max-width:768px) {
+  .form-add {
+    display: block;
+  }
 }
 
 form label {

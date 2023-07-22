@@ -1,8 +1,11 @@
 <template>
-  <div class="flex">
+  <div class="wallet-cont">
     <!-- Side panel -->
-    <div class="flex flex-col w-1/4 bg-gray-200 p-4" style="width: 295px;">
-      <h2 class="text-2xl font-bold mb-4">Wallet Panel</h2>
+    <div class="bg-gray-200 card-cont" style="width: 295px;">
+      <div class="content">
+
+
+      <h2 class="text-2xl font-bold mb-4 ">Wallet Panel</h2>
       <div class="mb-2">
         <span class="font-bold">Username: </span>
         <span>{{ user.name }}</span>
@@ -19,6 +22,7 @@
         <p class="font-bold">Wallet Address: </p>
         <p style="word-wrap: break-word;">{{ user.wallet_address}}</p>
       </div>
+    </div>
       <div class="flex flex-col items-center mt-8">
         <h3 class="text-xl font-bold mb-4">QR Code para depositos:</h3>
         <div class="w-48 h-48">
@@ -60,8 +64,8 @@
 
   <div class="mt-8">
     <h3 class="text-xl font-bold mb-4">Historial de retiros</h3>
-    <table class="table min-w-full border border-gray-300">
-      <thead>
+    <table class="table min-w-full border border-gray-300  responsive-table">
+      <thead v-show="!isWindowSmall">
         <tr>
           <th class="py-2 px-4 bg-gray-100 border-b">No. de orden</th>
           <th class="py-2 px-4 bg-gray-100 border-b">Monto</th>
@@ -71,7 +75,7 @@
           <th class="py-2 px-4 bg-gray-100 border-b">Wallet</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody v-if="!isWindowSmall">
         <tr v-for="transaction in transactionHistory" :key="transaction.id">
           <td class="py-2 px-4 border-b">{{ transaction.no_orden }}</td>
           <td class="py-2 px-4 border-b">{{ transaction.amount }}</td>
@@ -82,6 +86,37 @@
         </tr>
       </tbody>
     </table>
+
+    <table :key="transaction.id" v-if="isWindowSmall" v-for="transaction in transactionHistory"  class="table min-w-full border border-gray-300  responsive-table">
+      <tbody>
+        <tr>
+          <td class="py-2 px-4 bg-gray-100 border-b">No. de orden</td>
+          <td class="py-2 px-4 border-b">{{ transaction.no_orden }}</td>
+        </tr>
+        <tr>
+          <td class="py-2 px-4 bg-gray-100 border-b">Monto</td>
+          <td class="py-2 px-4 border-b">{{ transaction.amount }}</td>
+        </tr>
+        <tr>
+          <td class="py-2 px-4 bg-gray-100 border-b">Estado</td>
+          <td class="py-2 px-4 border-b" :class="{'text-black-500': transaction.status === 'Pendiente', 'text-red-500': transaction.status === 'Rechazada', 'text-green-500':transaction.status=== 'Aprobada'}">{{ transaction.status }}</td>
+        </tr>
+        <tr>
+          <td class="py-2 px-4 bg-gray-100 border-b">Fecha de Solicitud</td>
+          <td class="py-2 px-4 border-b">{{ transaction.fecha_solicitud }}</td>
+        </tr>
+        <tr>
+          <th class="py-2 px-4 bg-gray-100 border-b">Fecha de Respuesta</th>
+          <td class="py-2 px-4 border-b">{{ transaction.fecha_review }}</td>
+        </tr>
+        <tr>
+          <th class="py-2 px-4 bg-gray-100 border-b">Wallet</th>
+          <td class="py-2 px-4 border-b">{{ transaction.walletRequested }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+
     <section  class="nav-arrows" v-show="2==2">
       <svg xmlns="http://www.w3.org/2000/svg" :style="{color:previousArrowColor}" @click="handleChangePage('fisics',-1)" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M15 18l-6-6 6-6"/>
@@ -98,6 +133,7 @@
 <script>
 import axios from "axios";
 import Cookies from 'js-cookie';
+import { on } from 'resize-event';
 
 export default {
   data() {
@@ -107,12 +143,16 @@ export default {
         userBalance: 0,
         wallet_address: ''
       },
+      isWindowSmall: false,
       amount:0,
       destinationWalletAddress:'',
       transactionHistory: []
     };
   },
+
   created() {
+    this.checkWindowSize();
+    window.addEventListener('resize', this.checkWindowSize);
     this.getUserData()
     this.getTransactHistory()
   },
@@ -141,6 +181,9 @@ export default {
       })
     },
 
+    checkWindowSize() {
+      this.isWindowSmall = window.innerWidth <= 768;
+    },
     async requestWithdrawal() {
       this.isWithdrawing = true;
         // await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -197,6 +240,29 @@ function generateWithdrawalOrderNumber() {
 </script>
 
 <style scoped>
+@media (max-width: 700px) {
+  .wallet-cont  {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+
+.wallet-cont {
+  display: flex;
+  margin-top: 40px;
+}
+
+
+@media (max-width:768px) {
+  .responsive-table {
+    display: table;
+    margin-top: 20px;
+    border:2px solid;
+  }
+
+}
+
 .table {
   border-collapse: collapse;
 }
