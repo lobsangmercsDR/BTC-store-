@@ -133,7 +133,7 @@
 <script>
 import axios from "axios";
 import Cookies from 'js-cookie';
-import { on } from 'resize-event';
+
 
 export default {
   data() {

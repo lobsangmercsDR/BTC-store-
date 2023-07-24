@@ -1,9 +1,9 @@
 <template>
     <div>
-      <h2 class="text-2xl font-bold mb-4">Deposits</h2>
+      <h2 class="text-2xl font-bold mb-4">Depositos</h2>
   
       <div class="flex items-center mb-4">
-        <label for="search" class="mr-2">Search:</label>
+        <label for="search" class="mr-2">Buscar:</label>
         <input type="text" id="search" v-model="searchQuery" placeholder="Enter search query" class="py-2 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-300">
       </div>
   
