@@ -1,4 +1,11 @@
 <template>
+            <section @click="this.showAsideMenu=!this.showAsideMenu" v-show="!this.showAsideMenu" style="margin: 20px; position: absolute;">
+          <svg width="30" height="30" id="icoOpen">
+            <path d="M0,5 30,5" stroke="#000" stroke-width="5"/>
+            <path d="M0,14 30,14" stroke="#000" stroke-width="5"/>
+            <path d="M0,23 30,23" stroke="#000" stroke-width="5"/>
+          </svg>
+        </section>
   <div class="w-screen h-screen flex">
     <!-- Side bar -->
     <div class="w-[400px] h-full bg-gray-200 text-white" v-show="showSide">
@@ -234,7 +241,7 @@
 export default {
   data() {
     return {
-      showSide: true,
+      showSide: false,
       showSubMenu: false,
       showSubMenu1: false,
       showSubMenu2: false,
