@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h2 class="text-2xl font-bold mb-4">Withdrawal Requests</h2>
-    <table class="table min-w-full border border-gray-300">
+    <h2 class="text-2xl font-bold mb-4 mt-4">Withdrawal Requests</h2>
+    <table class="table retireTable min-w-full border border-gray-300" v-if="!isWindowSmall">
       <thead>
         <tr>
           <th class="py-2 px-4 bg-gray-100 border-b">Withdrawal Order Number</th>
@@ -22,7 +22,7 @@
           <td class="py-2 px-4 border-b">{{ transaction.amountInUSD }}</td>
           <td class="py-2 px-4 border-b" :class="{'text-green-500': transaction.status === 'pending', 'text-red-500': transaction.status === 'completed'}">{{ transaction.status }}</td>
           <td class="py-2 px-4 border-b">{{ transaction.date }}</td>
-          <td class="py-2 px-4 border-b">{{ transaction.wallet }}</td>
+          <td class="py-2 px-4 border-b" style="word-break: break-all;">{{ transaction.wallet }}</td>
           <td class="py-2 px-4 border-b">
             <button
               class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md transition-colors duration-300 ease-in-out mr-2"
@@ -42,11 +42,71 @@
         </tr>
       </tbody>
     </table>
+
+    <!--Tabla responsive -->
+    <table :key="transaction.id" v-if="isWindowSmall" v-for="transaction in transactionHistory" class=" tableWit responsive-table">
+  <tbody>
+    <tr>
+      <td class="py-2 px-4 bg-gray-100 border-b">Withdrawal Order Number</td>
+      <td class="py-2 px-4 border-b">{{ transaction.withdrawalOrderNumber }}</td>
+    </tr>
+    <tr>
+      <td class="py-2 px-4 bg-gray-100 border-b">Username</td>
+      <td class="py-2 px-4 border-b">{{ transaction.username }}</td>
+    </tr>
+    <tr>
+      <td class="py-2 px-4 bg-gray-100 border-b">Amount (BTC)</td>
+      <td class="py-2 px-4 border-b">{{ transaction.amount }}</td>
+    </tr>
+    <tr>
+      <td class="py-2 px-4 bg-gray-100 border-b">Amount (USD)</td>
+      <td class="py-2 px-4 border-b">{{ transaction.amountInUSD }}</td>
+    </tr>
+    <tr>
+      <td class="py-2 px-4 bg-gray-100 border-b">Status</td>
+      <td class="py-2 px-4 border-b" :class="{'text-green-500': transaction.status === 'pending', 'text-red-500': transaction.status === 'completed'}">{{ transaction.status }}</td>
+    </tr>
+    <tr>
+      <td class="py-2 px-4 bg-gray-100 border-b">Date</td>
+      <td class="py-2 px-4 border-b">{{ transaction.date }}</td>
+    </tr>
+    <tr>
+      <td class="py-2 px-4 bg-gray-100 border-b">Wallet</td>
+      <td class="py-2 px-4 border-b">{{ transaction.wallet }}</td>
+    </tr>
+    <tr>
+      <td class="py-2 px-4 bg-gray-100 border-b">Acciones</td>
+      <td class="py-2 px-4 border-b">
+        <button
+              class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md transition-colors duration-300 ease-in-out mr-2"
+              @click="approveWithdrawal(transaction)"
+              :disabled="transaction.status !== 'pending'"
+            >
+              Approve
+            </button>
+            <button
+              class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors duration-300 ease-in-out"
+              @click="rejectWithdrawal(transaction)"
+              :disabled="transaction.status !== 'pending'"
+            >
+              Reject
+            </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
   </div>
 </template>
 
 <script>
 export default {
+  created() {
+    this.checkWindowSize();
+    window.addEventListener('resize', this.checkWindowSize);
+  },
+
   data() {
     return {
       transactionHistory: [
@@ -80,10 +140,15 @@ export default {
           wallet: "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq",
           username: "alice_johnson"
         }
-      ]
+      ],
+      isWindowSmall: false
     };
   },
   methods: {
+    checkWindowSize() {
+      this.isWindowSmall = window.innerWidth <= 960;
+      console.log(this.isWindowSmall)
+    },  
     async getUserData() { 
       await axios.get(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`, {
         headers:{
@@ -104,3 +169,16 @@ export default {
   }
 };
 </script>
+
+<style>
+.retireTable {
+  min-width: 960px;
+}
+
+.tableWit {
+  max-width: 600px;
+  border: 3px solid;
+  margin: 40px auto;
+}
+
+</style>

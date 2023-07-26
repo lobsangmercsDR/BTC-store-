@@ -8,7 +8,7 @@
         </section>
   <div class="w-screen h-screen flex" style="overflow: auto;">
     <!-- Side bar -->
-    <div class="w-[400px] h-full bg-gray-200 text-white" v-show="showSide" style="position: absolute;">
+    <div class="w-[400px] h-full bg-gray-200 text-white" v-show="showSide" style="position: absolute; z-index: 10;">
       <div class="h-[50px] bg-gray-900 flex justify-start items-center ">
         <div class="px-[20px] header-menu">
           <h3 class="font-bold text-xl">Admin Dashboard</h3>
@@ -90,9 +90,6 @@
               Carteras
             </button>
             <div class="mt-2 bg-gray-300 rounded-md overflow-hidden" v-show="showSubMenu2">
-              <router-link to="/products_fis" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
-                Administrador de Carteras
-              </router-link>
               <router-link to="/Wallet" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
                 Solicitudes de Retiro
               </router-link>
