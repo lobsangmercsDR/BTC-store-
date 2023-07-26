@@ -1,17 +1,24 @@
 <template>
-            <section @click="this.showAsideMenu=!this.showAsideMenu" v-show="!this.showAsideMenu" style="margin: 20px; position: absolute;">
+            <section @click="this.showSide=!this.showSide" v-show="!this.showSide" style="margin: 20px; position: absolute;">
           <svg width="30" height="30" id="icoOpen">
             <path d="M0,5 30,5" stroke="#000" stroke-width="5"/>
             <path d="M0,14 30,14" stroke="#000" stroke-width="5"/>
             <path d="M0,23 30,23" stroke="#000" stroke-width="5"/>
           </svg>
         </section>
-  <div class="w-screen h-screen flex">
+  <div class="w-screen h-screen flex" style="overflow: auto;">
     <!-- Side bar -->
-    <div class="w-[400px] h-full bg-gray-200 text-white" v-show="showSide">
+    <div class="w-[400px] h-full bg-gray-200 text-white" v-show="showSide" style="position: absolute;">
       <div class="h-[50px] bg-gray-900 flex justify-start items-center ">
-        <div class="px-[20px]">
+        <div class="px-[20px] header-menu">
           <h3 class="font-bold text-xl">Admin Dashboard</h3>
+          <button @click="this.showSide = false" class="close-button">
+          <svg class="w-6 h-6 fill-current text-gray-500 hover:text-gray-700" xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24">
+            <path
+              d="M18.364 5.636a2 2 0 0 0-2.828 0L12 9.172 8.464 5.636a2 2 0 1 0-2.828 2.828L9.172 12l-3.536 3.536a2 2 0 1 0 2.828 2.828L12 14.828l3.536 3.536a2 2 0 1 0 2.828-2.828L14.828 12l3.536-3.536a2 2 0 0 0 0-2.828z" />
+          </svg>
+        </button>
         </div>
       </div>
       <div class="h-[calc(100vh-50px)] bg-gray-800 py-[20px]">
@@ -274,6 +281,12 @@ export default {
 </script>
 
 <style scoped>
+
+.header-menu {
+    display: flex;
+    justify-content: space-between !important;
+    width: 100%;
+}
 .container {
   display: grid;
   grid-template-columns: 240px auto;
