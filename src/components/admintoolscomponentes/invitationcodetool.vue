@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-4xl mx-auto grid flex-col items-center containersDash">
+  <div class="max-w-4xl mx-auto grid flex-col items-center containerInvDash">
     <!-- Campo de descripción y generación de código -->
     <div class="mb-4">
       <label class="block text-gray-700 text-sm font-bold mb-2">Descripción:</label>
@@ -99,34 +99,5 @@ export default {
       .catch(error => {console.log(error.response.data)});
     }
     }
-} // Agrega el nombre del creador predeterminado aquí
-//     };
-//   },
-//   methods: {
-//     generarCodigo() {
-//       const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-//       let codigoGenerado = '';
-//       for (let i = 0; i < 16; i++) {
-//         codigoGenerado += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
-//       }
-//       this.codigo = codigoGenerado;
-      
-//       // Agregar el código, la descripción, la fecha de generación, la cantidad de usuarios registrados y el nombre del creador a la lista de códigos generados
-//       this.codigosGenerados.push({
-//         descripcion: this.descripcion,
-//         codigo: this.codigo,
-//         fechaGeneracion: new Date().toLocaleString(), // Obtener la fecha actual
-//         usuariosRegistrados: 0, // Inicialmente, no hay usuarios registrados
-//         creadoPor: this.creadoPor,
-//       });
-      
-//       // Limpiar el campo de descripción y reiniciar el campo de código
-//       this.descripcion = '';
-//       this.codigo = '';
-//     },
-//     eliminarCodigo(index) {
-//       this.codigosGenerados.splice(index, 1);
-//     },
-//   },
-// };
+}
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-fit mx-auto bg-white shadow-lg rounded-lg overflow-hidden containersDash">
+  <div class="max-w-fit mx-auto  bg-white shadow-lg rounded-lg overflow-hidden containersDash">
     <h1 class="text-3xl font-bold text-center bg-blue-500 text-white py-4">Administrador de Usuarios</h1>
 
     <!-- Buscador -->
@@ -8,7 +8,7 @@
     </div>
 
     <!-- Lista de usuarios -->
-    <table class="min-w-full">
+    <table class="min-w-full" v-show="!isWindowSmall">
       <thead>
         <tr>
           <th class="px-4 py-2 text-left">ID</th>
@@ -45,6 +45,69 @@
         </tr>
       </tbody>
     </table>
+
+    <!--Lista de tablas responsive-->
+    <table 
+    style="
+    border: 3px solid;
+    margin: 39px auto;
+    " 
+    
+    class="
+    table 
+    min-w-full 
+    border 
+    border-gray-300 
+    responsive-table"
+    
+    v-if="isWindowSmall" 
+    v-for="(user, index) in usersTable" :key="user.id">
+
+      <tbody>
+        <tr>
+          <td class="py-2 px-4 bg-gray-100 border-b">ID</td>
+          <td class="py-2 px-4 border-b">{{ user.id }}</td>
+        </tr>
+        <tr>
+          <td class="py-2 px-4 bg-gray-100 border-b">Username</td>
+          <td class="py-2 px-4 border-b">{{ user.name }}</td>
+        </tr>
+        <tr>
+          <td class="py-2 px-4 bg-gray-100 border-b">Amount (BTC)</td>
+          <td class="py-2 px-4 border-b">{{ user.email }}</td>
+        </tr>
+        <tr>
+          <td class="py-2 px-4 bg-gray-100 border-b">Amount (USD)</td>
+          <td class="py-2 px-4 border-b">{{ user.group }}</td>
+        </tr>
+        <tr>
+          <td class="py-2 px-4 bg-gray-100 border-b">Date</td>
+          <td class="py-2 px-4 border-b">{{ user.createdAt }}</td>
+        </tr>
+        <tr>
+          <td class="py-2 px-4 bg-gray-100 border-b">Wallet</td>
+          <td class="py-2 px-4 border-b">{{ user.wallet_address }}</td>
+        </tr>
+        <tr>
+          <td class="py-2 px-4 bg-gray-100 border-b">Actions</td>
+          <td class="py-2 px-4 border-b">
+            <button
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
+              @click="editUser(user)"
+            >
+              Editar
+            </button>
+            <button
+              class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              @click="deleteUser(user.id)"
+            >
+              Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
 
     <!-- Paginación -->
     <div class="flex justify-center mt-4">
@@ -112,8 +175,11 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 export default {
+
+
   data() {
     return {
+      isWindowSmall: true,
       users: [],
       usersTable:[],
       error: null,
@@ -121,6 +187,9 @@ export default {
     };
   },
   computed: {
+
+
+
     filteredUsers() {
       if (!this.searchQuery) {
         return this.users;
@@ -148,9 +217,14 @@ export default {
 
   created() {
     this.formatData();
+    this.checkWindowSize();
+    window.addEventListener('resize', this.checkWindowSize);
   },
 
   methods: {
+    checkWindowSize() {
+      this.isWindowSmall = window.innerWidth <= 1045;
+    },  
      async formatData() {  
       await this.getUsers()
 
@@ -209,6 +283,8 @@ export default {
     },
   
     async editUser(user) {
+      this.usersTable = [user]
+      console.log(this.usersTable)
       await this.getUsers()
       let originalUserId  = this.users.findIndex(us => us.id === user.id)
       this.editUserData = { ...this.users[originalUserId] };
@@ -223,6 +299,7 @@ export default {
           this.updateUserInApi(this.editUserData.id)
           this.error = null
           console.log("Usuario actualizado correctamente");
+          this.editUserData=false
         } else {
           console.log("Actualización de usuario cancelada");
         }

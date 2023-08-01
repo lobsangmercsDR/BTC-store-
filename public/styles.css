@@ -29,4 +29,11 @@
 
 .containersDash {
     margin-top:70px !important;
+    min-width: 495px;
+    padding-bottom: 50px;
+}
+
+.containerInvDash {
+    margin-top:70px !important;
+    min-width: 495px;
 }
