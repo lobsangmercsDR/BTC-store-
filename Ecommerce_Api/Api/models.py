@@ -93,7 +93,7 @@ class Stores(models.Model):
         return self.productfisic_set.count() + self.productdigit_set.count() + self.methodproducts_set.count()
 
 class MethodProducts(models.Model):
-    nameProduct = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
     dateCreated = models.DateField()
     actQuantity = models.IntegerField(default=0)
     quantity = models.IntegerField(default=0)
@@ -108,12 +108,12 @@ class MethodProducts(models.Model):
         return self.transacts_set.count()
         
 class ProductFisic(models.Model):
-    nameProduct = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
     image_product = models.ImageField(upload_to=generate_file_path, default=None)
     description = models.CharField(max_length=200, default="")
     actQuantity = models.IntegerField(default=0)
-    priceProduct = models.DecimalField(max_digits=10, decimal_places=2)
-    dateReleased = models.DateField(auto_now_add=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    dateCreated = models.DateField(auto_now_add=True)
     address_direction = models.CharField(max_length=50)
     active = models.BooleanField(default=False)
     brand = models.CharField(max_length=50, default="")

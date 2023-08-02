@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from django.http import response
+from operator import itemgetter
 from django.db.models import Case, When
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
@@ -196,8 +197,6 @@ class TransactSubcategoryView(viewsets.ModelViewSet):
 class ProductView(viewsets.ModelViewSet):
     queryset = ProductFisic.objects.all()
     serializer_class = ProductSerializer
-    # authentication_classes = [authentication.TokenAuthentication]
-    # permission_classes = [IsAuthenticated,IsGroupAccepted]
     pagination_class = Paginator
 
     def get_all_methods(self, request):
@@ -221,8 +220,7 @@ class ProductView(viewsets.ModelViewSet):
         serializer = MethodSerializer(instance)
         result = serializer.data
         return JsonResponse(result, status=200)
-
-
+   
     # GET all Products (with restrictions for sellers)
     def nested_list_products(self, request):
         user_products= request.GET.get('userProducts','false')
@@ -255,7 +253,6 @@ class ProductView(viewsets.ModelViewSet):
         }
         return JsonResponse(dicc, status=200, safe=False)
 
-    
     # GET just one product (Also with restricctions)
     def get_product(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -271,7 +268,19 @@ class ProductView(viewsets.ModelViewSet):
         except: 
             return JsonResponse({"error":"no existe"}, status=200)
 
+    def get_inventory(self, request):
+        querysetFisic  = ProductFisic.objects.all()
+        querysetDigit = ProductDigit.objects.all()
+        querysetMethod = MethodProducts.objects.all()
 
+        serialized_Fisic = ProductSerializer(querysetFisic, many=True).data
+        serialized_Digit = ProductDigitSerializer(querysetDigit, many=True).data
+        serialized_Method = MethodSerializer(querysetMethod, many=True).data
+
+        combined_data = serialized_Fisic + serialized_Digit + serialized_Method
+        print
+        sorted_data  = sorted(combined_data,key=itemgetter('dateCreated'))
+        return JsonResponse(sorted_data, status=200,safe=False)
 
     # POST a new product (Taking Seller id)
     def post_product(self,request):

@@ -34,6 +34,13 @@
 }
 
 .containerInvDash {
+    width: auto;
     margin-top:70px !important;
-    min-width: 495px;
+    min-width: 350px;
+}
+
+.responsive-table-invitations {
+    border: 3px solid black;
+    margin: 10px auto;
+    max-width: 445px;
 }

@@ -127,14 +127,21 @@ class InvitationCodesSerializer(serializers.ModelSerializer):
 class MethodSerializer(serializers.ModelSerializer):
     store = StoreSerializer()
     transacts_count = serializers.SerializerMethodField()
+    subCategory = serializers.SerializerMethodField()
 
     class Meta:
         model = MethodProducts
-        fields = ['id','nameProduct', 'dateCreated','actQuantity','quantity','sendDirection','description','price','store','image','transacts_count']
+        fields = ['id','name', 'dateCreated','actQuantity','quantity','subCategory','sendDirection','description','price','store','image','transacts_count']
 
 
     def get_transacts_count(self, obj):
         return obj.transacts_count
+
+    def get_subCategory(self, obj):
+        return {
+            'category':'Method',
+            'nameSub':'N/A'
+        }
 
 
 class UserCreatorSerializer(serializers.ModelSerializer):
@@ -303,9 +310,22 @@ class ExtSubCategorySerializer(serializers.ModelSerializer):
 
 class ProductDigitSerializer(serializers.ModelSerializer):
     dateCreated = serializers.DateTimeField(format="%d/%m/%Y %I:%M %p", required=False)
-    subCategory = ExtSubCategorySerializer()
+    subCategory = serializers.SerializerMethodField()
     subCategory_id = serializers.IntegerField(required=True)
     store_id = serializers.SerializerMethodField()
+    quantity = serializers.SerializerMethodField()
+
+    def get_quantity(self, obj):
+        result= 'Available'
+        return result
+
+    def get_subCategory(self, obj):
+        result =  {
+            "id":obj.subCategory.id if obj.subCategory != None else None,
+            "nameSub":obj.subCategory.nameSubCategory if obj.subCategory != None else None,
+            "category":"Digitales"
+        }
+        return result    
 
     def get_store_id(self, obj):
         store = Stores.objects.get(id=obj.store_id)
@@ -319,7 +339,7 @@ class ProductDigitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductDigit
-        fields = ['id', 'name', 'price','no_solicitud','subCategory', 'subCategory_id', 'description','comisionCheck','additional_details','needChecker','orgQuantity','actQuantity', 'dateCreated','store_id','checkerText']
+        fields = ['id', 'name', 'price','no_solicitud','subCategory','quantity','subCategory_id', 'description','comisionCheck','additional_details','needChecker','orgQuantity','actQuantity', 'dateCreated','store_id','checkerText']
 
     def create(self, validated_data):
         request = self.context.get('request',None)
@@ -409,7 +429,7 @@ class ProductSerializer(serializers.ModelSerializer):
     seller = UserNestedSerializer(read_only=True)
     category = CategoryNestedSerializer(read_only=True)
     description = serializers.CharField(required=True)
-    priceProduct = serializers.DecimalField(max_digits=10,decimal_places=2)
+    price = serializers.DecimalField(max_digits=10,decimal_places=2)
     image_product = serializers.ImageField(required=True, write_only=False)
     subCategory = serializers.SerializerMethodField()
     subCat_id = serializers.IntegerField(write_only=True)
@@ -457,9 +477,9 @@ class ProductSerializer(serializers.ModelSerializer):
         model = ProductFisic
         fields = [
                     'id',
-                    'nameProduct',
+                    'name',
                     'image_product',
-                    'dateReleased',
+                    'dateCreated',
                     'active',
                     'actQuantity',
                     'brand',
@@ -474,7 +494,7 @@ class ProductSerializer(serializers.ModelSerializer):
                     'store',
                     'subCategory',
                     'aditional_details',
-                    'priceProduct'
+                    'price'
                 ]
 
     # def validate_description(self, value):

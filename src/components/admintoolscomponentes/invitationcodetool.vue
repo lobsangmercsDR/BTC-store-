@@ -14,7 +14,7 @@
     <!-- Tabla con códigos y descripciones generados previamente -->
     <div class="mt-8">
       <h2 class="text-lg font-bold mb-2">Códigos generados</h2>
-      <table class="min-w-full bg-white border border-gray-300">
+      <table  v-if="!isWindowSmall" class="min-w-full bg-white border border-gray-300">
         <thead>
           <tr>
             <th class="px-4 py-2 border-b">Descripción</th>
@@ -34,6 +34,37 @@
             <td class="px-4 py-2 border-b">{{ item.created_by.name}}</td>
             <td class="px-4 py-2 border-b">
               <button @click="deleteInvitationCode(item.id)" class="text-red-600 font-semibold hover:text-red-800">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!--Tabla de codigos responsive-->
+      <table v-if="isWindowSmall" v-for="code in items" class="responsive-table-invitations">
+        <tbody>
+          <tr>
+            <td class="py-2 px-4 bg-gray-100 border-b">Withdrawal Order Number</td>
+            <td class="py-2 px-4 border-b">{{ code.description }}</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-4 bg-gray-100 border-b">Username</td>
+            <td class="py-2 px-4 border-b">{{ code.invitationCodes }}</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-4 bg-gray-100 border-b">Amount (BTC)</td>
+            <td class="py-2 px-4 border-b">{{ code.created_at }}</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-4 bg-gray-100 border-b">Amount (USD)</td>
+            <td class="py-2 px-4 border-b">{{ code.countUsers }}</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-4 bg-gray-100 border-b">Status</td>
+            <td class="py-2 px-4 border-b">{{ code.created_by.name }}</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-4 bg-gray-100 border-b">Actions</td>
+            <td class="px-4 py-2 border-b">
+              <button @click="deleteInvitationCode(code.id)" class="text-red-600 font-semibold hover:text-red-800">Eliminar</button>
             </td>
           </tr>
         </tbody>
@@ -61,16 +92,24 @@ import Cookie from 'js-cookie'
 export default {
   data() {
     return{
+      isWindowSmall: false,
       items: [],
       formData: {
         description: ""
-      }
+      },
+      codigo: ""
     };
   },
   created() {
     this.getInvitationsCode()
+    this.checkWindowSize();
+    window.addEventListener('resize', this.checkWindowSize);
   },
   methods: {
+    checkWindowSize() {
+      this.isWindowSmall = window.innerWidth <= 800;
+      console.log(this.isWindowSmall)
+    }, 
     async getInvitationsCode() {
          await axios.get("http://127.0.0.1:8000/api/users/invitations", {
             headers: {
@@ -85,7 +124,7 @@ export default {
           headers: {
               Authorization: `Token ${Cookie.get('token')}`,
             },
-      }).then(response => {console.log(response.data); this.getInvitationsCode()})
+      }).then(response => {console.log(response.data); this.getInvitationsCode(); this.codigo = response.data.invitationCodes})
       .catch(error => {console.log(error.response.data)});
       },
 

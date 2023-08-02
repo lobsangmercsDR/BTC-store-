@@ -181,10 +181,7 @@
             <div class="mt-2 bg-gray-300 rounded-md overflow-hidden" v-show="showSubMenu5">
               <router-link to="/products_fis" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
                 Solicitudes de Checker
-              </router-link>
-              <router-link to="/product_dig" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
-                Checkers activos
-              </router-link>
+              </router-link>  
             </div>
 
 

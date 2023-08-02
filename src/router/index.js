@@ -79,6 +79,11 @@ import deposit_coins from '../pages/Dashboard/wallet_cripto/deposit_coins.vue'
           path: '/Wallet',
           component:Wallet
         },
+        {
+          path: '/user_checker',
+          name:'user_checker',
+          component : user_checker
+        },
 
 
 
