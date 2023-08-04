@@ -8,6 +8,7 @@ class AllowAny(BaseAuthentication):
 class IsAdmin(BaseAuthentication):
     def has_permission(self, request,view):
         user =request.user
+        print(user.is_superuser,22)
         if user.groups.filter(name="administrator").exists() or user.is_superuser:
             return True
         else:
@@ -15,13 +16,23 @@ class IsAdmin(BaseAuthentication):
     
     def has_object_permission(self, request, view,obj):
         user =request.user
-        print(user.groups.values_list('name',flat=True))
-        if user.groups.filter(name="administrator").exists() or user.is_superuser:
-            print(view.__class__.__name__)
-
+        print(user.is_superuser,2)
+        if user.groups.filter(name="administrator").exists() or user.is_superuser:            
             if view.__class__.__name__== 'ProductView':
                 print("aja")
-                if obj.seller.is_superuser:
+                if user.is_superuser:
+                    return True
+                if 'administrator' in obj.seller.groups.values_list('name',flat=True):
+                    if request.user.id == obj.seller.id:
+                        return True
+                    else:
+                        return False
+                else:
+                    return False
+                
+            if view.__class__.__name__== 'ProductsDigitView':
+                print(11)
+                if user.is_superuser:
                     return True
                 if 'administrator' in obj.seller.groups.values_list('name',flat=True):
                     if request.user.id == obj.seller.id:

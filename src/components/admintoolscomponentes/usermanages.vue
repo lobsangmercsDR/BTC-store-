@@ -21,6 +21,7 @@
         </tr>
       </thead>
       <tbody>
+         {{  }}
         <tr v-for="(user, index) in usersTable" :key="user.id">
           <td class="border px-4 py-2">{{ user.id }}</td>
           <td class="border px-4 py-2">{{ user.name }}</td>
@@ -110,7 +111,7 @@
 
 
     <!-- Paginación -->
-    <div class="flex justify-center mt-4">
+    <div class="flex justify-center mt-4" v-if="edi">
       <button
         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         @click="previousPage"
@@ -156,7 +157,7 @@
       </div>
       <div class="mb-2">
         <label class="block text-gray-700">Cartera Bitcoin:</label>
-        <input v-model="editUserData.bitcoinWallet" type="text" class="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
+        <input v-model="editUserData.wallet_address" type="text" class="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
       </div>
       <div class="text-right">
         <button
@@ -164,6 +165,12 @@
           @click.prevent="updateUserInTable"
         >
           Actualizar
+        </button>
+        <button
+          class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          @click.prevent="this.editUserData = false; this.formatData()"
+        >
+          Cancelar
         </button>
       </div>
     </form>
@@ -219,6 +226,7 @@ export default {
     this.formatData();
     this.checkWindowSize();
     window.addEventListener('resize', this.checkWindowSize);
+    console.log(this.usersTable)
   },
 
   methods: {

@@ -20,7 +20,7 @@
                         <tr v-if="transactsMaked.data" v-for="(product, index) in transactsMaked.data" :key="index"
                             class="bg-gray-200 digit-selled-item text-gray-700" @click="openModal(product.productDigit.id, 'digits')">
                             <td class="p-2">{{ product.productDigit.name }}</td> 
-                            <td class="p-2">{{ product.productDigit.store_id.nameStore }}</td>
+                            <td class="p-2">{{ product.productDigit.store.nameStore }}</td>
                             <td class="p-2 wid">{{ product.dateTransact }}</td>
                             <td class="p-2">{{ product.productDigit.price }}</td>
                         </tr>
@@ -99,7 +99,7 @@
                             <td class="p-2" style="width: 20px;">{{ product.orgQuantity }}</td>
                             <td class="p-2">{{ product.dateCreated }}</td>
                             <td class="p-2">{{ product.price }}</td>
-                            <td class="w-1/4 p-2">{{ product.store_id.nameStore }}</td>
+                            <td class="w-1/4 p-2">{{ product.store.nameStore }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -148,7 +148,7 @@
                             </div>
                             <h4 class="product-name">{{ product.nameProduct }}</h4>
                             <p class="product-price">$ {{ product.priceProduct }}</p>
-                            <p>Tienda: <b> {{ product.seller.name }} </b></p>
+                            <p>Tienda: <b> {{ product.store.nameStore }} </b></p>
                             <button class="product-button-slide" @click="openModal(product.id, 'fisic')">Go to Product</button>
                         </div>
                     </div>

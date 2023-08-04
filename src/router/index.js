@@ -31,12 +31,14 @@ import deposit_coins from '../pages/Dashboard/wallet_cripto/deposit_coins.vue'
       name: 'Dashboard',
       path: '/',
       component: dashboard,
+      redirect: {name: 'home'},
       meta : {requiresAuth: true},
       children: [
          {
           name: 'home',
           path: '/home',
-          component:home
+          component:home,
+          meta : {requiresAuth: true},
         },
        
         {

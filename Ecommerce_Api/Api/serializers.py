@@ -12,15 +12,6 @@ import string
 
 dateFormat = "%d/%m/%Y %I:%M:%S %p"
 
-class StoreSerializer(serializers.ModelSerializer):
-    product_count = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Stores
-        fields = ['id', 'nameStore','seller','product_count']
-    
-    def get_product_count(self, obj):
-        count = obj.product_count 
 
 
 class GroupsSerializer(serializers.Serializer): 
@@ -77,6 +68,17 @@ class UserSerializer(serializers.ModelSerializer):
             return False
         else:  
             return list(obj.groups.values_list('name',flat=True))[0]
+
+class StoreSerializer(serializers.ModelSerializer):
+    product_count = serializers.SerializerMethodField()
+    seller = UserNestedSerializer()
+
+    class Meta:
+        model = Stores
+        fields = ['id', 'nameStore','seller','product_count']
+    
+    def get_product_count(self, obj):
+        count = obj.product_count 
 
 class WithDrawSerializer(serializers.ModelSerializer):
     user = UserSerializer(required=False)
@@ -202,7 +204,7 @@ class UserCreatorSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance,validated_data):
-
+        print(self.context, 220)
         validated_data = self.context['request'].data   
         group_name = validated_data.pop('add_group', False)
         delete_group = validated_data.pop('delete_group', False)
@@ -227,7 +229,8 @@ class UserCreatorSerializer(serializers.ModelSerializer):
         roles = True if self.context.get('roles') == 'true' else False
         if not roles and evidence:
             print(roles)
-            print(evidence)
+            print(validated_data.keys(), 1212)
+            print(evidence,3)
             raise serializers.ValidationError({"message":"Acceso a estas propiedades no tienes"})
 
 
@@ -312,8 +315,13 @@ class ProductDigitSerializer(serializers.ModelSerializer):
     dateCreated = serializers.DateTimeField(format="%d/%m/%Y %I:%M %p", required=False)
     subCategory = serializers.SerializerMethodField()
     subCategory_id = serializers.IntegerField(required=True)
-    store_id = serializers.SerializerMethodField()
+    store = serializers.SerializerMethodField()
     quantity = serializers.SerializerMethodField()
+    id = serializers.SerializerMethodField()
+
+
+    def get_id(self, obj):
+        return f'2.{obj.id}'
 
     def get_quantity(self, obj):
         result= 'Available'
@@ -327,7 +335,7 @@ class ProductDigitSerializer(serializers.ModelSerializer):
         }
         return result    
 
-    def get_store_id(self, obj):
+    def get_store(self, obj):
         store = Stores.objects.get(id=obj.store_id)
         serializer = StoreSerializer(store)
         return serializer.data
@@ -339,14 +347,12 @@ class ProductDigitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductDigit
-        fields = ['id', 'name', 'price','no_solicitud','subCategory','quantity','subCategory_id', 'description','comisionCheck','additional_details','needChecker','orgQuantity','actQuantity', 'dateCreated','store_id','checkerText']
+        fields = ['id', 'name', 'price','no_solicitud','subCategory','quantity','subCategory_id', 'description','comisionCheck','additional_details','needChecker', 'dateCreated','store','checkerText']
 
     def create(self, validated_data):
         request = self.context.get('request',None)
         subC_id = validated_data.pop('subCategory_id')
-        print(subC_id,312)
         subObj = SubCategory.objects.get(id=subC_id)
-        print(request.user.id,23)
         store = Stores.objects.get(seller=request.user.id)
         instance = ProductDigit.objects.create(store=store, subCategory=subObj, **validated_data)
         return instance
@@ -435,6 +441,12 @@ class ProductSerializer(serializers.ModelSerializer):
     subCat_id = serializers.IntegerField(write_only=True)
     brand = serializers.CharField(required=True)
     aditional_details = serializers.CharField(required=True)
+    id = serializers.SerializerMethodField()
+    store = StoreSerializer()
+
+
+    def get_id(self, obj):
+        return f'1.{obj.id}'
 
     def validate_subCat_id(self, value):
         if not value: 
@@ -485,7 +497,6 @@ class ProductSerializer(serializers.ModelSerializer):
                     'brand',
                     'aditional_details',
                     'seller', 
-                    'variants',
                     'quantity',
                     'address_direction',
                     'description',

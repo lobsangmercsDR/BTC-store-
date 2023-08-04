@@ -1,6 +1,6 @@
 <template >
   <div class="modal" v-show="showFisicModal" :class="{'modal-transition':showFisicModal}" >
-    <div class="bg-white rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto card-container" style="padding: 20px 32px; max-height: 645px;  min-width: 435px;">
+    <div class="bg-white rounded-lg shadow-md p-4 md:p-8 transition-colors duration-500 hover:bg-blue-50 mx-auto card-container" style="padding: 20px 32px; max-height: 645px;  min-width: 435px; width: 860px;">
       <div class="close-button-cont">
         <button @click="closeModal" class="close-button">
           <svg class="w-6 h-6 fill-current text-gray-500 hover:text-gray-700" xmlns="http://www.w3.org/2000/svg"

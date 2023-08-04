@@ -159,7 +159,7 @@ class WithDrawView(viewsets.ModelViewSet):
 class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):
         localD = os.getenv('USERPROFILE')
-        TP_route=  f'{localD}\Documents\Proyectos\Frontend\Vue\AlanStore\Ecommerce_Api\images'
+        TP_route=  f'{localD}\Desktop\Proyectos\AlanStore\Ecommerce_Api\images'
         print(TP_route)
         complete_path = os.path.join(TP_route, image_name)
         
@@ -198,6 +198,8 @@ class ProductView(viewsets.ModelViewSet):
     queryset = ProductFisic.objects.all()
     serializer_class = ProductSerializer
     pagination_class = Paginator
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = []
 
     def get_all_methods(self, request):
         query = MethodProducts.objects.all()
@@ -259,15 +261,6 @@ class ProductView(viewsets.ModelViewSet):
         serializer = ProductSerializer(instance)
         return JsonResponse(serializer.data,status=200)
         
-    def get_digit_product(self, request, *args, pk):
-        try:
-            instance = ProductDigit.objects.get(id=pk)
-            serializer = ProductDigitSerializer(instance)
-            result = serializer.data
-            return JsonResponse(result, status=200)
-        except: 
-            return JsonResponse({"error":"no existe"}, status=200)
-
     def get_inventory(self, request):
         querysetFisic  = ProductFisic.objects.all()
         querysetDigit = ProductDigit.objects.all()
@@ -306,15 +299,23 @@ class ProductView(viewsets.ModelViewSet):
         self.perform_update(serializer)
         return JsonResponse({'message':'El campo ha sido actualizado','result':serializer.data, 'status':200}, status=200)
 
-    # DELETE Product (with restrictions)
     def delete_product(self, request, *args, **kwargs):
         instance= self.get_object()
-        userPerm = uti.hasOrNotPermission(self, request,self.__class__, authClass=[IsSeller,IsAdmin],oneObj=True, obj=instance)
+        userPerm = uti.hasOrNotPermission(self, request,self, authClass=[IsSeller,IsAdmin],oneObj=True, obj=instance)
         print(userPerm)
         if not any(val is True for val in userPerm.values()):
             return JsonResponse({"message":"No tiene acceso a esta funcionalidad o producto"}, status=403)
         self.perform_destroy(instance)
-        return JsonResponse({"Success":True, "message":"El producto fue borrado correctamente"}, status=200)
+        return JsonResponse({'message':'Objeto borrado con exito'})
+
+
+    def check_permissions(self, request):
+        print(self.action)
+        if self.action == 'delete_product':
+            print("asdsda")
+            self.permission_classes = [IsAuthenticated]
+        super().check_permissions(request)
+
 
 
 class ProductsDigitView(viewsets.ModelViewSet):
@@ -333,6 +334,16 @@ class ProductsDigitView(viewsets.ModelViewSet):
         print(paginated_data[0],222222)
         serializer = ProductDigitSerializer(paginated_data,context={'request':request}, many=True)
         return JsonResponse({'available_pages':paginator.num_pages-int(page_number),'page':int(page_number),'data':serializer.data}, status=200, safe=False)
+    
+    def get_digit_product(self, request, *args, pk):
+        try:
+            instance = ProductDigit.objects.get(id=pk)
+            serializer = ProductDigitSerializer(instance)
+            result = serializer.data
+            return JsonResponse(result, status=200)
+        except: 
+            return JsonResponse({"error":"no existe"}, status=200)
+
 
     def post_product_digit(self, request):
         data = request.data
@@ -362,6 +373,22 @@ class ProductsDigitView(viewsets.ModelViewSet):
         solic.save()
         product.save()
         return JsonResponse({'succes':True})
+    
+    def delete_digit_product(self, request, *args, **kwargs):
+        instance= self.get_object()
+        userPerm = uti.hasOrNotPermission(self, request,self, authClass=[IsSeller,IsAdmin],oneObj=True, obj=instance)
+        print(userPerm)
+        if not any(val is True for val in userPerm.values()):
+            return JsonResponse({"message":"No tiene acceso a esta funcionalidad o producto"}, status=403)
+        self.perform_destroy(instance)
+        return JsonResponse({'message':'Objeto borrado con exito'})
+    
+    def check_permissions(self, request):
+
+        if self.action == 'delete_digit_product':
+
+            self.permission_classes = [IsAuthenticated]
+        super().check_permissions(request)
 
 class ReportView(viewsets.ModelViewSet):
     def post_report(self, request, pkP):
@@ -664,7 +691,6 @@ class TransactsView(viewsets.ModelViewSet):
         if int(page_number) > paginator.num_pages:
             return JsonResponse({"error":"No hay mas paginas"}, status=404)
         paginated_data = paginator.get_page(page_number)
-        print(paginated_data[0]) 
         serializer= TransactsSerializer(paginated_data, many=True, context={'request':request})
         print(paginated_data,2)
         dicc = {

@@ -42,6 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     userBalance = models.DecimalField(max_digits=50, decimal_places=2, default=0)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    is_superuser = models.BooleanField(default=False)
     createdAt = models.DateTimeField(auto_now_add=True)
     USERNAME_FIELD = 'email'
     objects = UserManager()
@@ -61,8 +62,8 @@ class Category(models.Model):
 
 class SubCategory(models.Model):
     nameSubCategory = models.CharField(max_length=50)
-    minPriceBTC = models.DecimalField(max_digits=10, decimal_places=2)
-    maxPriceBTC = models.DecimalField(max_digits=10, decimal_places=2)
+    minPriceBTC = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    maxPriceBTC = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     priceSubCategory = models.DecimalField(max_digits=10, decimal_places=2)
     userCreator = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
@@ -118,7 +119,6 @@ class ProductFisic(models.Model):
     active = models.BooleanField(default=False)
     brand = models.CharField(max_length=50, default="")
     aditional_details = models.CharField(max_length=200, default="")
-    variants = models.CharField(max_length=200, default="")
     quantity = models.IntegerField(default=0)
     subCategory = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True)
     seller = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -135,11 +135,9 @@ class ProductDigit(models.Model):
     subCategory = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True)
     text_preview = models.CharField(max_length=200)
     needChecker = models.BooleanField(default=True)
-    orgQuantity= models.IntegerField(default=1)
-    actQuantity = models.IntegerField(default=1)
-    no_solicitud = models.IntegerField(default=1)
+    no_solicitud = models.IntegerField(default=0)
     comisionCheck = models.DecimalField(max_digits=10, decimal_places=2, default=10)
-    checkerText = models.CharField(max_length=500)
+    checkerText = models.CharField(max_length=500,blank=True)
     store = models.ForeignKey(Stores, on_delete=models.CASCADE)
 
     @property

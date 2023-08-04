@@ -33,8 +33,8 @@
           <th class="px-4 py-2">Categoria</th>
           <th class="px-4 py-2">Subcategoria</th>
           <th class="px-4 py-2">Cantidad</th>
-          <th class="px-4 py-2">Descripción</th>
           <th class="px-4 py-2">Precio</th>
+          <th class="px-4 py-2">Tienda</th>
           <th class="px-4 py-2">Usuario</th>
           <th class="px-4 py-2">Acciones</th>
         </tr>
@@ -43,15 +43,18 @@
         <tr v-for="product in filteredProducts" :key="product.id">
           <td class="border px-4 py-2">{{ product.id }}</td>
           <td class="border px-4 py-2">{{ product.name }}</td>
-          <td class="border px-4 py-2">{{ product.subCategory }}</td>
-          <td class="border px-4 py-2">{{ product.subCategory }}</td>     
+          <td class="border px-4 py-2">{{ product.subCategory.category }}</td>
+          <td class="border px-4 py-2">{{ product.subCategory.nameSub }}</td>     
           <td class="border px-4 py-2">{{ product.quantity }}</td>
-          <!-- <td class="border px-4 py-2">{{ product.description }}</td> -->
           <td class="border px-4 py-2">{{ product.price }}</td>
-          <!-- <td class="border px-4 py-2">{{ product.seller.name }}</td> -->
-          <td class="border px-4 py-2">
-            <button @click="openEditModal(product)" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
-              Editar
+          <td class="border px-4 py-2">{{ product.store.nameStore }}</td>
+          <td class="border px-4 py-2">{{ product.store.seller.name }}</td>
+          <td class="border px-4 py-2 ">
+            <button @click="openEditModal(product)" class="mx-1 bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              Ver
+            </button>
+            <button @click="deleteProduct(product.id)" class="mx-1 bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500">
+              Retirar
             </button>
           </td>
         </tr>
@@ -64,6 +67,14 @@
         <h2 class="text-3xl font-semibold mb-4">Editar Producto</h2>
         <form @submit.prevent="updateExistingProduct">
           <div class="grid grid-cols-3 gap-4">
+            <div v-if="editedProduct.subCategory.category === 'Fisicos'">
+              <label for="editProductName" class="text-lg font-semibold">Imagen:</label>
+              <div class="product-image">
+                <img :src="'http://127.0.0.1:8000/api'+editedProduct.image_product"  alt="Product Image">
+              <input @change="handleImageUpload" id="src-file" type="file" accept="image/*" class=" file-select">
+              </div>
+              
+            </div>
             <div>
               <label for="editProductName" class="text-lg font-semibold">Nombre del Producto:</label>
               <input v-model="editedProduct.nameProduct" id="editProductName" type="text" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg">
@@ -177,57 +188,18 @@ export default {
     },
 
     openEditModal(product) {
-      this.editedProduct = {
-        id: product.id,
-        nameProduct: product.nameProduct,
-        description: product.description,
-        priceProduct: product.price,
-        image: product.image,
-        brand: product.brand,
-        variants: product.variants,
-        category: product.category,
-        subCategory: product.subCategory,
-        quantity: product.quantity,
-        aditional_details: product.aditional_details,
-        username: product.username
-      };
+      this.editedProduct = product
       this.isEditModalOpen = true;
       this.selectedProduct = product.subCategory
     },
 
     closeEditModal() {
       this.isEditModalOpen = false;
-      this.editedProduct = {
-        id: null,
-        nameProduct: '',
-        description: '',
-        priceBTC: 0,
-        priceUSD: 0,
-        image: null,
-        brand: '',
-        variants: '',
-        category: '',
-        subcategory: '',
-        quantity: 0,
-        aditional_details: '',
-        username: ''
-      };
+      this.editedProduct = null
     },
 
     updateExistingProduct() {
-      const updatedProduct = {
-        nameProduct: this.editedProduct.nameProduct,
-        description: this.editedProduct.description,
-        priceProduct: this.editedProduct.priceProduct,
-        image: this.editedProduct.image,
-        brand: this.editedProduct.brand,
-        variants: this.editedProduct.variants,
-        category: this.editedProduct.category,
-        subcategory: this.editedProduct.subcategory,
-        quantity: this.editedProduct.quantity,
-        aditional_details: this.editedProduct.aditional_details,
-        username: this.editedProduct.username,
-      };
+      const updatedProduct = product
 
       // Lógica para enviar los cambios del producto existente al servidor
       axios.put(`http://127.0.0.1:8000/api/productos/${this.editedProduct.id}`, updatedProduct, {
@@ -248,18 +220,7 @@ export default {
 
     saveAsNewProduct() {
       console.log(this.selectedProduct)
-  const newProduct = {
-    nameProduct: this.editedProduct.nameProduct,
-    description: this.editedProduct.description,
-    priceProduct: this.editedProduct.priceProduct,
-    brand: this.editedProduct.brand,
-    variants: this.editedProduct.variants,
-    category: this.editedProduct.category,
-    subCategory: this.selectedProduct.id,
-    quantity: this.editedProduct.quantity,
-    aditional_details: this.editedProduct.aditional_details,
-    username: this.editedProduct.username
-  };
+      const newProduct = this.selectedProduct
 
   // Lógica para guardar los cambios como un nuevo producto
 axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
@@ -303,6 +264,41 @@ axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
         return selectedCategory.subCategories;
       }
       return [];
+    },
+
+    async deleteProduct(id) {
+      console.log(id)
+      if(!confirm("¿Está seguro de que quiere retirar este producto del sistema?")) {
+        return null
+      }
+      const idSplited = id.split('.')
+      const tipo = idSplited[0]
+      const idOrg = idSplited[1] 
+      let url = ""
+      console.log(tipo)
+      if(tipo == 1) {
+       url = `http://127.0.0.1:8000/api/productos/${idOrg}`
+      }
+      else if(tipo ==2) {
+        console.log(idOrg)
+        url = `http://127.0.0.1:8000/api/productos/digit/${idOrg}`
+      }
+        await axios.delete(url,
+        {
+          headers: {
+            Authorization: `Token ${Cookies.get('token')}`
+          }
+        } 
+        )
+        .then(
+          response => {
+            console.log(response)
+            this.fetchProducts()
+          }
+        )
+        .catch(error => {
+          console.log(error)
+        })
     }
   },
 
@@ -336,4 +332,46 @@ axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
   }
 };
 </script>
+
+<style>
+.product-image img {
+    width: 100%;
+    height: 125px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.file-select {
+  position: relative;
+  display: inline-block;
+}
+
+.file-select::before {
+  background-color: #2ac100;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  content: 'Seleccionar'; /* testo por defecto */
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.file-select input[type="file"] {
+  opacity: 0;
+  width: 200px;
+  height: 32px;
+  display: inline-block;
+}
+
+#src-file::before {
+  content: 'Cambiar';
+}
+
+</style>
 

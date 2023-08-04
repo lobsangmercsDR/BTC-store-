@@ -6,12 +6,14 @@ class ApiConfig(AppConfig):
     name = 'Api'
 
     def ready(self):
-        from .models import Transacts
+        from .models import Transacts, ProductFisic,ProductDigit
         from .groups import create_groups
         create_groups()
 
-        # for i in range(1,23):
-        #     Transacts.objects.create(productFisic_id=10, quantity_asked=1)
+        # for i in range(0,4):
+        #     newObjet = ProductDigit.objects.get(id=1)
+        #     newObjet.id= None
+        #     newObjet.save()
         # for i in range(20):
         #     newRecord= Transacts(productDigit_id=i+1, quantity_asked=1)
         #     newRecord.save()

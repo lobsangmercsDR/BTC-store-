@@ -66,6 +66,11 @@ export default {
   methods: {
    async saveChanges() {
     console.log(this.user);
+    const propiedadesAEliminar = ['group', 'is_active'];
+    propiedadesAEliminar.forEach((prop) => {
+        delete this.user[prop];
+    });
+    console.log(this.user, 2)
       await axios.put(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`,this.user,
       {
         headers:{
@@ -89,7 +94,7 @@ export default {
         }
       })
       .then(response => {this.user.invitationCode = response.data[0].invitationCodes})
-      .catch(error=> {console.log(error.response.data)})
+      .catch(error=> {console.log(error)})
     }
   }
 };
