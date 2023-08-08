@@ -70,7 +70,7 @@
             <div v-if="editedProduct.subCategory.category === 'Fisicos'">
               <label for="editProductName" class="text-lg font-semibold">Imagen:</label>
               <div class="product-image">
-                <img :src="'http://127.0.0.1:8000/api'+editedProduct.image_product"  alt="Product Image">
+                <img :src="getImageURL()"  alt="Product Image">
               <input @change="handleImageUpload" id="src-file" type="file" accept="image/*" class=" file-select">
               </div>
               
@@ -138,17 +138,19 @@ export default {
       isEditModalOpen: false,
       editedProduct: {
         id: null,
-        nameProduct: '',
+        name: '',
         description: '',
         price: 0,
-        image: null,
+        image_product: null,
+        image_view: null,
         brand: '',
         variants: '',
         category: '',
         subCategory: '',
         quantity: 0,
         aditional_details: '',
-        username: ''
+        username: '',
+        localImage: false
       },
       selectedProduct: null
     };
@@ -199,15 +201,36 @@ export default {
     },
 
     updateExistingProduct() {
-      const updatedProduct = product
+      const updatedProduct =  this.editedProduct
 
+      const formData= new FormData();
+
+      if (this.editedProduct.localImage) {
+        formData.append('image_product',this.editedProduct.image_product)
+        const image = this.editedProduct.image_product
+        axios.put(`http://127.0.0.1:8000/api/images/${image}`, formData)
+        .then(response => {
+          console.log(response)
+        })
+      }
+
+      let requestData = {...updatedProduct}
+      let deleteList= ['image_product', 'dateCreated', 'subCategory', 'seller','store']
+      for(let i = 0; i <= deleteList.length-1; i++ ) {
+        delete requestData[deleteList[i]]
+      }
+      console.log(requestData)
+
+      
+      
       // Lógica para enviar los cambios del producto existente al servidor
-      axios.put(`http://127.0.0.1:8000/api/productos/${this.editedProduct.id}`, updatedProduct, {
+      axios.put(`http://127.0.0.1:8000/api/productos/${this.editedProduct.id.split('.')[1]}`, requestData, {
         headers: {
           Authorization: `Token ${Cookies.get('token')}`
         }
       })
       .then(response => {
+        console.log(response)
         this.fetchProducts();
       })
       .catch(error => {
@@ -258,6 +281,28 @@ axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
 },
 
 
+    handleImageUpload(event) {
+      const file = event.target.files[0];
+      this.editedProduct.localImage = true
+      this.editedProduct.image_product = file;
+      console.log(file)
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.editedProduct.image_view = reader.result;
+      };
+      reader.readAsDataURL(file);
+    },
+
+    getImageURL() {
+
+      if(this.editedProduct.localImage) {
+          return this.editedProduct.image_view
+      }
+      else {
+        return `http://127.0.0.1:8000/api${this.editedProduct.image_product}`
+      }
+    },
+
     getSubcategories(category) {
       if (category !== '') {
         const selectedCategory = this.categories.find((c) => c.nameCategory === category);
@@ -305,7 +350,6 @@ axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
   computed: {
     filteredProducts() {
       let filtered = this.products;
-      // Filtrar por categoría
       if (this.selectedCategory !== '') {
 
         filtered = filtered.filter((product) => product.subCategory.category === this.selectedCategory);

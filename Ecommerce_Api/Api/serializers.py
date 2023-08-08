@@ -536,7 +536,8 @@ class ProductSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         userValidation= self.context.get('userPermision')
         if userValidation['IsChecker'] and not userValidation['IsAdmin'] and any( key != 'active' for key in validated_data.keys()):
-            raise serializers.ValidationError({"message":"No puede editar esto"}) 
+            raise serializers.ValidationError({"message":"No puede editar esto"})
+        print(validated_data) 
         return super().update(instance, validated_data)
 
     def to_internal_value(self, data):
@@ -544,8 +545,7 @@ class ProductSerializer(serializers.ModelSerializer):
             input_fields = set(data.keys())
             userValidation= self.context.get('userPermision') 
             
-            if 'id' in data:
-                raise serializers.ValidationError({"Parametro no autorizado":['id']})
+    
 
             if userValidation['IsSeller'] and not userValidation['IsChecker'] and not userValidation['IsAdmin'] and 'active' in input_fields:
                 raise serializers.ValidationError({'message': 'No es checker'})

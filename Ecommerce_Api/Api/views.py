@@ -168,6 +168,23 @@ class Img_view(viewsets.ModelViewSet):
         else:
             print('ruta')
             return JsonResponse({'error':'No se encuentra la imagen'})
+        
+    def put_file_img(self, request, image_name):
+        print(request.data)
+        localD = os.getenv('USERPROFILE')
+        TP_route=  f'{localD}\Desktop\Proyectos\AlanStore\Ecommerce_Api\images'
+        file_img = os.path.join(TP_route, image_name)
+        img_product = request.data['image_product']
+        with open(file_img, 'wb') as f:
+            for chunk in img_product.chunks():
+                f.write(chunk)
+
+        if not os.path.exists(file_img):
+            return JsonResponse({"error":"La imagen no existe"}, status=400)
+        
+        return JsonResponse({'message':'imagen guardada'})
+
+
 
 
 class TransactSubcategoryView(viewsets.ModelViewSet):
