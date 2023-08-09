@@ -158,16 +158,14 @@ class WithDrawView(viewsets.ModelViewSet):
 
 class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):
-        localD = os.getenv('USERPROFILE')
-        TP_route=  f'{localD}\Desktop\Proyectos\AlanStore\Ecommerce_Api\images'
-        print(TP_route)
-        complete_path = os.path.join(TP_route, image_name)
-        
-        if os.path.exists(complete_path):
-            return FileResponse(open(complete_path,'rb'),content_type='image/jpeg')
+        pathFile = os.path.abspath(__file__)
+        path = pathFile.replace(r"Api\views.py", "") + r"\images" + '\\' + image_name   
+        print(path)
+        if os.path.exists(path=path):
+            return FileResponse(open(path,'rb'),content_type='image/jpeg')
         else:
             print('ruta')
-            return JsonResponse({'error':'No se encuentra la imagen'})
+            return JsonResponse({'error':'No se encuentra la imagen'}, status=404)
         
     def put_file_img(self, request, image_name):
         print(request.data)
@@ -279,6 +277,12 @@ class ProductView(viewsets.ModelViewSet):
         return JsonResponse(serializer.data,status=200)
         
     def get_inventory(self, request):
+        searchQuery = request.GET.get('s',"")
+        filterCQuery = request.GET.get('c',"")
+        filterSQuery = request.GET.get('q',"")
+        isPaginated = request.GET.get('paginated',"f")
+        print()
+
         querysetFisic  = ProductFisic.objects.all()
         querysetDigit = ProductDigit.objects.all()
         querysetMethod = MethodProducts.objects.all()
@@ -288,9 +292,23 @@ class ProductView(viewsets.ModelViewSet):
         serialized_Method = MethodSerializer(querysetMethod, many=True).data
 
         combined_data = serialized_Fisic + serialized_Digit + serialized_Method
-        print
         sorted_data  = sorted(combined_data,key=itemgetter('dateCreated'))
-        return JsonResponse(sorted_data, status=200,safe=False)
+        if isPaginated == "t":
+            page = request.GET.get("page", 1)
+            paginator = Paginator(sorted_data, 5)
+
+            try:
+                Actpage = paginator.page(page)
+                return JsonResponse({
+                            "items":list(Actpage),
+                            "act_page":Actpage.number,
+                            "rest_pages":paginator.num_pages - int(Actpage.number)
+                             }, status=200)
+            except Exception as e:
+                return JsonResponse({"error":"Page Invalid"})
+        else:
+            return JsonResponse({"items":sorted_data, "is_paginated":False})
+      
 
     # POST a new product (Taking Seller id)
     def post_product(self,request):
@@ -361,6 +379,16 @@ class ProductsDigitView(viewsets.ModelViewSet):
         except: 
             return JsonResponse({"error":"no existe"}, status=200)
 
+    def put_digit_product(self, request, pk):
+        try:
+            instance = ProductDigit.objects.get(id=pk)
+        except Exception():
+            return JsonResponse({'error':'No existe el producto'})
+        
+        serializer = ProductDigitSerializer(instance=instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return JsonResponse({"message":"Exito", "object":serializer.data})
 
     def post_product_digit(self, request):
         data = request.data

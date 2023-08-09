@@ -3,7 +3,7 @@
     <h2 class="text-3xl font-semibold mb-4">Inventario</h2>
 
     <!-- Filtros -->
-    <div class="flex items-center mb-4">
+    <div class="flex items-center mb-2 filters">
       <div>
         <label for="categoryFilter" class="text-lg font-semibold">Categoría:</label>
         <select v-model="selectedCategory" id="categoryFilter" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg">
@@ -15,7 +15,7 @@
         <label for="subcategoryFilter" class="text-lg font-semibold">Subcategoría:</label>
         <select v-model="selectedSubcategory" id="subcategoryFilter" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg">
           <option value="">Todas las Subcategorías</option>
-          <option v-for="subcategory in getSubcategories(selectedCategory)" :key="subcategory.id" :value="subcategory.nameCategory">{{ subcategory.nameSubCategory }}</option>
+          <option v-for="subcategory in getSubcategories(selectedCategory)" :key="subcategory.id" :value="subcategory.nameSubCategory">{{ subcategory.nameSubCategory }}</option>
         </select>
       </div>
       <div class="ml-auto">
@@ -23,43 +23,57 @@
         <input v-model="searchTerm" id="searchInput" type="text" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg">
       </div>
     </div>
+    <button class="mt-0 mb-4 bg-orange-500 hover:bg-orange-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"> Buscar</button>
 
     <!-- Tabla de productos -->
-    <table class="table-auto w-full">
-      <thead>
-        <tr>
-          <th class="px-4 py-2">ID</th>
-          <th class="px-4 py-2">Producto</th>
-          <th class="px-4 py-2">Categoria</th>
-          <th class="px-4 py-2">Subcategoria</th>
-          <th class="px-4 py-2">Cantidad</th>
-          <th class="px-4 py-2">Precio</th>
-          <th class="px-4 py-2">Tienda</th>
-          <th class="px-4 py-2">Usuario</th>
-          <th class="px-4 py-2">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="product in filteredProducts" :key="product.id">
-          <td class="border px-4 py-2">{{ product.id }}</td>
-          <td class="border px-4 py-2">{{ product.name }}</td>
-          <td class="border px-4 py-2">{{ product.subCategory.category }}</td>
-          <td class="border px-4 py-2">{{ product.subCategory.nameSub }}</td>     
-          <td class="border px-4 py-2">{{ product.quantity }}</td>
-          <td class="border px-4 py-2">{{ product.price }}</td>
-          <td class="border px-4 py-2">{{ product.store.nameStore }}</td>
-          <td class="border px-4 py-2">{{ product.store.seller.name }}</td>
-          <td class="border px-4 py-2 ">
-            <button @click="openEditModal(product)" class="mx-1 bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
-              Ver
-            </button>
-            <button @click="deleteProduct(product.id)" class="mx-1 bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500">
-              Retirar
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div style="min-height: 370px">
+      <table class="table-auto w-full" style="margin: auto;">
+        <thead>
+          <tr>
+            <th class="px-4 py-2">ID</th>
+            <th class="px-4 py-2">Producto</th>
+            <th class="px-4 py-2">Categoria</th>
+            <th class="px-4 py-2">Subcategoria</th>
+            <th class="px-4 py-2">Cantidad</th>
+            <th class="px-4 py-2">Precio</th>
+            <th class="px-4 py-2">Tienda</th>
+            <th class="px-4 py-2">Usuario</th>
+            <th class="px-4 py-2">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="product in filteredProducts" :key="product.id">
+            <td class="border px-4 py-2">{{ product.id }}</td>
+            <td class="border px-4 py-2">{{ product.name }}</td>
+            <td class="border px-4 py-2">{{ product.subCategory.category }}</td>
+            <td class="border px-4 py-2">{{ product.subCategory.nameSub }}</td>     
+            <td class="border px-4 py-2">{{ product.quantity }}</td>
+            <td class="border px-4 py-2">{{ product.price }}</td>
+            <td class="border px-4 py-2">{{ product.store.nameStore }}</td>
+            <td class="border px-4 py-2">{{ product.store.seller.name }}</td>
+            <td class="border px-4 py-2 ">
+              <button @click="openEditModal(product)" class="mx-1 bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Editar
+              </button>
+              <button @click="deleteProduct(product.id)" class="mx-1 bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500">
+                Retirar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <section class="nav-arrows cont">
+        <svg xmlns="http://www.w3.org/2000/svg" @click="handleChangePage(-1)" :style="{color:previousArrowColor}" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg> 
+        <div  class="pageCounter"> <span>{{ pageInfo.act_page }}</span></div>
+        <svg xmlns="http://www.w3.org/2000/svg" @click="handleChangePage(1)" :style="{color:nextArrowColor}" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+    </section>
+
 
     <!-- Modal de Edición de Producto -->
     <div v-if="isEditModalOpen" class="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-gray-800 bg-opacity-75">
@@ -77,9 +91,9 @@
             </div>
             <div>
               <label for="editProductName" class="text-lg font-semibold">Nombre del Producto:</label>
-              <input v-model="editedProduct.nameProduct" id="editProductName" type="text" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg">
+              <input v-model="editedProduct.name" id="editProductName" type="text" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg">
             </div>
-            <div>
+            <div v-if="editedProduct.subCategory.category === 'Fisicos'">
               <label for="editProductQuantity" class="text-lg font-semibold">Cantidad del Producto:</label>
               <input v-model="editedProduct.quantity" id="editProductQuantity" type="number" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" min="1">
             </div>
@@ -89,19 +103,32 @@
             </div>
             <div>
               <label for="editProductPriceUSD" class="text-lg font-semibold">Precio del Producto</label>
-              <input v-model="editedProduct.priceProduct" id="editProductPriceUSD" type="number" step="0.01" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20" min="0" required>
+              <input v-model="editedProduct.price" id="editProductPriceUSD" type="number" step="0.01" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20" min="0" required>
             </div>
-            <div>
+            <div v-if="editedProduct.subCategory.category === 'Fisicos'">
               <label for="editProductBrand" class="text-lg font-semibold">Marca del Producto:</label>
               <input v-model="editedProduct.brand" id="editProductBrand" type="text" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg">
             </div>
-            <div>
-              <label for="editProductVariants" class="text-lg font-semibold">Variantes del Producto:</label>
-              <textarea v-model="editedProduct.variants" id="editProductVariants" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="2"></textarea>
+            <div v-if="editedProduct.subCategory.category === 'Fisicos'">
+              <label for="editProductVariants" class="text-lg font-semibold">Direccion</label>
+              <textarea v-model="editedProduct.address_direction" id="editProductVariants" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="2"></textarea>
+            </div>
+            <div v-if="editedProduct.subCategory.category === 'Digitales'">
+              <label for="editProductVariants" class="text-lg font-semibold">Texto de Checker</label>
+              <textarea v-model="editedProduct.checkerText" id="editProductVariants" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="2"></textarea>
             </div>
             <div>
               <label for="editProductDetails" class="text-lg font-semibold">Detalles Adicionales:</label>
               <textarea v-model="editedProduct.aditional_details" id="editProductDetails" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="4"></textarea>
+            </div>
+            <div v-if="editedProduct.subCategory.category === 'Digitales'">
+              <label for="editProductVariants" class="text-lg font-semibold">Comision de Checker</label>
+              <textarea v-model="editedProduct.comisionCheck" id="editProductVariants" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="2"></textarea>
+              <div class="flex checkerInp">
+                <label for="editProductVariants" class="text-lg font-semibold">Necesita Checker</label>
+                <input type="checkbox" v-model="editedProduct.needChecker">
+              </div>
+              
             </div>
           </div>
           <div class="flex justify-end mt-4">
@@ -110,9 +137,6 @@
             </button>
             <button @click="updateExistingProduct" class="ml-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
               Guardar Cambios
-            </button>
-            <button @click="saveAsNewProduct" class="ml-2 bg-green-500 hover:bg-green-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500">
-              Guardar como Nuevo Producto
             </button>
           </div>
         </form>
@@ -136,6 +160,11 @@ export default {
       selectedSubcategory: '',
       searchTerm: '',
       isEditModalOpen: false,
+      isPaginated: true,
+      pageInfo: {
+        act_page: 1,
+        rest_pages: 0
+      },
       editedProduct: {
         id: null,
         name: '',
@@ -162,19 +191,28 @@ export default {
   },
 
   methods: {
-    async fetchProducts() {
+    async fetchProducts(id=1, query=[]) {
+      console.log(query)
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/inventory`, {
+        const response = await axios.get(`http://127.0.0.1:8000/api/inventory?page=${id}`, {
           headers: {
             Authorization: `Token ${Cookies.get('token')}`
           }
         });
         console.log(response.data)
-        this.products = response.data;
+        this.products = response.data.items;
+        this.pageInfo.act_page = response.data.act_page
+        this.pageInfo.rest_pages = response.data.rest_pages
       } catch (error) {
         console.error('Error al obtener los productos:', error);
       }
     },
+
+    async handleChangePage(steps) {
+      if((this.pageInfo.act_page+steps != 0 && this.pageInfo.act_page+steps <= this.pageInfo.rest_pages + this.pageInfo.act_page)) {
+          this.fetchProducts(this.pageInfo.act_page+steps)
+        }
+      },
 
     async fetchCategories() {
       try {
@@ -219,12 +257,18 @@ export default {
       for(let i = 0; i <= deleteList.length-1; i++ ) {
         delete requestData[deleteList[i]]
       }
-      console.log(requestData)
-
+      const tipo = this.editedProduct.id.split(".")[0]
+      let url = ""
+      if (tipo== 1) {
+        url = `http://127.0.0.1:8000/api/productos/${this.editedProduct.id.split('.')[1]}` 
+      }
+      else if(tipo==2) {
+        url = `http://127.0.0.1:8000/api/productos/digit/${this.editedProduct.id.split('.')[1]}`
+      }
       
       
       // Lógica para enviar los cambios del producto existente al servidor
-      axios.put(`http://127.0.0.1:8000/api/productos/${this.editedProduct.id.split('.')[1]}`, requestData, {
+      axios.put(url, requestData, {
         headers: {
           Authorization: `Token ${Cookies.get('token')}`
         }
@@ -252,25 +296,7 @@ axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
       }
     })
     .then(response => {
-      // Agregar el nuevo producto a la lista
       this.fetchProducts();
-
-      // Restaurar los campos de edición a sus valores predeterminados
-      this.editedProduct = {
-        id: null,
-        nameProduct: '',
-        description: '',
-        priceBTC: 0,
-        priceUSD: 0,
-        image: null,
-        brand: '',
-        variants: '',
-        category: '',
-        subcategory: '',
-        quantity: 0,
-        aditional_details: '',
-        username: ''
-      };
     })
     .catch(error => {
       console.error( error.response.data);
@@ -349,27 +375,29 @@ axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
 
   computed: {
     filteredProducts() {
+      let query=["","",""]
       let filtered = this.products;
       if (this.selectedCategory !== '') {
-
-        filtered = filtered.filter((product) => product.subCategory.category === this.selectedCategory);
-        console.log(filtered)
+        query[0] = this.selectedCategory
       }
 
       // Filtrar por subcategoría
       if (this.selectedSubcategory !== '') {
-        filtered = filtered.filter((product) => product.subCategory.nameSubCategory === this.selectedSubcategory);
+        query[1] = this.selectedSubcategory
       }
 
       // Filtrar por término de búsqueda
       if (this.searchTerm !== '') {
-        const searchTermLower = this.searchTerm.toLowerCase();
-        filtered = filtered.filter((product) => {
-          const nameLower = product.nameProduct.toLowerCase();
-          const descriptionLower = product.description.toLowerCase();
-          return nameLower.includes(searchTermLower) || descriptionLower.includes(searchTermLower);
-        });
+        query[2] = this.searchTerm.toLowerCase()
+        
+        // const searchTermLower = this.searchTerm.toLowerCase();
+        // filtered = filtered.filter((product) => {
+        //   const nameLower = product.name.toLowerCase();
+        //   const descriptionLower = product.description.toLowerCase();
+        //   return nameLower.includes(searchTermLower) || descriptionLower.includes(searchTermLower);
+        // });
       }
+      console.log(query)
 
       return filtered;
     }
@@ -391,6 +419,11 @@ axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
   display: inline-block;
 }
 
+.filters  {
+  max-width: 1000px;
+    margin: 20px auto;
+    margin-bottom: 10px;
+}
 .file-select::before {
   background-color: #2ac100;
   color: white;
@@ -417,5 +450,19 @@ axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
   content: 'Cambiar';
 }
 
+
+.checkerInp {
+  gap: 20px;
+  margin: 5px;
+}
+
+.checkerInp label {
+  margin-bottom: 0px;
+}
+
+.cont {
+  justify-content: center;
+  margin-top: 23px;
+}
 </style>
 

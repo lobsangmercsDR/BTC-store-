@@ -347,7 +347,7 @@ class ProductDigitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductDigit
-        fields = ['id', 'name', 'price','no_solicitud','subCategory','quantity','subCategory_id', 'description','comisionCheck','additional_details','needChecker', 'dateCreated','store','checkerText']
+        fields = ['id', 'name', 'price','no_solicitud','subCategory','quantity','subCategory_id', 'description','comisionCheck','aditional_details','needChecker', 'dateCreated','store','checkerText']
 
     def create(self, validated_data):
         request = self.context.get('request',None)
