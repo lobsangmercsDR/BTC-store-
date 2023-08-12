@@ -21,8 +21,8 @@
         </button>
         </div>
       </div>
-      <div class="h-[calc(100vh-50px)] bg-gray-800 py-[20px]">
-        <div class="flex flex-col justify-between h-full px-[20px] space-y-[10px]">
+      <div class=" bg-gray-800 py-[20px]" style="height: inherit; ">
+        <div class="flex flex-col justify-between h-full px-[20px] space-y-[10px] menuCont" style="overflow: auto;">
           <div class=" flex flex-col justify-between space-y-[10px]">
             <router-link to="/home"
               class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800  transition duration-400 ease-in-out">
@@ -179,7 +179,7 @@
               Checker Panel
             </button>
             <div class="mt-2 bg-gray-300 rounded-md overflow-hidden" v-show="showSubMenu5">
-              <router-link to="/products_fis" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
+              <router-link to="/user_checker" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
                 Solicitudes de Checker
               </router-link>  
             </div>
@@ -189,7 +189,7 @@
 
 
 
-            <router-link to="/profile"
+            <router-link to="/homePageEcommerce"
               class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-300  hover:text-gray-800 transition duration-400 ease-in-out">
               <svg aria-hidden="true" class="mr-2 w-[25px] h-[25px] fill-current" fill="currentColor" viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg">
@@ -197,7 +197,7 @@
                   d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z">
                 </path>
               </svg>
-              Noticias
+              Home
             </router-link>
 
 
@@ -219,9 +219,9 @@
               Opciones
             </button>
             <div class="mt-2 bg-gray-300 rounded-md overflow-hidden" v-show="showSubMenu">
-              <router-link to="/settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
+              <!-- <router-link to="/settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
                 Configuraciones
-              </router-link>
+              </router-link> -->
               <router-link to="/logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-400">
                 Cerrar Sesión
               </router-link>
@@ -275,6 +275,11 @@ export default {
 </script>
 
 <style scoped>
+
+.menuCont::-webkit-scrollbar {
+  width: 0
+}
+
 
 .header-menu {
     display: flex;

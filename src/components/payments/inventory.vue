@@ -4,30 +4,30 @@
 
     <!-- Filtros -->
     <div class="flex items-center mb-2 filters">
-      <div>
-        <label for="categoryFilter" class="text-lg font-semibold">Categoría:</label>
+      <div class="filter">
+        <label for="categoryFilter " class="text-lg font-semibold">Categoría:</label>
         <select v-model="selectedCategory" id="categoryFilter" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg">
           <option value="">Todas las Categorías</option>
           <option v-for="category in categories" :key="category.id" :value="category.nameCategory">{{ category.nameCategory }}</option>
         </select>
       </div>
-      <div class="ml-4">
+      <div class="ml-4 filter">
         <label for="subcategoryFilter" class="text-lg font-semibold">Subcategoría:</label>
         <select v-model="selectedSubcategory" id="subcategoryFilter" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg">
           <option value="">Todas las Subcategorías</option>
-          <option v-for="subcategory in getSubcategories(selectedCategory)" :key="subcategory.id" :value="subcategory.nameSubCategory">{{ subcategory.nameSubCategory }}</option>
+          <option v-for="subcategory in getSubcategories(selectedCategory)" :key="subcategory.id" :value="subcategory.id">{{ subcategory.nameSubCategory }}</option>
         </select>
       </div>
-      <div class="ml-auto">
-        <label for="searchInput" class="text-lg font-semibold">Buscar:</label>
+      <div class="ml-4 filter">
+        <label for="searchInput" class="text-lg font-semibold"> Buscar:</label>
         <input v-model="searchTerm" id="searchInput" type="text" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg">
       </div>
     </div>
-    <button class="mt-0 mb-4 bg-orange-500 hover:bg-orange-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"> Buscar</button>
+    <button class="mt-0 mb-4 bg-orange-500 hover:bg-orange-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500" @click="filteredProducts()"> Buscar</button>
 
     <!-- Tabla de productos -->
     <div style="min-height: 370px">
-      <table class="table-auto w-full" style="margin: auto;">
+      <table class="table-auto w-full" style="margin: auto;" v-if="!isWindowSmall">
         <thead>
           <tr>
             <th class="px-4 py-2">ID</th>
@@ -42,7 +42,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="product in filteredProducts" :key="product.id">
+          <tr v-for="product in products" :key="product.id">
             <td class="border px-4 py-2">{{ product.id }}</td>
             <td class="border px-4 py-2">{{ product.name }}</td>
             <td class="border px-4 py-2">{{ product.subCategory.category }}</td>
@@ -62,25 +62,74 @@
           </tr>
         </tbody>
       </table>
+
+      <table :key="product.id" v-if="isWindowSmall" v-for="product in products" class=" tableWit responsive-table">
+        <tbody>
+          <tr>
+            <td class="py-2 px-4 bg-gray-100 border-b">ID</td>
+            <td class="py-2 px-4 border-b">{{ product.id }}</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-4 bg-gray-100 border-b">Producto</td>
+            <td class="py-2 px-4 border-b">{{ product.name }}</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-4 bg-gray-100 border-b">Categoria</td>
+            <td class="py-2 px-4 border-b">{{ product.subCategory.category }}</td>
+          </tr>
+          
+          <tr>
+            <td class="py-2 px-4 bg-gray-100 border-b">Subcategoria</td>
+            <td class="py-2 px-4 border-b">{{ product.subCategory.nameSub }}</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-4 bg-gray-100 border-b">Cantidad</td>
+            <td class="py-2 px-4 border-b">{{ product.quantity }}</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-4 bg-gray-100 border-b">Precio</td>
+            <td class="py-2 px-4 border-b">{{ product.price }}</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-4 bg-gray-100 border-b">Usuario</td>
+            <td class="py-2 px-4 border-b">{{ product.store.nameStore }}</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-4 bg-gray-100 border-b">Acciones</td>
+            <td class="py-2 px-4 border-b">{{ product.store.seller.name }}</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-4 bg-gray-100 border-b">Acciones</td>
+            <td class="border px-4 py-2 ">
+              <button @click="openEditModal(product)" class="mx-1 bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Editar
+              </button>
+              <button @click="deleteProduct(product.id)" class="mx-1 bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500">
+                Retirar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <section class="nav-arrows cont">
-        <svg xmlns="http://www.w3.org/2000/svg" @click="handleChangePage(-1)" :style="{color:previousArrowColor}" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" @click="handleChangePage(-1)"  class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M15 18l-6-6 6-6"/>
         </svg> 
         <div  class="pageCounter"> <span>{{ pageInfo.act_page }}</span></div>
-        <svg xmlns="http://www.w3.org/2000/svg" @click="handleChangePage(1)" :style="{color:nextArrowColor}" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" @click="handleChangePage(1)" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M9 18l6-6-6-6"/>
         </svg>
     </section>
 
 
     <!-- Modal de Edición de Producto -->
-    <div v-if="isEditModalOpen" class="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-gray-800 bg-opacity-75">
-      <div class="bg-white rounded-lg shadow-md p-8" style="max-width: 800px; width: 90%">
+    <div v-if="isEditModalOpen" class="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-gray-800 bg-opacity-75 ">
+      <div class="bg-white rounded-lg shadow-md p-8 modalForm" style="max-width: 800px; width: 90%; max-height: 775px; overflow: auto;">
         <h2 class="text-3xl font-semibold mb-4">Editar Producto</h2>
-        <form @submit.prevent="updateExistingProduct">
-          <div class="grid grid-cols-3 gap-4">
+        <form >
+          <div class="grid formGrid">
             <div v-if="editedProduct.subCategory.category === 'Fisicos'">
               <label for="editProductName" class="text-lg font-semibold">Imagen:</label>
               <div class="product-image">
@@ -153,6 +202,7 @@ import { filter } from 'lodash';
 export default {
   data() {
     return {
+      isWindowSmall: false,
       products: [],
       categories: [],
       subcategories: [],
@@ -188,13 +238,18 @@ export default {
   created() {
     this.fetchProducts();
     this.fetchCategories();
+    this.checkWindowSize();
+    window.addEventListener('resize', this.checkWindowSize);
   },
 
   methods: {
+    checkWindowSize() {
+      this.isWindowSmall = window.innerWidth <= 870;
+    },  
     async fetchProducts(id=1, query=[]) {
       console.log(query)
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/inventory?page=${id}`, {
+        const response = await axios.get(`http://127.0.0.1:8000/api/inventory?page=${id}&paginated=t`, {
           headers: {
             Authorization: `Token ${Cookies.get('token')}`
           }
@@ -203,6 +258,7 @@ export default {
         this.products = response.data.items;
         this.pageInfo.act_page = response.data.act_page
         this.pageInfo.rest_pages = response.data.rest_pages
+        console.log(response.data)
       } catch (error) {
         console.error('Error al obtener los productos:', error);
       }
@@ -337,6 +393,41 @@ axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
       return [];
     },
 
+    async filteredProducts() {
+      let query=["","",""]
+      let filtered = this.products;
+      if (this.selectedCategory !== '') {
+        query[0] = this.selectedCategory
+      }
+
+      if (this.selectedSubcategory !== '') {
+        query[1] = this.selectedSubcategory
+      }
+
+      if (this.searchTerm !== '') {
+        query[2] = this.searchTerm.toLowerCase()
+        
+        // const searchTermLower = this.searchTerm.toLowerCase();
+        // filtered = filtered.filter((product) => {
+        //   const nameLower = product.name.toLowerCase();
+        //   const descriptionLower = product.description.toLowerCase();
+        //   return nameLower.includes(searchTermLower) || descriptionLower.includes(searchTermLower);
+        // });
+      }
+      let url = 'http://127.0.0.1:8000/api/seeker?query='+this.searchTerm
+      if(this.selectedCategory) {
+      url=  url +"&tip="+this.selectedCategory 
+      }
+      if(this.selectedSubcategory) {
+      url=  url +"&subC="+this.selectedSubcategory 
+      }
+
+      await axios.get(url)
+      .then(response=> {
+        this.products = response.data
+      })
+    },
+
     async deleteProduct(id) {
       console.log(id)
       if(!confirm("¿Está seguro de que quiere retirar este producto del sistema?")) {
@@ -372,36 +463,6 @@ axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
         })
     }
   },
-
-  computed: {
-    filteredProducts() {
-      let query=["","",""]
-      let filtered = this.products;
-      if (this.selectedCategory !== '') {
-        query[0] = this.selectedCategory
-      }
-
-      // Filtrar por subcategoría
-      if (this.selectedSubcategory !== '') {
-        query[1] = this.selectedSubcategory
-      }
-
-      // Filtrar por término de búsqueda
-      if (this.searchTerm !== '') {
-        query[2] = this.searchTerm.toLowerCase()
-        
-        // const searchTermLower = this.searchTerm.toLowerCase();
-        // filtered = filtered.filter((product) => {
-        //   const nameLower = product.name.toLowerCase();
-        //   const descriptionLower = product.description.toLowerCase();
-        //   return nameLower.includes(searchTermLower) || descriptionLower.includes(searchTermLower);
-        // });
-      }
-      console.log(query)
-
-      return filtered;
-    }
-  }
 };
 </script>
 
@@ -423,7 +484,39 @@ axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
   max-width: 1000px;
     margin: 20px auto;
     margin-bottom: 10px;
+    flex-direction: column;
 }
+
+.filter {
+  display: flex;
+    flex-direction: column;
+}
+
+
+.tableWit {
+  min-width: 400px;
+  border: 3px solid;
+  margin: 40px auto;
+}
+
+.formGrid {
+  display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(205px, 1fr));
+    grid-gap: 49px;
+}
+
+.modalForm {
+  max-width: 955px !important;
+}
+@media (min-width:870px) {
+  .filters {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+
+}
+
 .file-select::before {
   background-color: #2ac100;
   color: white;

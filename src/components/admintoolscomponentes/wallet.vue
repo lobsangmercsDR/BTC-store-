@@ -147,7 +147,7 @@ export default {
   methods: {
     checkWindowSize() {
       this.isWindowSmall = window.innerWidth <= 960;
-      console.log(this.isWindowSmall)
+
     },  
     async getUserData() { 
       await axios.get(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`, {

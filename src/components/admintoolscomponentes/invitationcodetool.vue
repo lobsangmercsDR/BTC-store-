@@ -108,7 +108,6 @@ export default {
   methods: {
     checkWindowSize() {
       this.isWindowSmall = window.innerWidth <= 800;
-      console.log(this.isWindowSmall)
     }, 
     async getInvitationsCode() {
          await axios.get("http://127.0.0.1:8000/api/users/invitations", {

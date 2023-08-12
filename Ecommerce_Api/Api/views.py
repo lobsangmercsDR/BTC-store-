@@ -99,36 +99,43 @@ def validate_group(user, groups):
 class SearchAPIView(viewsets.ModelViewSet):
     def get(self, request):
         search_query = request.GET.get('query', '')
-        product_type = request.GET.get('tip', '')  # Obtener el parámetro 'tip'
-        print(product_type)
+        product_type = request.GET.get('tip', '')
+        subcategory = request.GET.get('subC', None) 
         if product_type.lower() == 'digitales':
-            # Buscar coincidencias en ProductDigit
-            digit_results = ProductDigit.objects.filter(name__icontains=search_query)
+            digit_results=None
+            if subcategory:
+              digit_results = ProductDigit.objects.filter(name__icontains=search_query, subCategory_id=subcategory)  
+            else:
+                digit_results = ProductDigit.objects.filter(name__icontains=search_query)
             digit_serializer = ProductDigitSerializer(digit_results, many=True)
             return JsonResponse(digit_serializer.data, safe=False)
         
-        if product_type.lower() == 'fisicas':
-            # Buscar coincidencias en ProductFisic
-            fisic_results = ProductFisic.objects.filter(nameProduct__icontains=search_query)
+        if product_type.lower() == 'fisicos':
+            fisic_results=None
+            if subcategory:
+              fisic_results = ProductFisic.objects.filter(name__icontains=search_query, subCategory_id=subcategory)  
+            else:
+                fisic_results = ProductFisic.objects.filter(name__icontains=search_query)
             fisic_serializer = ProductSerializer(fisic_results, many=True)
             return JsonResponse(fisic_serializer.data, safe=False)
         
         if product_type.lower() == 'metodos':
-            # Buscar coincidencias en MethodProduct
-            method_results = MethodProducts.objects.filter(nameProduct__icontains=search_query)
+            method_results=None
+            if subcategory:
+              method_results = ProductDigit.objects.filter(name__icontains=search_query, subCategory_id=subcategory)  
+            else:
+                method_results = ProductDigit.objects.filter(name__icontains=search_query)
             method_serializer = MethodSerializer(method_results, many=True)
             return JsonResponse(method_serializer.data,safe=False)
         
-        # Buscar coincidencias en todos los tipos de productos
-        fisic_results = ProductFisic.objects.filter(nameProduct__icontains=search_query)
+        fisic_results = ProductFisic.objects.filter(name__icontains=search_query)
         digit_results = ProductDigit.objects.filter(name__icontains=search_query)
-        method_results = MethodProducts.objects.filter(nameProduct__icontains=search_query)
+        method_results = MethodProducts.objects.filter(name__icontains=search_query)
         
         fisic_serializer = ProductSerializer(fisic_results, many=True)
         digit_serializer = ProductDigitSerializer(digit_results, many=True)
         method_serializer = MethodSerializer(method_results, many=True)
         
-        # Unir los resultados en una lista de diccionarios
         results = fisic_serializer.data + digit_serializer.data + method_serializer.data
         
         return JsonResponse(results, safe=False)
@@ -277,9 +284,6 @@ class ProductView(viewsets.ModelViewSet):
         return JsonResponse(serializer.data,status=200)
         
     def get_inventory(self, request):
-        searchQuery = request.GET.get('s',"")
-        filterCQuery = request.GET.get('c',"")
-        filterSQuery = request.GET.get('q',"")
         isPaginated = request.GET.get('paginated',"f")
         print()
 
