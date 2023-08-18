@@ -24,6 +24,7 @@ from django.core import serializers
 from django.http import HttpResponse
 from .models import ProductFisic,MethodProducts,Withdrawals,ReportTransacts,CheckerSolic,TransactCategories,ProductDigit,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
 from .serializers import (TransactsSerializer,
+                          TransactsViewAdminSerializer,
                           TransactCategorySerializer,
                           ReportSerializer,
                           SolicCheckerSerializer,
@@ -283,10 +284,11 @@ class ProductView(viewsets.ModelViewSet):
         serializer = ProductSerializer(instance)
         return JsonResponse(serializer.data,status=200)
         
+
+
     def get_inventory(self, request):
         isPaginated = request.GET.get('paginated',"f")
-        print()
-
+        
         querysetFisic  = ProductFisic.objects.all()
         querysetDigit = ProductDigit.objects.all()
         querysetMethod = MethodProducts.objects.all()
@@ -708,6 +710,12 @@ class TransactsView(viewsets.ModelViewSet):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = []
     
+
+    def get_admin_view_transacts(self, request):
+        queryset = Transacts.objects.all()
+        df = TransactsViewAdminSerializer(queryset, many=True)
+        return JsonResponse(df.data, safe=False)
+        
 
     def get_all_transacts(self, request):
         isDigital = request.GET.get('digitals',None)

@@ -147,7 +147,7 @@
                                 <img :src="'http://127.0.0.1:8000/api'+product.image_product" alt="Product Image">
                             </div>
                             <h4 class="product-name">{{ product.nameProduct }}</h4>
-                            <p class="product-price">$ {{ product.priceProduct }}</p>
+                            <p class="product-price">$ {{ product.price }}</p>
                             <p>Tienda: <b> {{ product.store.nameStore }} </b></p>
                             <button class="product-button-slide" @click="openModal(product.id, 'fisic')">Go to Product</button>
                         </div>

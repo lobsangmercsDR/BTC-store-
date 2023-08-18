@@ -178,8 +178,8 @@ class Transacts(models.Model):
     quantity_asked = models.IntegerField(default=1)
     status = models.CharField(max_length=50, choices=OPTIONS, default='Procesando')
     buyers = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
-    company = models.CharField(max_length=50)
-    noSeguimiento = models.CharField(max_length=50)
+    company = models.CharField(max_length=50, default="N/A")
+    noSeguimiento = models.CharField(max_length=50, default="N/A")
 
 
 class TransactCategories(models.Model):

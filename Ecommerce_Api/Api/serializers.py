@@ -556,6 +556,20 @@ class ProductSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({"Parametros Invalidos":INVList})
             return super().to_internal_value(data)
 
+class ProductNestedSerializer(serializers.ModelSerializer):
+    store = StoreSerializer()
+    
+    class Meta:
+        model = ProductFisic
+        fields = ('id', 'name','price', 'store')
+
+class ProductDigitNestedSerializer(serializers.ModelSerializer):
+    store = StoreSerializer()
+    
+    class Meta:
+        model = ProductDigit
+        fields = ('id', 'name', 'price','store' )
+
 class TransactProductNestedSerializer(serializers.ModelSerializer):
     seller = UserNestedSerializer(source='seller_id')
 
@@ -608,14 +622,15 @@ class TransactsSerializer(serializers.ModelSerializer):
         try:
             if type == 'fisics':
                 products = ProductFisic.objects.get(id=product_id)
-                total_price = quantity_asked * products.priceProduct
+                total_price = quantity_asked * products.price
             elif type=='method':
                 products = MethodProducts.objects.get(id=product_id)
                 total_price = products.price
             elif type == 'digitals':
                 products = ProductDigit.objects.get(id=product_id)
                 total_price = products.price
-        except:
+        except Exception as e:
+            print(e)
             raise serializers.ValidationError({"error":"Producto Inexistente"}) 
         print(total_price)
         user = User.objects.get(id=request.user.id)
@@ -640,6 +655,29 @@ class TransactsSerializer(serializers.ModelSerializer):
             transact = Transacts.objects.create(productDigit=products, buyers=buyers, **validated_data)
         return transact
     
+
+class TransactsViewAdminSerializer(serializers.ModelSerializer):
+    product= serializers.SerializerMethodField()
+    buyers = UserNestedSerializer()
+    dateTransact = serializers.DateTimeField(format="%d/%m/%Y %I:%M:%S %p")
+
+    
+    class Meta:
+        model= Transacts
+        fields= ('id','dateTransact', 'product', 'quantity_asked','buyers')
+
+    def get_product(self, obj):
+        if obj.productDigit:
+            return ProductDigitNestedSerializer(obj.productDigit).data
+        if obj.productFisic:
+            return ProductNestedSerializer(obj.productFisic).data
+        else:
+            return None
+        
+    def to_representation(self, instance):
+        result = super().to_representation(instance)
+        result['total'] = float(result['product']['price']) * float(result['quantity_asked']) 
+        return result
 
 class ReportSerializer(serializers.ModelSerializer):
     transact = TransactsSerializer(required=False)

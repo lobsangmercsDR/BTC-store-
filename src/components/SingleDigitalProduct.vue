@@ -28,7 +28,7 @@
           <div class="mt-4">
             <div class="flex items-center mb-2">
               <span class="text-gray-600 text-l-show mr-2 font-semibold">Tienda:</span>
-              <span class="text-lg">{{ productDigit.store_id.nameStore }}</span>
+              <span class="text-lg">{{ productDigit.store.nameStore }}</span>
             </div>
             <div class="flex items-center mb-2">
               <span class="text-gray-600 text-lg mr-2 font-semibold"></span>
@@ -135,7 +135,7 @@
             <p>Orden: {{ orderNumber }}</p>
             <p>Producto: {{ productDigit.name }}</p>
             <p>Cantidad: 1</p>
-            <p>Tienda: {{ productDigit.store_id.nameStore }}</p>
+            <p>Tienda: {{ productDigit.store.nameStore }}</p>
           </div>
           <div class="flex justify-end mt-4">
             <button @click="showSuccessModal = false" class="text-gray-500 hover:text-gray-700 mr-2">Cerrar</button>
@@ -194,7 +194,8 @@ export default {
         this.showModal = newValue.showDigitModal
         this.status = newValue.status
         this.orderS = newValue.order
-        this.renderDigitProductData(newValue.objID, newValue.typeProd)
+        let id = (this.getId(newValue.objID))
+        this.renderDigitProductData(id, newValue.typeProd)
       }  
     }
   },
@@ -250,25 +251,25 @@ export default {
     };
   },
   methods: {
+    getId(string) {
+      return string.split('.')[1]
+    },
+
+
     async makeActionInChecking(id, type,ordID) {
-      console.log(ordID);
       if(type=='approve') {
         await axios.put(`http://127.0.0.1:8000/api/productos/digit/${id}/${ordID}`,{status:true})
         .then(response => {
-          console.log(response.data)
           this.$emit('updated')
         })
         .catch(error => {
-          console.log(error)
         })
       }else if (type == 'refuse'){
         await axios.put(`http://127.0.0.1:8000/api/productos/digit/${id}/${ordID}`,{status:false})
         .then(response => {
-          console.log(response.data)
           this.$emit('updated')
         })
         .catch(error => {
-          console.log(error)
         })
       }
     },
@@ -281,13 +282,11 @@ export default {
       this.showPaymentModal = true;
     },
     confirmPayment(id) {
-      console.log(id, this.user.balance, this.productDigit.price)
       if (parseInt(this.user.balance) >= parseInt(this.productDigit.price)) {
         this.showPaymentModal = false;
-        this.showSuccessModal = true;
         this.orderNumber = Math.floor(Math.random() * 1000000);
         this.quantity = 1;
-        this.makeTransact(id)
+        this.makeTransact(id.split('.')[1])
         this.addChecker = false;
       } else {
         this.showPaymentModal = false;
@@ -308,12 +307,14 @@ export default {
     },
 
     async makeTransact(id) {
+      console.log(id)
       await axios.post(`http://127.0.0.1:8000/api/productos/transacts/digits`,{productDigit_id:id}, {
         headers: {
           Authorization: `Token ${Cookies.get('token')}`
         }
       }) 
       .then( response => {
+        this.showSuccessModal = true;
         console.log(response.data)
       })
       .catch (error => {
@@ -639,21 +640,7 @@ export default {
   color: #fff;
 }
 
-.hover\:bg-[#fa7328]:hover {
-  background-color: #f87171;
-}
 
-.bg-green-500 {
-  background-color: #84cc16;
-}
-
-.hover\:bg-[#d836e8]:hover {
-  background-color: #6b46c1;
-}
-
-.bg-[#ac15c1] {
-  background-color: #ac15c1;
-}
 
 .text-3xl {
   font-size: 1.875rem;
@@ -669,13 +656,7 @@ export default {
   box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.5);
 }
 
-.bg-[#f76108] {
-  background-color: #f76108;
-}
 
-.hover\:bg-[#fa7328]:hover {
-  background-color: #fa7328;
-}
 
 .px-4 {
   padding-left: 1rem;
@@ -695,13 +676,7 @@ export default {
   color: #fff;
 }
 
-.bg-[#ac15c1] {
-  background-color: #ac15c1;
-}
 
-.hover\:bg-[#d836e8]:hover {
-  background-color: #d836e8;
-}
 
 .px-4 {
   padding-left: 1rem;
@@ -742,21 +717,11 @@ export default {
   color: #fff;
 }
 
-.hover\:bg-[#fa7328]:hover {
-  background-color: #f87171;
-}
-
 .bg-green-500 {
   background-color: #84cc16;
 }
 
-.hover\:bg-[#d836e8]:hover {
-  background-color: #6b46c1;
-}
 
-.bg-[#ac15c1] {
-  background-color: #ac15c1;
-}
 
 .text-3xl {
   font-size: 1.875rem;
@@ -960,21 +925,11 @@ export default {
   color: #fff;
 }
 
-.hover\:bg-[#fa7328]:hover {
-  background-color: #f87171;
-}
 
 .bg-green-500 {
   background-color: #84cc16;
 }
 
-.hover\:bg-[#d836e8]:hover {
-  background-color: #6b46c1;
-}
-
-.bg-[#ac15c1] {
-  background-color: #ac15c1;
-}
 
 .text-3xl {
   font-size: 1.875rem;
@@ -1162,21 +1117,12 @@ export default {
   color: #fff;
 }
 
-.hover\:bg-[#fa7328]:hover {
-  background-color: #f87171;
-}
 
 .bg-green-500 {
   background-color: #84cc16;
 }
 
-.hover\:bg-[#d836e8]:hover {
-  background-color: #6b46c1;
-}
 
-.bg-[#ac15c1] {
-  background-color: #ac15c1;
-}
 
 .text-3xl {
   font-size: 1.875rem;
@@ -1352,21 +1298,12 @@ export default {
   color: #fff;
 }
 
-.hover\:bg-[#fa7328]:hover {
-  background-color: #f87171;
-}
 
 .bg-green-500 {
   background-color: #84cc16;
 }
 
-.hover\:bg-[#d836e8]:hover {
-  background-color: #6b46c1;
-}
 
-.bg-[#ac15c1] {
-  background-color: #ac15c1;
-}
 
 .text-3xl {
   font-size: 1.875rem;
@@ -1542,21 +1479,13 @@ export default {
   color: #fff;
 }
 
-.hover\:bg-[#fa7328]:hover {
-  background-color: #f87171;
-}
+
 
 .bg-green-500 {
   background-color: #84cc16;
 }
 
-.hover\:bg-[#d836e8]:hover {
-  background-color: #6b46c1;
-}
 
-.bg-[#ac15c1] {
-  background-color: #ac15c1;
-}
 
 .text-3xl {
   font-size: 1.875rem;
@@ -1732,21 +1661,13 @@ export default {
   color: #fff;
 }
 
-.hover\:bg-[#fa7328]:hover {
-  background-color: #f87171;
-}
+
 
 .bg-green-500 {
   background-color: #84cc16;
 }
 
-.hover\:bg-[#d836e8]:hover {
-  background-color: #6b46c1;
-}
 
-.bg-[#ac15c1] {
-  background-color: #ac15c1;
-}
 
 .text-3xl {
   font-size: 1.875rem;

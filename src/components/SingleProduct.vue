@@ -46,7 +46,7 @@
             <span class="text-lg">{{ productFisic.address_direction }}</span>
           </div>
           <div class="flex mb-2">
-            <p class="text-2xl font-semibold mr-2"> Precio: {{ productFisic.priceProduct }}</p>
+            <p class="text-2xl font-semibold mr-2"> Precio: {{ productFisic.price }}</p>
           </div>
           <div class="mt-8">
             <h3 class="text-xl font-semibold mb-2 text-left">Detalles adicionales:</h3>
@@ -233,12 +233,13 @@ export default {
   watch: {
     modalInfo(newValue) {
       this.showFisicModal = newValue.showFisicModal
+      let id = newValue.objID.split('.')[1] 
       if (newValue.typeProd == 'fisic') {
-        this.renderProductFisicData(newValue.objID)
+        this.renderProductFisicData(id)
         
       }
       else if(newValue.typeProd== 'method') {
-        this.renderMethodData(newValue.objID)
+        this.renderMethodData(id)
       }
     }
   },
@@ -300,10 +301,11 @@ export default {
   },
   methods: {
     async renderProductFisicData(id) {
+      console.log(id)
       await axios.get(`http://127.0.0.1:8000/api/productos/${id}`)
         .then(response => {
           this.productFisic = response.data;
-          this.transactInfo.productDigit_id = response.data.id
+          this.transactInfo.productDigit_id =id
         })
         .catch(error => console.log(error.response.data))
     },
@@ -383,10 +385,8 @@ export default {
       this.processingTransaction = true;
       setTimeout(() => {
         if ((this.user.balance >= this.productFisic.price * this.quantity) && (this.productFisic.actQuantity != 0)) {
-          console.log("AAAw");
           this.showPaymentModal = false;
           this.processingTransaction = false;
-          this.showInvoiceModal = true;
           this.orderNumber = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
           this.transactInfo.quantity_asked = this.quantity
           this.makeTransact()
@@ -429,7 +429,7 @@ export default {
           Authorization: `Token ${Cookies.get('token')}`
         }})
         .then(response => {
-          console.log(response)
+          this.showInvoiceModal = true
           this.takeUserInfo()
         })
         .catch(error =>

@@ -26,6 +26,12 @@ import deposit_coins from '../pages/Dashboard/wallet_cripto/deposit_coins.vue'
 
 
   const routes = [
+
+    {
+      name:'test',
+      path:'/test',
+      component:users
+    },
     {
       
       name: 'Dashboard',
@@ -70,11 +76,6 @@ import deposit_coins from '../pages/Dashboard/wallet_cripto/deposit_coins.vue'
           name: 'invitation_code_manager',
           path: '/invitation_code_manager',
           component:invitation_code_manager
-        },
-        {
-          name: 'Wallet',
-          path: '/Wallet',
-          component:Wallet
         },
         {
           name: 'Wallet',
