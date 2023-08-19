@@ -105,7 +105,8 @@
         date:null,
         isWindowSmall: false,
         allTransacts: [],
-        dateInput:null
+        dateInput:null,
+        searchTerm:""
       }
     },
     created() {
@@ -114,12 +115,23 @@
       window.addEventListener('resize', this.checkWindowSize);
     },
     methods: {
+      async searchData() {
+       if(this.searchTerm !="") {
+        await axios.get('')
+       }
+      }
+
       async makeFilterwithData(date) {
-        console.log(date)
+        let startDate = date[0].toJSON()
+        let endDate= date[1].toJSON()
+        await axios.get(`http://127.0.0.1:8000/api/transacts/admin?dr_s=${startDate}&dr_e=${endDate}`)
+        .then(response => {
+          this.allTransacts = response.data
+        })
       },
 
       async getTransacts() {
-        await axios.get('http://127.0.0.1:8000/api/transacts/admin')
+        await axios.get(`http://127.0.0.1:8000/api/transacts/admin?dr={}`)
         .then(response => {
           console.log(response.data);
           this.allTransacts = response.data
@@ -144,7 +156,7 @@
 
   .filter {
     gap: 20px;
-    flex-direction: row;
+    flex-direction: row !important;
   }
 
   button{

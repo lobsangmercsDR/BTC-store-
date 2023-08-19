@@ -712,7 +712,22 @@ class TransactsView(viewsets.ModelViewSet):
     
 
     def get_admin_view_transacts(self, request):
-        queryset = Transacts.objects.all()
+        date_start = request.GET.get("dr_s",None)
+        date_end = request.GET.get("dr_e",None)
+        querySearch = request.GET.get("")
+
+        if date_start and date_end:
+            start = datetime.strptime(date_start,  "%Y-%m-%dT%H:%M:%S.%fZ").date()
+            end = datetime.strptime(date_end,  "%Y-%m-%dT%H:%M:%S.%fZ").date()
+            queryset = Transacts.objects.filter(dateTransact__range=(start,end))
+            if date_start == date_end:
+                end = end + timedelta(days=1)
+                queryset = Transacts.objects.filter(dateTransact__range=(start, end))
+            print(queryset)
+        else:
+            if querySearch:
+                queryset =  
+            queryset = Transacts.objects.all()
         df = TransactsViewAdminSerializer(queryset, many=True)
         return JsonResponse(df.data, safe=False)
         
