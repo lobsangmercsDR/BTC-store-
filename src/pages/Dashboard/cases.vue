@@ -7,7 +7,7 @@
         </section>
         <div class=" filter">
           <input v-model="searchTerm" id="searchInput" type="text" class="text-gray-600 border border-gray-300 searcher">
-          <button class="btn"> 
+          <button class="btn" @click="searchData()"> 
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
               <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
             </svg>
@@ -117,23 +117,29 @@
     methods: {
       async searchData() {
        if(this.searchTerm !="") {
-        await axios.get('')
-       }
-      }
-
-      async makeFilterwithData(date) {
-        let startDate = date[0].toJSON()
-        let endDate= date[1].toJSON()
-        await axios.get(`http://127.0.0.1:8000/api/transacts/admin?dr_s=${startDate}&dr_e=${endDate}`)
+        await axios.get(`http://127.0.0.1:8000/api/transacts/admin?sq=${this.searchTerm}`)
         .then(response => {
           this.allTransacts = response.data
         })
+       }
+      },
+
+      async makeFilterwithData(date) {
+        if(date!=null) { 
+          let startDate = date[0].toJSON()
+          let endDate= date[1].toJSON()
+          await axios.get(`http://127.0.0.1:8000/api/transacts/admin?dr_s=${startDate}&dr_e=${endDate}`)
+          .then(response => {
+            this.allTransacts = response.data
+          })
+        } else {
+          this.getTransacts()
+        }
       },
 
       async getTransacts() {
         await axios.get(`http://127.0.0.1:8000/api/transacts/admin?dr={}`)
         .then(response => {
-          console.log(response.data);
           this.allTransacts = response.data
         })
         .catch(error => {

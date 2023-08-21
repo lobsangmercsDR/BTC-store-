@@ -239,6 +239,13 @@ class ProductView(viewsets.ModelViewSet):
         }
         return JsonResponse(dicc, status=200, safe=False)
     
+    def postMethod(self, request):
+        serializer = MethodSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return JsonResponse(serializer.data, status=201)
+
+
     def get_method(self, request, *args, pk):
         instance = MethodProducts.objects.get(id=pk)
         print(instance)
@@ -714,7 +721,7 @@ class TransactsView(viewsets.ModelViewSet):
     def get_admin_view_transacts(self, request):
         date_start = request.GET.get("dr_s",None)
         date_end = request.GET.get("dr_e",None)
-        querySearch = request.GET.get("")
+        querySearch = request.GET.get("sq", None)
 
         if date_start and date_end:
             start = datetime.strptime(date_start,  "%Y-%m-%dT%H:%M:%S.%fZ").date()
@@ -726,8 +733,9 @@ class TransactsView(viewsets.ModelViewSet):
             print(queryset)
         else:
             if querySearch:
-                queryset =  
-            queryset = Transacts.objects.all()
+                queryset = Transacts.objects.filter(Q(productFisic__name__icontains=querySearch) | Q(productDigit__name__icontains=querySearch) | Q(methodProduct__name__icontains=querySearch))
+            else:
+                queryset = Transacts.objects.all()
         df = TransactsViewAdminSerializer(queryset, many=True)
         return JsonResponse(df.data, safe=False)
         

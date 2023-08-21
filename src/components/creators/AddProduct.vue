@@ -1,21 +1,28 @@
 <template>
       <div class="bg-white rounded-lg shadow-md p-8" style="max-width: 1100px; max-height: 1100px;">
       <h2 class="text-3xl font-semibold mb-4">Agregar Nuevo Producto</h2>
+      <div class="flex typProd">
+          <label for="productType" class="text-lg font-semibold">Tipo de Producto:</label>
+          <select name="productType" v-model="isMethod" @change="selectProductType()">
+            <option value=f>Fisico</option>
+            <option value=t>Metodo</option>
+          </select>
+        </div>
       <form class="grid grid-cols-2 gap-4 form-add" @submit.prevent>
         <div>
           <label for="productName" class="text-lg font-semibold">Nombre del Producto:</label>
-          <input v-model="newProduct.nameProduct" id="productName" type="text" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" :class="{'errorInput': error && error.hasOwnProperty('nameProduct')}">
+          <input v-model="newProduct.name" id="productName" type="text" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" :class="{'errorInput': error && error.hasOwnProperty('nameProduct')}">
           <div v-if="error && error.hasOwnProperty('nameProduct')" class="text-red-500 errorText"> 
-            <small>{{ error.nameProduct[0] }}</small>
+            <small>{{ error.name[0] }}</small>
           </div>
         </div>
         <div>
           <label for="productPriceBTC" class="text-lg font-semibold">Precio del Producto:</label>
           <div class="flex items-center">
-            <input v-model="newProduct.priceProduct" id="productPriceBTC" type="number" step="0.001" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20" min="0" :class="{'errorInput':error && error.hasOwnProperty('priceProduct')}"  @input="updatePriceUSD">
+            <input v-model="newProduct.price" id="productPriceBTC" type="number" step="0.001" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg w-20" min="0" :class="{'errorInput':error && error.hasOwnProperty('price')}"  @input="updatePriceUSD">
           </div>
-          <div v-if="error && error.hasOwnProperty('priceProduct')" class="text-red-500 errorText"> 
-              <small>{{ error.priceProduct[0] }}</small>
+          <div v-if="error && error.hasOwnProperty('price')" class="text-red-500 errorText"> 
+              <small>{{ error.price[0] }}</small>
           </div>
         </div>
         <div>
@@ -36,7 +43,7 @@
           <label class="text-lg font-semibold">Vista Previa de la Imagen:</label>
           <img :src="newProduct.image" class="w-40 h-auto mt-2 rounded-lg">
         </div>
-        <div>
+        <div v-if="isMethod === 'f'">
           <label for="productSubcategories" class="text-lg font-semibold">Subcategorías del Producto:</label>
           
           <select v-model="newProduct.subCat_id" id="productSubcategories" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" :class="{'errorInput': error && error.hasOwnProperty('subCat_id')}" >
@@ -90,18 +97,12 @@ import Cookies from 'js-cookie';
 export default {
   data() {
     return {
+      isMethod: "f",
       newProduct: {
-        nameProduct: '',
-        description: '',
-        priceProduct: 0,
-        image_product: null,
-        brand: '',
-        variants: '',
-        quantity: 1,
-        aditional_details: '',
-        store:1
+        name:"martinis",
+        price:99.8
       },
-      error: null, 
+      error: {}, 
       btcPrice: 0,
       categories:null
     };
@@ -112,6 +113,9 @@ export default {
   },
 
   methods: {
+    selectProductType() {
+      console.log(typeof(this.isMethod))
+    },
 
     async fetchCategoriesForCreate() {
       await axios.get("http://127.0.0.1:8000/api/categorias?formC=true", {
@@ -146,7 +150,16 @@ export default {
         let Obj = ObjCopy[clave]
         formData.append(clave, Obj)
       }
-      await axios.post('http://127.0.0.1:8000/api/productos',formData,{
+
+      let url = ""
+      if(this.isMethod) {
+        url = 'http://127.0.0.1:8000/api/productos/methods'        
+      }else {
+         url = 'http://127.0.0.1:8000/api/productos'
+
+      }
+      
+      await axios.post(url,formData,{
         headers: {
           Authorization: `Token ${Cookies.get('token')}`
         }
@@ -173,6 +186,18 @@ export default {
 </script>
 
 <style>
+
+.typProd {
+  justify-content: center;
+  gap: 12px;
+  font-size: 19px;
+}
+
+.typProd label {
+  font-size: 19px;
+}
+
+
 .container {
   display: flex;
   justify-content: row;
