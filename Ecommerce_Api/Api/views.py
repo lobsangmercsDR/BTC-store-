@@ -22,7 +22,7 @@ import os
 from .utils import services as uti
 from django.core import serializers
 from django.http import HttpResponse
-from .models import ProductFisic,MethodProducts,Withdrawals,ReportTransacts,CheckerSolic,TransactCategories,ProductDigit,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
+from .models import ProductFisic,MethodProducts,Withdrawals,ReportTransacts,Stores,CheckerSolic,TransactCategories,ProductDigit,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
 from .serializers import (TransactsSerializer,
                           TransactsViewAdminSerializer,
                           TransactCategorySerializer,
@@ -191,7 +191,16 @@ class Img_view(viewsets.ModelViewSet):
         return JsonResponse({'message':'imagen guardada'})
 
 
+class StoreView(viewsets.ModelViewSet):
+    queryset = Stores.objects.all()
 
+    def get_store_user_based(self, request, pk):
+        try:
+            store = Stores.objects.get(seller_id=pk)
+            return JsonResponse({'store_id':store.id})
+        except Exception as  e:
+            print(e)
+            return JsonResponse({'msg':'Store no encontrada'}, status=404)
 
 class TransactSubcategoryView(viewsets.ModelViewSet):
     queryset = TransactCategories.objects.all()
@@ -292,13 +301,19 @@ class ProductView(viewsets.ModelViewSet):
         return JsonResponse(serializer.data,status=200)
         
 
-
+    
     def get_inventory(self, request):
         isPaginated = request.GET.get('paginated',"f")
-        
-        querysetFisic  = ProductFisic.objects.all()
-        querysetDigit = ProductDigit.objects.all()
-        querysetMethod = MethodProducts.objects.all()
+        own = request.GET.get('own',"f")
+        if own =="t":
+            store = Stores.objects.get(seller=request.user.id)
+            querysetFisic = ProductFisic.objects.filter(store=store) 
+            querysetDigit = ProductDigit.objects.filter(store=store) 
+            querysetMethod = MethodProducts.objects.filter(store=store) 
+        else:
+            querysetFisic  = ProductFisic.objects.all()
+            querysetDigit = ProductDigit.objects.all()
+            querysetMethod = MethodProducts.objects.all()
 
         serialized_Fisic = ProductSerializer(querysetFisic, many=True).data
         serialized_Digit = ProductDigitSerializer(querysetDigit, many=True).data

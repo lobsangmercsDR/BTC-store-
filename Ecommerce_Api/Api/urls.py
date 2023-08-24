@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import  ProductView,ReportView,SearchAPIView, ProductsDigitView,TransactSubcategoryView,WithDrawView, CategoryView,TransactsView,UserView, SolicCheckerView, AuthenticationView, GroupsView, LogoutView, InvitationCodeView, RoleRequestsView,Img_view
+from .views import  ProductView,ReportView,SearchAPIView, StoreView, ProductsDigitView,TransactSubcategoryView,WithDrawView, CategoryView,TransactsView,UserView, SolicCheckerView, AuthenticationView, GroupsView, LogoutView, InvitationCodeView, RoleRequestsView,Img_view
 
 urlpatterns = [
     path('transactscategories',TransactSubcategoryView.as_view({'get':'get', 'post':'post'}),name="CheckerSOLIC"),
@@ -32,6 +32,7 @@ urlpatterns = [
     path('transacts/admin', TransactsView.as_view({'get':'get_admin_view_transacts'})),
     path('transacts/<int:pk>',TransactsView.as_view({'delete':'delete_transact','put':'put_transact'}), name='individual_transact'),
     path('users/invitations', InvitationCodeView.as_view({'get':'get_invitation_codes','post':'post_invitation_code'}), name='invitation'),
+    path('store/<int:pk>',StoreView.as_view({'get':'get_store_user_based'}), name='store'),
     path('userbased/invitation/<int:pk>', InvitationCodeView.as_view({'get':'get_invitation_code_user_based'}, name="Ayuda")),
     path('users/invitations/<int:pk>', InvitationCodeView.as_view({'delete':'delete_invitation_code'}), name='invitationssss'),
 ]

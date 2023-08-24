@@ -127,13 +127,15 @@ class InvitationCodesSerializer(serializers.ModelSerializer):
             return InvitationCode
 
 class MethodSerializer(serializers.ModelSerializer):
-    store = StoreSerializer()
+    store = StoreSerializer(read_only=True)
     transacts_count = serializers.SerializerMethodField()
     subCategory = serializers.SerializerMethodField()
+    dateCreated = serializers.DateTimeField(required=False)
+    store_id = serializers.IntegerField()
 
     class Meta:
         model = MethodProducts
-        fields = ['id','name', 'dateCreated','actQuantity','quantity','subCategory','sendDirection','description','price','store','image','transacts_count']
+        fields = ['id','name', 'dateCreated','actQuantity','quantity','subCategory','sendDirection','description','price','store','image','transacts_count', 'store_id']
 
 
     def get_transacts_count(self, obj):
@@ -144,6 +146,11 @@ class MethodSerializer(serializers.ModelSerializer):
             'category':'Method',
             'nameSub':'N/A'
         }
+    
+    def create(self, validated_data):
+        store_id = validated_data.pop('store_id')
+        method = MethodProducts.objects.create(store_id=store_id, **validated_data)
+        return method
 
 
 class UserCreatorSerializer(serializers.ModelSerializer):
@@ -436,13 +443,14 @@ class ProductSerializer(serializers.ModelSerializer):
     category = CategoryNestedSerializer(read_only=True)
     description = serializers.CharField(required=True)
     price = serializers.DecimalField(max_digits=10,decimal_places=2)
-    image_product = serializers.ImageField(required=True, write_only=False)
+    image = serializers.ImageField(required=True, write_only=False)
     subCategory = serializers.SerializerMethodField()
     subCat_id = serializers.IntegerField(write_only=True)
     brand = serializers.CharField(required=True)
     aditional_details = serializers.CharField(required=True)
     id = serializers.SerializerMethodField()
-    store = StoreSerializer()
+    store = StoreSerializer(read_only=True)
+    store_id = serializers.IntegerField()
 
 
     def get_id(self, obj):
@@ -457,7 +465,7 @@ class ProductSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("La sub categoria planteada no existe")
         return value
     
-    def validate_image_product(self, value):
+    def validate_image(self, value):
         print(value)
         if value==None:
             raise serializers.ValidationError("Este campo no debería estar vacío")
@@ -490,7 +498,7 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = [
                     'id',
                     'name',
-                    'image_product',
+                    'image',
                     'dateCreated',
                     'active',
                     'actQuantity',
@@ -505,33 +513,19 @@ class ProductSerializer(serializers.ModelSerializer):
                     'store',
                     'subCategory',
                     'aditional_details',
-                    'price'
+                    'price',
+                    'store_id'
                 ]
-
-    # def validate_description(self, value):
-    #     print(value,22)
-    #     if value=='':
-    #         raise serializers.ValidationError("Debe ingresar una descripcion valida del producto")
-    #     return value
-
 
     
 
     def create(self, validated_data):
-        request = self.context.get('request')
-        validated_data = request.data
-        category_id = validated_data.pop('subCat_id', None)
-        seller = User.objects.get(id=request.user.id)
-        subCategory = SubCategory.objects.get(id=category_id[0])
-        transformed_data = {}
-        for key, value in validated_data.items():
-            if not key=='image_product':
-                transformed_data[key] = value
-
-        image = validated_data['image_product']
-        store = Stores.objects.get(id=transformed_data.pop('store')[0])
-        product = ProductFisic.objects.create(seller=seller, subCategory=subCategory,image_product=image,store=store,  **transformed_data)
-        return product
+        subcId = validated_data.pop('subCat_id')
+        storeId = validated_data.pop('store_id')
+        subC = SubCategory.objects.get(id = subcId)
+        store = Stores.objects.get(id = storeId)
+        newProduct = ProductFisic.objects.create(subCategory=subC,store=store, **validated_data)
+        return newProduct
 
     def update(self, instance, validated_data):
         userValidation= self.context.get('userPermision')
@@ -540,21 +534,6 @@ class ProductSerializer(serializers.ModelSerializer):
         print(validated_data) 
         return super().update(instance, validated_data)
 
-    def to_internal_value(self, data):
-            valid_fields = set(self.fields.keys())
-            input_fields = set(data.keys())
-            userValidation= self.context.get('userPermision') 
-            
-    
-
-            if userValidation['IsSeller'] and not userValidation['IsChecker'] and not userValidation['IsAdmin'] and 'active' in input_fields:
-                raise serializers.ValidationError({'message': 'No es checker'})
-            
-            if not input_fields.issubset(valid_fields):
-                invalid_fields = input_fields - valid_fields
-                INVList = list(invalid_fields)
-                raise serializers.ValidationError({"Parametros Invalidos":INVList})
-            return super().to_internal_value(data)
 
 class ProductNestedSerializer(serializers.ModelSerializer):
     store = StoreSerializer()

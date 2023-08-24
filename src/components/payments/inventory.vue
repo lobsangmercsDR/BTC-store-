@@ -3,6 +3,8 @@
     <h2 class="text-3xl font-semibold mb-4">Inventario</h2>
 
     <!-- Filtros -->
+    <input type="checkbox" name="own" id="own" style="width: 20px; height: 20px;"  @change="this.own = !this.own;this.makeOwnProductsRequest()">
+    <label for="own" style="font-size: 20px; margin: 0 10px;">Propios</label>   
     <div class="flex items-center mb-2 filters">
       <div class="filter">
         <label for="categoryFilter " class="text-lg font-semibold">Categoría:</label>
@@ -203,6 +205,7 @@ export default {
   data() {
     return {
       isWindowSmall: false,
+      own: false,
       products: [],
       categories: [],
       subcategories: [],
@@ -246,10 +249,15 @@ export default {
     checkWindowSize() {
       this.isWindowSmall = window.innerWidth <= 870;
     },  
-    async fetchProducts(id=1, query=[]) {
-      console.log(query)
+    async fetchProducts(id=1, query=[], own=false) {
+      let url =""
+      if(own) {
+        url = `http://127.0.0.1:8000/api/inventory?page=${id}&paginated=t&own=t`
+      } else {
+        url=`http://127.0.0.1:8000/api/inventory?page=${id}&paginated=t`
+      }
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/inventory?page=${id}&paginated=t`, {
+        const response = await axios.get(url, {
           headers: {
             Authorization: `Token ${Cookies.get('token')}`
           }
@@ -426,6 +434,9 @@ axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
       .then(response=> {
         this.products = response.data
       })
+    },
+    async makeOwnProductsRequest() {
+       await this.fetchProducts(1,[],this.own)
     },
 
     async deleteProduct(id) {

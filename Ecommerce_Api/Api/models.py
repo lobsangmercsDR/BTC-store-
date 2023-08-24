@@ -54,7 +54,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def shares_count(self):
-        return self.productfisic_set.count()
+        return 10
 
 class Category(models.Model):
     nameCategory = models.CharField(max_length=50)
@@ -95,7 +95,7 @@ class Stores(models.Model):
 
 class MethodProducts(models.Model):
     name = models.CharField(max_length=50)
-    dateCreated = models.DateField()
+    dateCreated = models.DateTimeField(auto_now_add=True)
     actQuantity = models.IntegerField(default=0)
     quantity = models.IntegerField(default=0)
     sendDirection = models.CharField(max_length=50, default="")
@@ -110,9 +110,9 @@ class MethodProducts(models.Model):
         
 class ProductFisic(models.Model):
     name = models.CharField(max_length=50)
-    image_product = models.ImageField(upload_to=generate_file_path, default=None)
+    image = models.ImageField(upload_to=generate_file_path, default=None)
     description = models.CharField(max_length=200, default="")
-    actQuantity = models.IntegerField(default=0)
+    actQuantity = models.IntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     dateCreated = models.DateField(auto_now_add=True)
     address_direction = models.CharField(max_length=50)
@@ -121,7 +121,6 @@ class ProductFisic(models.Model):
     aditional_details = models.CharField(max_length=200, default="")
     quantity = models.IntegerField(default=0)
     subCategory = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True)
-    seller = models.ForeignKey(User, on_delete=models.CASCADE)
     store = models.ForeignKey(Stores, on_delete=models.CASCADE)
 
 

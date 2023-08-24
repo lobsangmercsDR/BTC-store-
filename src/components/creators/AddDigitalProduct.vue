@@ -46,9 +46,9 @@
         </div>
         <div>
           <label for="productPlainText" class="text-lg font-semibold">Texto Plano:</label>
-          <textarea :class="{'errorInput': error && error.hasOwnProperty('additional_details')}"  v-model="newProduct.additional_details" id="productPlainText" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
-          <div v-if="error && error.hasOwnProperty('additional_details')" class="text-red-500 errorText"> 
-            <small>{{ error.additional_details[0] }}</small>
+          <textarea :class="{'errorInput': error && error.hasOwnProperty('aditional_details')}"  v-model="newProduct.aditional_details" id="productPlainText" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" rows="4" required></textarea>
+          <div v-if="error && error.hasOwnProperty('aditional_details')" class="text-red-500 errorText"> 
+            <small>{{ error.aditional_details[0] }}</small>
           </div>
         </div>
 

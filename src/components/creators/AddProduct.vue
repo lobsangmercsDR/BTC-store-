@@ -1,5 +1,5 @@
 <template>
-      <div class="bg-white rounded-lg shadow-md p-8" style="max-width: 1100px; max-height: 1100px;">
+      <div class="bg-white rounded-lg shadow-md p-8" style="max-width: 1100px;">
       <h2 class="text-3xl font-semibold mb-4">Agregar Nuevo Producto</h2>
       <div class="flex typProd">
           <label for="productType" class="text-lg font-semibold">Tipo de Producto:</label>
@@ -11,8 +11,8 @@
       <form class="grid grid-cols-2 gap-4 form-add" @submit.prevent>
         <div>
           <label for="productName" class="text-lg font-semibold">Nombre del Producto:</label>
-          <input v-model="newProduct.name" id="productName" type="text" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" :class="{'errorInput': error && error.hasOwnProperty('nameProduct')}">
-          <div v-if="error && error.hasOwnProperty('nameProduct')" class="text-red-500 errorText"> 
+          <input v-model="newProduct.name" id="productName" type="text" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" :class="{'errorInput': error && error.hasOwnProperty('name')}">
+          <div v-if="error && error.hasOwnProperty('name')" class="text-red-500 errorText"> 
             <small>{{ error.name[0] }}</small>
           </div>
         </div>
@@ -27,9 +27,9 @@
         </div>
         <div>
           <label for="productImage" class="text-lg font-semibold">Imagen del Producto:</label>
-          <input type="file" style="border-radius:15px" accept="image/*" @change="handleImageUpload"  :class="{'errorInput': error && error.hasOwnProperty('image_product')}">
-          <div v-if="error && error.hasOwnProperty('image_product')" class="text-red-500 errorText"> 
-            <small>{{ error.image_product[0] }}</small>
+          <input type="file" style="border-radius:15px" accept="image/*" @change="handleImageUpload"  :class="{'errorInput': error && error.hasOwnProperty('image')}">
+          <div v-if="error && error.hasOwnProperty('image')" class="text-red-500 errorText"> 
+            <small>{{ error.image[0] }}</small>
           </div>
         </div>
         <div>
@@ -39,9 +39,9 @@
             <small>{{ error.address_direction[0] }}</small>
           </div>
         </div>
-        <div v-if="newProduct.image" style="margin-bottom:20px ;">
+        <div v-if="newProduct.image_product" style="margin-bottom:20px ;">
           <label class="text-lg font-semibold">Vista Previa de la Imagen:</label>
-          <img :src="newProduct.image" class="w-40 h-auto mt-2 rounded-lg">
+          <img :src="newProduct.image_product" class="w-40 h-auto mt-2 rounded-lg">
         </div>
         <div v-if="isMethod === 'f'">
           <label for="productSubcategories" class="text-lg font-semibold">Subcategorías del Producto:</label>
@@ -64,9 +64,9 @@
         
         <div>
           <label for="productQuantity" class="text-lg font-semibold">Cantidad del Producto:</label>
-          <input v-model="newProduct.quantity" id="productQuantity" type="number" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" min="1" :class="{'errorInput': error && error.hasOwnProperty('quantity')}">
-          <div v-if="error && error.hasOwnProperty('quantity')" class="text-red-500 errorText"> 
-              <small>{{ error.quantity[0] }}</small>
+          <input v-model="newProduct.actQuantity" id="productQuantity" type="number" class="text-gray-600 text-lg p-2 border border-gray-300 rounded-lg" min="1" :class="{'errorInput': error && error.hasOwnProperty('actQuantity')}">
+          <div v-if="error && error.hasOwnProperty('actQuantity')" class="text-red-500 errorText"> 
+              <small>{{ error.actQuantity[0] }}</small>
           </div>
         </div>
         <div>
@@ -100,19 +100,34 @@ export default {
       isMethod: "f",
       newProduct: {
         name:"martinis",
-        price:99.8
+        price:99.8,
+        store_id:0,
+        actQuantity:1,
       },
       error: {}, 
       btcPrice: 0,
-      categories:null
+      categories:null, 
+
     };
   },
 
   created() {
     this.fetchCategoriesForCreate();
+    this.getStoreId();
   },
 
   methods: {
+    async getStoreId() {
+      let userID = Cookies.get('svg');
+      await axios.get(`http://127.0.0.1:8000/api/store/${userID}`)
+      .then(response => {
+        this.newProduct.store_id = response.data.store_id
+      })
+      .catch(error => {
+        console.log(error)
+      })
+    },
+
     selectProductType() {
       console.log(typeof(this.isMethod))
     },
@@ -132,14 +147,8 @@ export default {
       const formData= new FormData();
       const ObjCopy = Object.assign({}, this.newProduct)
       console.log(ObjCopy)
-      if (ObjCopy.image_product == null)  {
-        delete ObjCopy.image_product
-      }
       if (ObjCopy.subCat_id == 0)  {
         delete ObjCopy.subCat_id
-      }
-      if(ObjCopy.image) {
-        delete ObjCopy.image
       }
       
       console.log(ObjCopy)
@@ -152,12 +161,13 @@ export default {
       }
 
       let url = ""
-      if(this.isMethod) {
+      if(this.isMethod =="t") {
         url = 'http://127.0.0.1:8000/api/productos/methods'        
       }else {
          url = 'http://127.0.0.1:8000/api/productos'
 
       }
+      console.log(url, this.isMethod)
       
       await axios.post(url,formData,{
         headers: {
@@ -173,11 +183,11 @@ export default {
     handleImageUpload(event) {
       const file = event.target.files[0];
 
-      this.newProduct.image_product = file;
+      this.newProduct.image = file;
       console.log(this.image_product)
       const reader = new FileReader();
       reader.onload = () => {
-        this.newProduct.image = reader.result;
+        this.newProduct.image_product = reader.result;
       };
       reader.readAsDataURL(file);
     },
