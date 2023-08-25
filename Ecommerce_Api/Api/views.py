@@ -22,9 +22,11 @@ import os
 from .utils import services as uti
 from django.core import serializers
 from django.http import HttpResponse
-from .models import ProductFisic,MethodProducts,Withdrawals,ReportTransacts,Stores,CheckerSolic,TransactCategories,ProductDigit,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
+from .models import ProductFisic,MethodProducts,Withdrawals,Deposits,ReportTransacts,Stores,CheckerSolic,TransactCategories,ProductDigit,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
 from .serializers import (TransactsSerializer,
                           TransactsViewAdminSerializer,
+                          ResetPassSerializer,
+                          DepositsSerializer,
                           TransactCategorySerializer,
                           ReportSerializer,
                           SolicCheckerSerializer,
@@ -147,8 +149,23 @@ class WithDrawView(viewsets.ModelViewSet):
     queryset = Withdrawals.objects.all()
     serializer_class = WithDrawSerializer
     authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = []
 
+    def get_admin_withdraws(self, request):
+        type = request.GET.get('t', None)
+        print(type)
+        if type:
+            if type == "pending":
+                objects = Withdrawals.objects.filter(status="Pendiente")
+            elif type == "approved":
+                objects = Withdrawals.objects.filter(status="Aprobada")
+            elif type == "declined":
+                objects = Withdrawals.objects.filter(status="Rechazada")
+            else:
+                objects = Withdrawals.objects.all()
+        else:
+            objects = Withdrawals.objects.all()
+        serializer = WithDrawSerializer(objects, many=True)
+        return JsonResponse(serializer.data, status=200,safe=False)
     
     def get_withdraws(self, request):
         objects = Withdrawals.objects.filter(user=request.user.id)
@@ -162,6 +179,40 @@ class WithDrawView(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return JsonResponse(serializer.data, status=200)
+    
+    def put_withdraw_status(self, request, id):
+        approve= request.GET.get('approve',None)
+        try:
+                withdraw = Withdrawals.objects.get(id=id)
+        except Exception as e:
+            print(e)
+            JsonResponse({'msg':'Retiro no existente'}, status=404)
+
+        if approve:
+            withdraw.status= "Aprobada"
+            withdraw.fecha_review = datetime.now()
+            withdraw.user.userBalance -= withdraw.amount
+            withdraw.user.save()
+            withdraw.save()
+        else:
+            withdraw.status="Rechazada"
+            withdraw.fecha_review = datetime.now()
+            withdraw.save()
+        return JsonResponse({'msg':'Actualizacion realizada con exito'})
+
+class DepositView(viewsets.ModelViewSet):
+    queryset = Deposits.objects.all()
+
+    def get_admin_deposits(self, request):
+        queryset= Deposits.objects.all()
+        serializer = DepositsSerializer(queryset, many=True)
+        return JsonResponse(serializer.data, safe=False)
+    
+    def post_deposit(self, request):
+        serializer = DepositsSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return JsonResponse(serializer.data)
 
 
 class Img_view(viewsets.ModelViewSet):
@@ -583,6 +634,18 @@ class CategoryView(viewsets.ModelViewSet):
         return JsonResponse({'message': 'El campo fue borrado correctamente', 'status':200}, status=200)
 
 
+class RestPassView(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+
+    def put_password(self, request):
+        serializer = ResetPassSerializer(data=request.data, context={'request':request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        updateSer = ResetPassSerializer(user,data=request.data) 
+        updateSer.is_valid(raise_exception=True)
+        updateSer.save()
+        return JsonResponse({'msg':'Accion realizada con exito'})
+
 class SolicCheckerView(viewsets.ModelViewSet):
     queryset = CheckerSolic.objects.all()
     authentication_classes = [authentication.TokenAuthentication]
@@ -629,6 +692,7 @@ class UserView(viewsets.ModelViewSet):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [IsAuthenticated, IsGroupAccepted]
 
+
     def get_all_users(self, request, *args, **kwargs):
         userPermision = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin])
         if not userPermision['IsAdmin']:
@@ -666,6 +730,8 @@ class UserView(viewsets.ModelViewSet):
         serializer= UserSerializer(userObj)
         return JsonResponse(serializer.data, status=200)
     
+
+
     def post_groups_request(self, request):
         serializer = RoleRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -714,6 +780,15 @@ class LogoutView(APIView):
         token1.delete()
         return JsonResponse({'message':'Token Borrado Exitosamente'}, status=200)
     
+    def put_password(self, request):
+        serializer = ResetPassSerializer(data=request.data, context={'request':request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        updateSer = ResetPassSerializer(user,data=request.data) 
+        updateSer.is_valid(raise_exception=True)
+        updateSer.save()
+        return JsonResponse({'msg':'Accion realizada con exito'})
+    
 class AuthenticationView(ObtainAuthToken):
     serializer_class = AuthenticationSerializer
 
@@ -724,6 +799,7 @@ class AuthenticationView(ObtainAuthToken):
         token, created = Token.objects.get_or_create(user=user)
         data = {'token': token.key, 'user':user.id, 'D_A':user.is_superuser}
         return JsonResponse(data)
+
 
 
 class TransactsView(viewsets.ModelViewSet):
@@ -737,6 +813,7 @@ class TransactsView(viewsets.ModelViewSet):
         date_start = request.GET.get("dr_s",None)
         date_end = request.GET.get("dr_e",None)
         querySearch = request.GET.get("sq", None)
+        own = request.GET.get('own', 'f')
 
         if date_start and date_end:
             start = datetime.strptime(date_start,  "%Y-%m-%dT%H:%M:%S.%fZ").date()
@@ -752,7 +829,13 @@ class TransactsView(viewsets.ModelViewSet):
             else:
                 queryset = Transacts.objects.all()
         df = TransactsViewAdminSerializer(queryset, many=True)
-        return JsonResponse(df.data, safe=False)
+        if own =="t": 
+            print(2)
+            result = list(filter(lambda item: item['product']['store']['seller']['id'] == request.user.id or item['buyers']['id'] == request.user.id,df.data ))
+            print(request.user.id)
+        else: 
+            result = df.data
+        return JsonResponse(result, safe=False)
         
 
     def get_all_transacts(self, request):

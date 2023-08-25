@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import  ProductView,ReportView,SearchAPIView, StoreView, ProductsDigitView,TransactSubcategoryView,WithDrawView, CategoryView,TransactsView,UserView, SolicCheckerView, AuthenticationView, GroupsView, LogoutView, InvitationCodeView, RoleRequestsView,Img_view
+from .views import  ProductView,ReportView,RestPassView,SearchAPIView, StoreView, ProductsDigitView,DepositView, TransactSubcategoryView,WithDrawView, CategoryView,TransactsView,UserView, SolicCheckerView, AuthenticationView, GroupsView, LogoutView, InvitationCodeView, RoleRequestsView,Img_view
 
 urlpatterns = [
     path('transactscategories',TransactSubcategoryView.as_view({'get':'get', 'post':'post'}),name="CheckerSOLIC"),
@@ -16,6 +16,8 @@ urlpatterns = [
     path('productos/transacts/methods', TransactsView.as_view({ 'post':'post_new_transacts_method'}, name="MethodsRN")),
     path('productos/transacts/digits', TransactsView.as_view({ 'post':'post_transact_digits'}, name="CreateDigitTransact")),
     path('productos/methods/<int:pk>', ProductView.as_view({'get':'get_method'}, name="godHelpMe")),
+    path('admin/withdraws',WithDrawView.as_view({'get':'get_admin_withdraws'}), name="Withdraws"),
+    path('admin/withdraws/<int:id>',WithDrawView.as_view({'put':'put_withdraw_status'}), name="Withdraws"),
     path('withdraws',WithDrawView.as_view({'get':'get_withdraws','post':'post_new_withdraw'}), name="Withdraws"),
     path('productos',ProductView.as_view({'get':'nested_list_products','post':'post_product'}), name='listOfProducts' ),
     path('productos/<int:pk>',ProductView.as_view({'get':'get_product', 'delete':'delete_product','put':'update_product'}), name='listOfProducts' ),
@@ -35,4 +37,7 @@ urlpatterns = [
     path('store/<int:pk>',StoreView.as_view({'get':'get_store_user_based'}), name='store'),
     path('userbased/invitation/<int:pk>', InvitationCodeView.as_view({'get':'get_invitation_code_user_based'}, name="Ayuda")),
     path('users/invitations/<int:pk>', InvitationCodeView.as_view({'delete':'delete_invitation_code'}), name='invitationssss'),
+    path('users/restpass', RestPassView.as_view({'put':'put_password'}), name='putpass'),
+    path('admin/deposits', DepositView.as_view({'get':'get_admin_deposits'}), name='Deposits'),
+    path('deposits', DepositView.as_view({'post':'post_deposit'}), name='DepositsInd'),
 ]

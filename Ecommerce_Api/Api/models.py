@@ -83,7 +83,13 @@ class Withdrawals(models.Model):
     walletRequested = models.CharField(max_length=50)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-
+class Deposits(models.Model):
+    no_orden= models.IntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tasaDepositMoment = models.DecimalField(max_digits=10, decimal_places=2)
+    quantityUSD = models.DecimalField(max_digits=10, decimal_places=2)
+    status= models.CharField(max_length=50)
+    date = models.DateTimeField(auto_now_add=True)
 
 class Stores(models.Model):
     nameStore = models.CharField(max_length=50)

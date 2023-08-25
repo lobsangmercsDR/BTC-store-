@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 
 from rest_framework import serializers,exceptions
-from .models import Category, ProductFisic, ProductDigit,ReportTransacts, Withdrawals, TransactCategories, CheckerSolic, Transacts,MethodProducts,User,InvitationCodes,RoleRequests, SubCategory, Stores
+from .models import Category, ProductFisic, ProductDigit,ReportTransacts,Deposits, Withdrawals, TransactCategories, CheckerSolic, Transacts,MethodProducts,User,InvitationCodes,RoleRequests, SubCategory, Stores
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
@@ -69,6 +69,8 @@ class UserSerializer(serializers.ModelSerializer):
         else:  
             return list(obj.groups.values_list('name',flat=True))[0]
 
+
+
 class StoreSerializer(serializers.ModelSerializer):
     product_count = serializers.SerializerMethodField()
     seller = UserNestedSerializer()
@@ -80,8 +82,15 @@ class StoreSerializer(serializers.ModelSerializer):
     def get_product_count(self, obj):
         count = obj.product_count 
 
+class DepositsSerializer(serializers.ModelSerializer):
+    user = UserNestedSerializer(required=False)
+
+    class Meta:
+        model = Deposits
+        fields = ('id', 'no_orden', 'user', 'tasaDepositMoment', 'quantityUSD', 'status', 'date')
+
 class WithDrawSerializer(serializers.ModelSerializer):
-    user = UserSerializer(required=False)
+    user = UserNestedSerializer(required=False)
 
 
     def validate_amount(self, obj):
@@ -683,7 +692,39 @@ class ReportSerializer(serializers.ModelSerializer):
         else:
             raise serializers.ValidationError({'error':'No existe'})
 
+class ResetPassSerializer(serializers.Serializer):
+    email= serializers.CharField()
+    oldPassword= serializers.CharField(style={'input_type':'password'})
+    newPassword= serializers.CharField(style={'input_type':'password'})
+    retPassword= serializers.CharField(style={'input_type':'password'})
 
+    def validate(self, data):
+        email = data.get('email')
+        oldPassword = data.get('oldPassword')
+        user = authenticate(
+            request= self.context.get('request'),
+            email=email,
+            password = oldPassword
+        )  
+        if not user:
+            raise serializers.ValidationError('Sus credenciales han sido incorrectas', code=401)
+        data['user'] = user 
+        return data
+        
+    def update(self,instance, validated_data):
+        newPassword = validated_data.get('newPassword','')
+        retPassword = validated_data.get('retPassword','')
+        if newPassword == '':
+            raise serializers.ValidationError({'newPassword':'Ingrese un valor valido'})
+        if not newPassword == retPassword:
+            raise serializers.ValidationError({'msg':'Las contraseñas no coinciden'}) 
+        instance.password = make_password(retPassword)
+        instance.save()
+        return instance
+
+
+
+        
 
 class AuthenticationSerializer(serializers.Serializer):
     email= serializers.EmailField()
