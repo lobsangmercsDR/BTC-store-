@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import  ProductView,ReportView,RestPassView,SearchAPIView, StoreView, ProductsDigitView,DepositView, TransactSubcategoryView,WithDrawView, CategoryView,TransactsView,UserView, SolicCheckerView, AuthenticationView, GroupsView, LogoutView, InvitationCodeView, RoleRequestsView,Img_view
+from .views import  ProductView,ReportView,RestPassView,SearchAPIView, GeneralDataView,StoreView, ProductsDigitView,DepositView, TransactSubcategoryView,WithDrawView, CategoryView,TransactsView,UserView, SolicCheckerView, AuthenticationView, GroupsView, LogoutView, InvitationCodeView,Img_view
 
 urlpatterns = [
     path('transactscategories',TransactSubcategoryView.as_view({'get':'get', 'post':'post'}),name="CheckerSOLIC"),
@@ -26,7 +26,6 @@ urlpatterns = [
     path('categorias/<int:pk>/<int:subCat_id>', CategoryView.as_view({'put': 'update_subCategory', 'post':'post_subCategorie','delete':'delete_subCategory'}, name='Update_and_Get_Categorie')),
     path('groups', GroupsView.as_view({'get':'nested_list'}), name='Groups_list'),
     path('users',UserView.as_view({'get':'get_all_users','post':'post_user'}), name='List_Users'),
-    path('rolechanges', RoleRequestsView.as_view({'get':'get_role_requests','post':'post_role_request',}), name='roleChanges'),
     path('users/authenticate',AuthenticationView.as_view(), name='Get_token'),
     path('users/logout',LogoutView.as_view(), name='logout'),
     path('users/<int:pk>', UserView.as_view({'get':'get_user','delete':'delete_user','put':'put_user_data'})),
@@ -40,4 +39,6 @@ urlpatterns = [
     path('users/restpass', RestPassView.as_view({'put':'put_password'}), name='putpass'),
     path('admin/deposits', DepositView.as_view({'get':'get_admin_deposits'}), name='Deposits'),
     path('deposits', DepositView.as_view({'post':'post_deposit'}), name='DepositsInd'),
+    path('admin/general', GeneralDataView.as_view({'get':'get_secret_key','put':'put_secret_key'}), name='DepositsInd'),
+    path('admin/general/data', GeneralDataView.as_view({'get':'general_data'}), name='DepositsInd'),
 ]

@@ -47,6 +47,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     objects = UserManager()
 
+    def total_registered(self, date=None):
+        return User.objects.aggregate(total_reg = models.Count('id'))['total_reg']
+
 
     @property
     def purchases_count(self):
@@ -181,12 +184,26 @@ class Transacts(models.Model):
     productDigit = models.ForeignKey(ProductDigit, on_delete=models.SET_NULL, default=None, null=True)
     methodProduct = models.ForeignKey(MethodProducts, on_delete=models.SET_NULL, default=None, null=True)
     quantity_asked = models.IntegerField(default=1)
+    total = models.DecimalField(max_digits=10,decimal_places=2)
     status = models.CharField(max_length=50, choices=OPTIONS, default='Procesando')
     buyers = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     company = models.CharField(max_length=50, default="N/A")
     noSeguimiento = models.CharField(max_length=50, default="N/A")
 
+    def total_transacts_amount(self, date=None):
+        if not date:
+            date = datetime.now()
+        transacts =  Transacts.objects.filter(dateTransact__range=(date.date(),date.date() +timedelta(days=1)))
+        print(transacts)
+        return transacts.aggregate(total_amount=models.Sum('total'))['total_amount']
 
+    def total_num_shares(self, date=None):
+        if not date:
+            date = datetime.now()
+        transacts =  Transacts.objects.filter(dateTransact__range=(date.date(),date.date() +timedelta(days=1)))
+        print(transacts)
+        return transacts.aggregate(total_count=models.Count('id'))['total_count']
+    
 class TransactCategories(models.Model):
     dateTransact = models.DateTimeField(auto_now_add=True)
     subCategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
@@ -224,9 +241,5 @@ class InvitationCodes(models.Model):
         super().save(*args, **kwargs)
 
 
-class RoleRequests(models.Model):
-    is_role = models.BooleanField()
-    is_password = models.BooleanField()
-    message = models.CharField(max_length=100)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    approved = models.BooleanField(default=False)
+class GenData(models.Model):
+    secret_key= models.CharField(max_length=50)

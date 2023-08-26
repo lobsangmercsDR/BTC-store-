@@ -2,7 +2,6 @@
 
 <template>
     <div>
-        <navbar-component></navbar-component>
         <main>
             <section class="pgae">
                 <div class="div-P"
@@ -45,14 +44,6 @@
                                         </div>
                                         <div class="flex justify-between items-center mb-3">
                                             <div>
-                                                <label class="inline-flex items-center cursor-pointer"><input
-                                                        id="customCheckLogin" type="checkbox"
-                                                        class="form-checkbox border-0 rounded text-gray-800 ml-1 w-5 h-5"
-                                                        style="transition: all 0.15s ease 0s;" /><span
-                                                        class="ml-2 text-sm font-semibold text-gray-700">Remember
-                                                        me</span></label>
-                                            </div>
-                                            <div>
                                                 <router-link to="/resetpass" class="link"
                                                     style="transition: all 0.15s ease 0s;">
                                                     Reset Password
@@ -78,14 +69,11 @@
                                 </div>
                             </div>
                         </div>
-                <footer-component></footer-component>
             </div>
             </section>
         </main>
     </div>
 </template>
-
-
 
 <script>
 import axios from 'axios';
@@ -118,7 +106,6 @@ export default {
     }
 };
 </script>
-  
 
 <style>
 .container-s {

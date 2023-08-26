@@ -5,6 +5,10 @@
         <section class="datePicker">
           <VueDatePicker :enable-time-picker="false" range v-model="date"></VueDatePicker>
         </section>
+        <section class="own">
+          <input type="checkbox" name="own" id="own" style="width: 20px; height: 20px;"  @change="this.own = !this.own;this.makeOwnProductsRequest()">
+          <label for="own" style="font-size: 20px; margin: 0 10px;">Propios</label>   
+        </section>
         <div class=" filter">
           <input v-model="searchTerm" id="searchInput" type="text" class="text-gray-600 border border-gray-300 searcher">
           <button class="btn" @click="searchData()"> 
@@ -87,6 +91,7 @@
   <script>
   import axios from 'axios';
   import VueDatePicker from '@vuepic/vue-datepicker'
+  import Cookies from 'js-cookie'
   import '@vuepic/vue-datepicker/dist/main.css'
 
   export default {
@@ -102,6 +107,7 @@
 
     data() {
       return {
+        own: false,
         date:null,
         isWindowSmall: false,
         allTransacts: [],
@@ -115,12 +121,33 @@
       window.addEventListener('resize', this.checkWindowSize);
     },
     methods: {
+      async makeOwnProductsRequest() {
+        let url = ""
+        if (this.own) {
+          url= `http://127.0.0.1:8000/api/transacts/admin?own=t`
+        } else {
+          url = `http://127.0.0.1:8000/api/transacts/admin`
+        }
+        await  axios.get(url, {
+        headers:{
+          Authorization:`Token ${Cookies.get('token')}`
+        }})
+        .then(response => {
+          this.allTransacts = response.data
+        })
+        .catch(error => {
+          console.log(error)
+        })
+      },
+
       async searchData() {
        if(this.searchTerm !="") {
         await axios.get(`http://127.0.0.1:8000/api/transacts/admin?sq=${this.searchTerm}`)
         .then(response => {
           this.allTransacts = response.data
         })
+       } else {
+        this.getTransacts()
        }
       },
 

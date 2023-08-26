@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 
 from rest_framework import serializers,exceptions
-from .models import Category, ProductFisic, ProductDigit,ReportTransacts,Deposits, Withdrawals, TransactCategories, CheckerSolic, Transacts,MethodProducts,User,InvitationCodes,RoleRequests, SubCategory, Stores
+from .models import Category, ProductFisic, ProductDigit,ReportTransacts,Deposits, Withdrawals, TransactCategories, CheckerSolic, Transacts,MethodProducts,User,InvitationCodes, SubCategory, Stores
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
@@ -11,8 +11,6 @@ import requests as rq
 import string
 
 dateFormat = "%d/%m/%Y %I:%M:%S %p"
-
-
 
 class GroupsSerializer(serializers.Serializer): 
     class Meta:
@@ -31,9 +29,6 @@ class GroupsSerializer(serializers.Serializer):
         count = obj.user_set.count()
         return count
      
-
-
-
 class UserNestedSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -68,8 +63,6 @@ class UserSerializer(serializers.ModelSerializer):
             return False
         else:  
             return list(obj.groups.values_list('name',flat=True))[0]
-
-
 
 class StoreSerializer(serializers.ModelSerializer):
     product_count = serializers.SerializerMethodField()
@@ -108,9 +101,6 @@ class WithDrawSerializer(serializers.ModelSerializer):
         validated_data['status'] = 'Pendiente'
         return super().create(validated_data)
 
-
-
-    
 class InvitationCodesSerializer(serializers.ModelSerializer):
     expire_date = dateFormat
     created_at = serializers.DateTimeField(format="%d/%m/%Y %I:%M:%S %p",required=False)
@@ -160,7 +150,6 @@ class MethodSerializer(serializers.ModelSerializer):
         store_id = validated_data.pop('store_id')
         method = MethodProducts.objects.create(store_id=store_id, **validated_data)
         return method
-
 
 class UserCreatorSerializer(serializers.ModelSerializer):
     add_group = serializers.CharField(read_only=True)
@@ -271,36 +260,6 @@ class UserCreatorSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
             
 
-class RoleRequestsSerializer(serializers.ModelSerializer):
-    user = UserNestedSerializer(read_only=True)
-    class Meta:
-        model =RoleRequests
-        fields = ['id', 'is_role','is_password','message','user','approved']
-        write_only_fields = ['is_role','is_password']
-        ref_name = 'UserSerializer'
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        listT = []
-        if data['is_role']:
-            listT.append('Role Change')
-        if data['is_password']:
-            listT.append('Password Change')
-        data['type'] = listT
-        return data
-
-    
-    def create(self, validated_data):
-        
-        role = validated_data.get('is_role')
-        password = validated_data.get('is_password')
-        listTypes = []
-        if not role and not password:
-            raise serializers.ValidationError({'message':'Debe especificar un tipo valido'})
-        user=User.objects.get(id=self.context.get('request').user.id)
-        roleRequest = RoleRequests.objects.create(user=user, **validated_data)
-        return roleRequest
-
 class SubCategorySerializer(serializers.ModelSerializer):
     purchased = serializers.SerializerMethodField()
 
@@ -318,14 +277,12 @@ class SubCategorySerializer(serializers.ModelSerializer):
         else:
             return False
         
-
 class ExtSubCategorySerializer(serializers.ModelSerializer):
 
     
     class Meta:
         model = SubCategory
         fields = ['id', 'nameSubCategory','priceSubCategory','minPriceBTC','maxPriceBTC']
-
 
 class ProductDigitSerializer(serializers.ModelSerializer):
     dateCreated = serializers.DateTimeField(format="%d/%m/%Y %I:%M %p", required=False)
@@ -372,7 +329,6 @@ class ProductDigitSerializer(serializers.ModelSerializer):
         store = Stores.objects.get(seller=request.user.id)
         instance = ProductDigit.objects.create(store=store, subCategory=subObj, **validated_data)
         return instance
-
 
 class TransactCategorySerializer(serializers.ModelSerializer):
     dateTransact = serializers.DateTimeField(format=dateFormat, required=False)
@@ -445,7 +401,6 @@ class CategoryNestedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id','nameCategory']
-
 
 class ProductSerializer(serializers.ModelSerializer):
     seller = UserNestedSerializer(read_only=True)
@@ -543,7 +498,6 @@ class ProductSerializer(serializers.ModelSerializer):
         print(validated_data) 
         return super().update(instance, validated_data)
 
-
 class ProductNestedSerializer(serializers.ModelSerializer):
     store = StoreSerializer()
     
@@ -565,7 +519,6 @@ class TransactProductNestedSerializer(serializers.ModelSerializer):
         model = ProductFisic
         fields = ['id','nameProduct','priceProduct','dateReleased','active', 'seller']
 
-
 class SolicCheckerSerializer(serializers.ModelSerializer): 
     dateCreated = serializers.DateTimeField(format="%d/%m/%Y %I:%M:%S %p")
 
@@ -579,8 +532,6 @@ class SolicCheckerSerializer(serializers.ModelSerializer):
         result = super().to_representation(instance)
         return result
 
-
-
 class TransactsSerializer(serializers.ModelSerializer):
     productDigit_id = serializers.IntegerField(write_only=True)
     quantity_asked = serializers.IntegerField(required=False)
@@ -589,10 +540,11 @@ class TransactsSerializer(serializers.ModelSerializer):
     buyers = UserNestedSerializer(read_only=True)
     productFisic = ProductSerializer(read_only=True)
     dateTransact = serializers.DateTimeField(format="%m/%d/%Y %I:%M:%S %p", read_only=True)
+    total = serializers.DecimalField(max_digits=10, decimal_places=2,read_only=True)
     
     class Meta:
         model  = Transacts 
-        fields = ['id','dateTransact','quantity_asked','status','sendDirection','productDigit','productFisic','buyers', 'productDigit_id', 'sendDirection','noSeguimiento','company']
+        fields = ['id','dateTransact','quantity_asked','status','total','sendDirection','productDigit','productFisic','buyers', 'productDigit_id', 'sendDirection','noSeguimiento','company']
 
     def create(self, validated_data):
         print(validated_data)
@@ -636,13 +588,12 @@ class TransactsSerializer(serializers.ModelSerializer):
         products.save() 
         print(products)
         if type == "fisics":
-            transact = Transacts.objects.create(productFisic=products,buyers=buyers, **validated_data)
+            transact = Transacts.objects.create(productFisic=products,buyers=buyers,total=total_price, **validated_data)
         elif type=="method":
-            transact = Transacts.objects.create(methodProduct=products,buyers=buyers, **validated_data)
+            transact = Transacts.objects.create(methodProduct=products,buyers=buyers,total=total_price, **validated_data)
         elif type == "digitals":
-            transact = Transacts.objects.create(productDigit=products, buyers=buyers, **validated_data)
+            transact = Transacts.objects.create(productDigit=products, buyers=buyers,total=total_price, **validated_data)
         return transact
-    
 
 class TransactsViewAdminSerializer(serializers.ModelSerializer):
     product= serializers.SerializerMethodField()
@@ -715,16 +666,17 @@ class ResetPassSerializer(serializers.Serializer):
         newPassword = validated_data.get('newPassword','')
         retPassword = validated_data.get('retPassword','')
         if newPassword == '':
-            raise serializers.ValidationError({'newPassword':'Ingrese un valor valido'})
+            print(newPassword,2)
+            raise serializers.ValidationError({'newPassword':['Ingrese un valor valido']})
         if not newPassword == retPassword:
-            raise serializers.ValidationError({'msg':'Las contraseñas no coinciden'}) 
+            print(retPassword)
+            raise serializers.ValidationError(
+                {'newPassword':['Las contraseñas no coinciden'],
+                'retPassword':['Las contraseñas no coinciden']}) 
+           
         instance.password = make_password(retPassword)
         instance.save()
-        return instance
-
-
-
-        
+        return instance 
 
 class AuthenticationSerializer(serializers.Serializer):
     email= serializers.EmailField()

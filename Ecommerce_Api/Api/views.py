@@ -22,7 +22,7 @@ import os
 from .utils import services as uti
 from django.core import serializers
 from django.http import HttpResponse
-from .models import ProductFisic,MethodProducts,Withdrawals,Deposits,ReportTransacts,Stores,CheckerSolic,TransactCategories,ProductDigit,Category,Transacts,User,InvitationCodes,RoleRequests, SubCategory
+from .models import ProductFisic,MethodProducts,Withdrawals,Deposits,ReportTransacts,GenData,Stores,CheckerSolic,TransactCategories,ProductDigit,Category,Transacts,User,InvitationCodes, SubCategory
 from .serializers import (TransactsSerializer,
                           TransactsViewAdminSerializer,
                           ResetPassSerializer,
@@ -39,7 +39,6 @@ from .serializers import (TransactsSerializer,
                           UserCreatorSerializer,
                           UserNestedSerializer,
                           InvitationCodesSerializer,
-                          RoleRequestsSerializer,
                           AuthenticationSerializer,
                           GroupsSerializer,
                           MethodSerializer,
@@ -75,8 +74,6 @@ def hasOrNotPermission(clss, request, view,obj=None,authClass=None, oneObj=False
             userComp = True if authClass.has_object_permission(clss, request,view,obj) else False
     return userComp
 
-
-
 def validate_credentials(request,userProperty=None,groups=[],is_one_item=False, is_limited=False):
     if request.user.is_authenticated ==  False:
        return {'success':False,'status':401, 'message':'No esta autorizado'}
@@ -89,7 +86,6 @@ def validate_credentials(request,userProperty=None,groups=[],is_one_item=False, 
         if validate_group(request.user, groups):
             if userProperty.id != request.user.id:
                 return {'success':False,'status':403}
-
 
 def validate_group(user, groups):
     if list(user.groups.values_list('name',flat=True)) == []:
@@ -142,8 +138,6 @@ class SearchAPIView(viewsets.ModelViewSet):
         results = fisic_serializer.data + digit_serializer.data + method_serializer.data
         
         return JsonResponse(results, safe=False)
-
-
 
 class WithDrawView(viewsets.ModelViewSet):
     queryset = Withdrawals.objects.all()
@@ -214,7 +208,6 @@ class DepositView(viewsets.ModelViewSet):
         serializer.save()
         return JsonResponse(serializer.data)
 
-
 class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):
         pathFile = os.path.abspath(__file__)
@@ -240,7 +233,6 @@ class Img_view(viewsets.ModelViewSet):
             return JsonResponse({"error":"La imagen no existe"}, status=400)
         
         return JsonResponse({'message':'imagen guardada'})
-
 
 class StoreView(viewsets.ModelViewSet):
     queryset = Stores.objects.all()
@@ -275,7 +267,6 @@ class TransactSubcategoryView(viewsets.ModelViewSet):
        serializer.is_valid(raise_exception=True)
        self.perform_create(serializer=serializer)
        return JsonResponse(serializer.data, status=200)
-
 
 class ProductView(viewsets.ModelViewSet):
     queryset = ProductFisic.objects.all()
@@ -430,8 +421,6 @@ class ProductView(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticated]
         super().check_permissions(request)
 
-
-
 class ProductsDigitView(viewsets.ModelViewSet):
     queryset = ProductDigit.objects.all()
     serializer_class = ProductDigitSerializer
@@ -521,7 +510,6 @@ class ReportView(viewsets.ModelViewSet):
         serializer.save()
         return JsonResponse(serializer.data, status=200)
         
-
 class CategoryView(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -633,7 +621,6 @@ class CategoryView(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         return JsonResponse({'message': 'El campo fue borrado correctamente', 'status':200}, status=200)
 
-
 class RestPassView(viewsets.ModelViewSet):
     queryset = User.objects.all()
 
@@ -684,8 +671,6 @@ class SolicCheckerView(viewsets.ModelViewSet):
         print(serializer.data)
         return JsonResponse(serializer.data,status=201)
 
-
-
 class UserView(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -731,12 +716,6 @@ class UserView(viewsets.ModelViewSet):
         return JsonResponse(serializer.data, status=200)
     
 
-
-    def post_groups_request(self, request):
-        serializer = RoleRequestSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()   
-        return JsonResponse(serializer.data, status=200)
     
 
 
@@ -765,8 +744,6 @@ class UserView(viewsets.ModelViewSet):
         else:
             permission_classes = self.permission_classes
         return [permission() for permission in permission_classes]
-
-
 
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated,IsGroupAccepted]
@@ -799,8 +776,6 @@ class AuthenticationView(ObtainAuthToken):
         token, created = Token.objects.get_or_create(user=user)
         data = {'token': token.key, 'user':user.id, 'D_A':user.is_superuser}
         return JsonResponse(data)
-
-
 
 class TransactsView(viewsets.ModelViewSet):
     queryset = Transacts.objects.all()
@@ -970,38 +945,34 @@ class InvitationCodeView(viewsets.ModelViewSet):
         self.perform_destroy(InvitationCode)
         return JsonResponse({'detail':'Codigo de invitacion eliminado correctamente'}, status=200)
 
-class RoleRequestsView(viewsets.ModelViewSet):
+
+
+class GeneralDataView(viewsets.ModelViewSet):
+    queryset = GenData.objects.all()
     authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [IsAuthenticated,IsGroupAccepted]
-    serializer_class = RoleRequestsSerializer
-
-    def get_role_requests(self, request):
-        still = False if request.GET.get('still','false') == 'true' else True
-        is_pass = True if request.GET.get('isPass', 'false') == 'true' else False
-        userPerm = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin])
-        if not userPerm['IsAdmin']:
-            return JsonResponse({'message':'No tiene permiso para realizar esta accion'})
+     
+    def get_secret_key(self, request):
+        instance= GenData.objects.values()
+        if len(instance) != 0:
+            secKey = list(instance)[0]
+            return JsonResponse({'sec_key':secKey})
         else:
-            print(still)
-            print(is_pass)
-            if not still and not is_pass:
-                request = RoleRequests.objects.all()
-            elif is_pass:
-                request = RoleRequests.objects.filter(is_password=is_pass)
-            elif still:
-                request = RoleRequests.objects.filter(approved=True)
-            else:
-                request = RoleRequests.objects.filter(approved=True, is_password=is_pass)
-            serializer = RoleRequestsSerializer(request, many=True)
-            return JsonResponse(serializer.data,status=200, safe=False)
-
-    def post_role_request(self, request):
-        print(request.data)
-        userPerm = uti.hasOrNotPermission(self, request, self.__class__, authClass=[IsAdmin])
-        if not userPerm['IsAdmin'] and 'approved' in request.data.keys(): 
-            return JsonResponse({"message":"No tiene permiso para realizar esta accion"}, status=401)
-
-        serializer = RoleRequestsSerializer(data=request.data,context={'request':request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return JsonResponse(serializer.data, safe=False)
+            return JsonResponse({'err':'El sistema carece de secretKey'}, status=400)
+        
+    def put_secret_key(self, request):
+        try:
+            instance= GenData.objects.get(id=1)
+            instance.secret_key = request.data['secret_key']
+            instance.save()
+            return JsonResponse({'msg':'listo'})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'msg':'La secret key no existe o sus datos son invalidos'}, status=404)
+        
+    def general_data(self, request):
+        instance = Transacts.objects.first()
+        user = User.objects.first()
+        totalShares = instance.total_transacts_amount()
+        totalNumShares = instance.total_num_shares()
+        totalUsersCreated = user.total_registered()
+        return JsonResponse({'total_shares':totalShares,'total_num_shares':totalNumShares, 'usersAdded':totalUsersCreated})
