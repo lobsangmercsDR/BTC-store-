@@ -50,7 +50,9 @@ export default {
     return {
       SKey:"", 
       disldInp: false,
-      genData:{},
+      genData:{
+        total_shares: 0
+      },
     }
   },
 
