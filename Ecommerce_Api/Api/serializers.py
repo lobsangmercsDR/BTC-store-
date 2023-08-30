@@ -129,7 +129,7 @@ class MethodSerializer(serializers.ModelSerializer):
     store = StoreSerializer(read_only=True)
     transacts_count = serializers.SerializerMethodField()
     subCategory = serializers.SerializerMethodField()
-    dateCreated = serializers.DateTimeField(required=False)
+    dateCreated = serializers.DateTimeField(required=False,format=dateFormat)
     store_id = serializers.IntegerField()
 
     class Meta:

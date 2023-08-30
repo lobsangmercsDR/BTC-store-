@@ -970,9 +970,18 @@ class GeneralDataView(viewsets.ModelViewSet):
             return JsonResponse({'msg':'La secret key no existe o sus datos son invalidos'}, status=404)
         
     def general_data(self, request):
+        all = request.GET.get('all')
         instance = Transacts.objects.first()
         user = User.objects.first()
-        totalShares = instance.total_transacts_amount()
-        totalNumShares = instance.total_num_shares()
-        totalUsersCreated = user.total_registered()
+        totalShares = 0
+        totalNumShares = 0
+        totalUsersCreated = 0
+        if all== 't':
+            totalShares = instance.total_transacts_amount(all=True)
+            totalNumShares = instance.total_num_shares(all=True)
+            totalUsersCreated = user.total_registered(all=True)
+        else:
+            totalShares = instance.total_transacts_amount()
+            totalNumShares = instance.total_num_shares()
+            totalUsersCreated = user.total_registered()
         return JsonResponse({'total_shares':totalShares,'total_num_shares':totalNumShares, 'usersAdded':totalUsersCreated})

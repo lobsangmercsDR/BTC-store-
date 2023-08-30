@@ -1,38 +1,107 @@
 <template>
-    <h1>si</h1>
     <section class="bar-container">
-        <Bar :id="2" :data="this.chartData" :options="chartOptions"></Bar>
+        <Bar :id="bar" :data="chartData" :options="this.chartOptions" ref="bar"></Bar>
     </section>
     
-
-
+{{ chartData }}
 
 </template>
 
 <script>
 import {Bar} from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import VueCharts from 'vue-chartjs'
+import { Chart as ChartJS, Title, Tooltip, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import { mdiTagHidden } from '@mdi/js'
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+ChartJS.register(Title, Tooltip, BarElement, CategoryScale, LinearScale)
 
 export default {
-    components:{
-        Bar
+    // mixins: [
+    //     mixins.reactiveProp
+    // ],
+    
+    
+    props:{
+        dataobj:Object
+    },  
+
+    watch: {
+        dataobj(nv) {
+
+            this.$nextTick(() => {
+                this.chartData =
+                {
+                    labels: nv,
+                    datasets: [
+                    {
+                        label: 'Data One',
+                        backgroundColor: '#f87979',
+                        data: [40, 20, 12]
+                    }]
+                } 
+                
+            })
+
+
+        }
+    },
+
+    computed: {
+
+        chartData() {
+            console.log(this.chartData)
+            return this.chartData
+        }
     },
 
     data() {
-    return{
-    chartData: {
-        labels: [ 'January', 'February', 'March','asd','asd','asds','asd' ],
-        datasets: [ { data: [40, 20, 12],  backgroundColor:['rgba(54, 162, 235, 0.2)',] } ]
-      },
-      chartOptions: {
-        responsive: true,
-        aspectRatio:2
-        
+        return {
+            chartData: {
+                labels: [],
+                datasets: [
+                {
+                    label: 'Data One',
+                    backgroundColor: '#f87979',
+                    data: [40, 20, 12]
+                }]
+            },
+            
+            chartOptions: {
+                responsive: true,
+                aspectRatio:2,
+                legend: {
+                    display: false
+                }
+            }
+        }
+    },
+
+    computed: {
+        chartData() {
+            console.log(this.chartData)
+            return this.chartData
+        },
+    },
+
+
+    methods: {
+        removeComponent() {
+            this.chartData.labels  = []
+
+      const targetElement = document.getElementById('bar');
+      
+      // Verificar si el elemento objetivo existe
+      if (targetElement) {
+        // Eliminar el elemento objetivo
+        targetElement.parentNode.removeChild(targetElement);
       }
     }
-    }
+
+    },
+
+    components:{
+        Bar
+    },
 }
 </script>
 
@@ -43,6 +112,8 @@ export default {
     align-self: center;
     margin: 10px auto;
 }
+
+
 .bar-container canvas {
     width: 100% !important;
     height: 100% !important;

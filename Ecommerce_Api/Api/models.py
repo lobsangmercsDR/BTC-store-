@@ -47,8 +47,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     objects = UserManager()
 
-    def total_registered(self, date=None):
-        return User.objects.aggregate(total_reg = models.Count('id'))['total_reg']
+    def total_registered(self, date=None,all=False):
+        if not date:
+            date = datetime.now()
+        if all ==False:
+            user =  User.objects.filter(createdAt__range=(date.date(),date.date() +timedelta(days=1)))
+        else:
+            user = User.objects.all()
+        return user.aggregate(total_reg = models.Count('id'))['total_reg']
 
 
     @property
@@ -190,18 +196,23 @@ class Transacts(models.Model):
     company = models.CharField(max_length=50, default="N/A")
     noSeguimiento = models.CharField(max_length=50, default="N/A")
 
-    def total_transacts_amount(self, date=None):
+    def total_transacts_amount(self, date=None, all=False):
         if not date:
             date = datetime.now()
-        transacts =  Transacts.objects.filter(dateTransact__range=(date.date(),date.date() +timedelta(days=1)))
-        print(transacts)
-        return transacts.aggregate(total_amount=models.Sum('total'))['total_amount']
+        if all ==False:
+            transacts =  Transacts.objects.filter(dateTransact__range=(date.date(),date.date() +timedelta(days=1)))
+        else:
+            transacts  = Transacts.objects.all()
+        result = transacts.aggregate(total_amount=models.Sum('total'))['total_amount']
+        return 0 if not result else result
 
-    def total_num_shares(self, date=None):
+    def total_num_shares(self,date=None, all=False):
         if not date:
             date = datetime.now()
-        transacts =  Transacts.objects.filter(dateTransact__range=(date.date(),date.date() +timedelta(days=1)))
-        print(transacts)
+        if all ==False:
+            transacts =  Transacts.objects.filter(dateTransact__range=(date.date(),date.date() +timedelta(days=1)))
+        else:
+            transacts = Transacts.objects.all()
         return transacts.aggregate(total_count=models.Count('id'))['total_count']
     
 class TransactCategories(models.Model):
