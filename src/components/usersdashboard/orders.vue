@@ -82,7 +82,7 @@
               <p><b>Comision de Checker: </b> {{ selectedOrder.productDigit.comisionCheck}}</p>
               <p><b>Precio Total: </b> {{ parseInt(selectedOrder.productDigit.price) + parseInt(selectedOrder.productDigit.comisionCheck)}}.00</p>
               <p><b>Verificado: </b> {{(selectedOrder.productDigit.needChecker ===true) ? 'Si' : 'No'}}</p>
-              <p><b>Tienda: </b> {{ selectedOrder.productDigit.store_id.nameStore}}</p>
+              <p><b>Tienda: </b> {{ selectedOrder.productDigit.store.nameStore}}</p>
               <p><b>Contacto de vendedor: </b>809-555-2222 </p>
 
             </div>

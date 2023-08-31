@@ -41,4 +41,5 @@ urlpatterns = [
     path('deposits', DepositView.as_view({'post':'post_deposit'}), name='DepositsInd'),
     path('admin/general', GeneralDataView.as_view({'get':'get_secret_key','put':'put_secret_key'}), name='DepositsInd'),
     path('admin/general/data', GeneralDataView.as_view({'get':'general_data'}), name='DepositsInd'),
+    path('admin/general/graphics', GeneralDataView.as_view({'get':'get_graphics_data'}), name='DepositsInd'),
 ]

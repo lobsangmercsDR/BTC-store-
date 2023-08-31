@@ -211,7 +211,7 @@ class DepositView(viewsets.ModelViewSet):
 class Img_view(viewsets.ModelViewSet):
     def get_file_img(self, request, image_name):
         pathFile = os.path.abspath(__file__)
-        path = pathFile.replace(r"Api\views.py", "") + r"\images" + '\\' + image_name   
+        path = pathFile.replace(r"Api\views.py", "") + r"images" + '\\' + image_name   
         print(path)
         if os.path.exists(path=path):
             return FileResponse(open(path,'rb'),content_type='image/jpeg')
@@ -708,12 +708,10 @@ class UserView(viewsets.ModelViewSet):
             return JsonResponse({'message':'No tiene permiso para esta funcion'}, status=403)
         # print(roles)
         print(request.data)
-        serializer = UserCreatorSerializer(userObj,data=request.data, partial=True, context={"roles":roles, 'update':True, 'request':request})
-        
+        serializer = UserCreatorSerializer(userObj,data=request.data, partial=True, context={"roles":roles, 'update':True, 'request':request})        
         serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        serializer= UserSerializer(userObj)
-        return JsonResponse(serializer.data, status=200)
+        serializer.save()
+        return JsonResponse({}, status=200)
     
 
     
@@ -945,8 +943,6 @@ class InvitationCodeView(viewsets.ModelViewSet):
         self.perform_destroy(InvitationCode)
         return JsonResponse({'detail':'Codigo de invitacion eliminado correctamente'}, status=200)
 
-
-
 class GeneralDataView(viewsets.ModelViewSet):
     queryset = GenData.objects.all()
     authentication_classes = [authentication.TokenAuthentication]
@@ -959,6 +955,36 @@ class GeneralDataView(viewsets.ModelViewSet):
         else:
             return JsonResponse({'err':'El sistema carece de secretKey'}, status=400)
         
+    def get_graphics_data(self, request):
+        dateSt = request.GET.get('stDate')
+        dateEd = request.GET.get('edDate')
+        trans_ins = Transacts.objects.first()
+        user_ins = User.objects.first()
+
+        if dateSt and dateEd: 
+            dateSt = datetime.strptime(dateSt, '%Y-%m-%dT%H:%M:%S.%fZ')
+            dateEd =datetime.strptime(dateEd, '%Y-%m-%dT%H:%M:%S.%fZ')
+            currDate = dateSt
+            print(dateSt, dateEd)
+            result  = {
+                "total_shares": [],
+                "total_cnt_shares": [],
+                "total_users":[]
+            } 
+            while currDate < dateEd:
+                result['total_shares'].append(trans_ins.total_transacts_amount(date=currDate))
+                result['total_cnt_shares'].append(trans_ins.total_num_shares(date=currDate))
+                result['total_users'].append(user_ins.total_registered(date=currDate))
+                currDate +=timedelta(days=1)
+                print(currDate)
+
+        return JsonResponse({"msg":"success", 'result':result})
+
+
+        totalShares = trans_ins.total_transacts_amount()
+        totalNumShares = trans_ins.total_num_shares(all=True)
+        totalUsersCreated = user_ins.total_registered(all=True)
+
     def put_secret_key(self, request):
         try:
             instance= GenData.objects.get(id=1)

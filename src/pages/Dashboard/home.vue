@@ -41,6 +41,7 @@
           </section>
       </div>
       <charts :dataobj="chartData"></charts>
+      {{  }}
     </div>
   </div>
 </template>
@@ -59,8 +60,10 @@ export default {
 
   watch: {
     selectedRange(newVal) {
-     this.filtDate()
-    }
+    this.$nextTick(() => {
+     this.filtDate(newVal)
+    })
+  }
   },
   data() {
     return {
@@ -70,14 +73,20 @@ export default {
         total_shares: 0,
         allData: false,
       },
-      chartData: {},
-      selectedRange:{}
+      chartData: {
+        labels:[]
+      },
+      selectedRange:[],
+      chartAPIData:{}
     }
   },
 
   created() {
     this.fetchApiKey(),
-    this.getAllData()
+    this.selectDefaultDate(),
+    this.getAllData(),
+    this.filtDate(),
+    this.getChartData()
   },
   methods: {
     async updateSecKey() {
@@ -123,17 +132,41 @@ export default {
       this.getAllData(this.allData)
     },  
 
-    filtDate() {
-      if(this.selectedRange) {
-        const currDate = new Date(this.selectedRange[0])
+    async filtDate(date) {
+      if(date) {
+        const currDate = new Date(date[0])
         let weekDays = ['Sabado','Domingo', 'Lunes','Martes','Miercoles','Jueves','Viernes','Sabado']
         let selectedWeekDays = []
-        while(currDate <= this.selectedRange[1]) {
+
+        while(currDate <= date[1]) {
           currDate.setDate(currDate.getDate()+1)
           selectedWeekDays.push(weekDays[currDate.getDay()])
-        }        
-        this.chartData =  selectedWeekDays
+        }
+        await this.getChartData()
+        let datasets = this.chartAPIData
+        this.chartData =  {labels:selectedWeekDays, datasets: datasets}
+      } else {
+        this.chartData = {labels:[]}
       }
+    },
+
+    selectDefaultDate() {
+      const now = new Date()
+      const actDate =  new Date(now.getFullYear(),now.getMonth(), now.getDate())
+      let lateDate = new Date()
+      lateDate.setDate(actDate.getDate() -6)
+      lateDate = new Date(lateDate.getFullYear(), lateDate.getMonth(), lateDate.getDate())
+      this.selectedRange = [lateDate, actDate]
+    },
+
+    async getChartData() {
+      await axios.get(`http://127.0.0.1:8000/api/admin/general/graphics?stDate=${this.selectedRange[0].toJSON()}&edDate=${this.selectedRange[1].toJSON()}`)
+      .then(response => {
+        this.chartAPIData = response.data.result
+      })
+      .catch(error => {
+        console.log(error.response.data)
+      })
     }
 
 

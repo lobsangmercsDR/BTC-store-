@@ -49,10 +49,10 @@
                 <div v-for="(product,index) in methodCreated" :key="index" class="method-item"> 
                     <img :src="'http://127.0.0.1:8000/api'+ product.image" alt="Product Image" class="product-table-img">
                     <section class="method-content">
-                        <div class="title3 title">{{ product.nameProduct}}</div>
+                        <div class="title3 title">{{ product.name}}</div>
                         <div class="description">
                             <div class="FRow">
-                                <div style="margin-top: -8px;">({{ product.dateCreated }})</div>
+                                <div style="margin-top: -8px;">{{ product.dateCreated }}</div>
                                 <div class="quantity_buy"><b>No. de compras:</b> {{ product.transacts_count }}</div>
                                 <div class="price"><b>Precio:</b> {{ product.price }}</div>
                                 <div class="tienda"><b>Tienda:</b> {{ product.store.nameStore }}</div>
@@ -144,9 +144,9 @@
                     <div v-for="(product, index) in displayedProductsTableSlider()" :key="index" class="slider-item">
                         <div class="product-info">
                             <div class="product-image">
-                                <img :src="'http://127.0.0.1:8000/api'+product.image_product" alt="Product Image">
+                                <img :src="'http://127.0.0.1:8000/api'+product.image" alt="Product Image">
                             </div>
-                            <h4 class="product-name">{{ product.nameProduct }}</h4>
+                            <h4 class="product-name">{{ product.name }}</h4>
                             <p class="product-price">$ {{ product.price }}</p>
                             <p>Tienda: <b> {{ product.store.nameStore }} </b></p>
                             <button class="product-button-slide" @click="openModal(product.id, 'fisic')">Go to Product</button>

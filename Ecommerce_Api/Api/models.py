@@ -48,6 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     def total_registered(self, date=None,all=False):
+        print(2222)
         if not date:
             date = datetime.now()
         if all ==False:
@@ -57,13 +58,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         return user.aggregate(total_reg = models.Count('id'))['total_reg']
 
 
-    @property
     def purchases_count(self):
         return self.transacts_set.count()
 
-    @property
-    def shares_count(self):
-        return 10
 
 class Category(models.Model):
     nameCategory = models.CharField(max_length=50)

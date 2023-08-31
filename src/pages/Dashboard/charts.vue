@@ -2,42 +2,49 @@
     <section class="bar-container">
         <Bar :id="bar" :data="chartData" :options="this.chartOptions" ref="bar"></Bar>
     </section>
-    
-{{ chartData }}
 
 </template>
 
 <script>
 import {Bar} from 'vue-chartjs'
 import VueCharts from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import { Chart as ChartJS, Title, Tooltip, Legend,BarElement, CategoryScale, LinearScale } from 'chart.js'
 import { mdiTagHidden } from '@mdi/js'
 
-ChartJS.register(Title, Tooltip, BarElement, CategoryScale, LinearScale)
+ChartJS.register(Title, Tooltip, BarElement, Legend,CategoryScale, LinearScale)
 
 export default {
-    // mixins: [
-    //     mixins.reactiveProp
-    // ],
-    
     
     props:{
         dataobj:Object
     },  
 
+
     watch: {
         dataobj(nv) {
-
+            console.log(nv)
             this.$nextTick(() => {
+                console.log(nv)
                 this.chartData =
                 {
-                    labels: nv,
+                    labels: nv.labels,
                     datasets: [
-                    {
-                        label: 'Data One',
-                        backgroundColor: '#f87979',
-                        data: [40, 20, 12]
-                    }]
+                        {
+                            label: 'Ventas totales',
+                            backgroundColor: '#3498db',
+                            data: nv.datasets.total_shares
+                        },
+                        {
+                            label: 'Productos vendidos',
+                            backgroundColor: '#2ecc71',
+                            data: nv.datasets.total_cnt_shares
+                        },
+                        {
+                            label: 'Usuarios registrados',
+                            backgroundColor: '#e74c3c',
+                            data: nv.datasets.total_users
+                        }
+                    ]
                 } 
                 
             })
@@ -78,14 +85,13 @@ export default {
 
     computed: {
         chartData() {
-            console.log(this.chartData)
             return this.chartData
         },
     },
 
 
     methods: {
-        removeComponent() {
+    removeComponent() {
             this.chartData.labels  = []
 
       const targetElement = document.getElementById('bar');

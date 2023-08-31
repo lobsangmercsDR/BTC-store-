@@ -262,11 +262,11 @@ export default {
             Authorization: `Token ${Cookies.get('token')}`
           }
         });
-        console.log(response.data)
+
         this.products = response.data.items;
         this.pageInfo.act_page = response.data.act_page
         this.pageInfo.rest_pages = response.data.rest_pages
-        console.log(response.data)
+
       } catch (error) {
         console.error('Error al obtener los productos:', error);
       }

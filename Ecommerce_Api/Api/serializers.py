@@ -39,20 +39,16 @@ class UserSerializer(serializers.ModelSerializer):
     group = serializers.SerializerMethodField()
     last_login = serializers.DateTimeField(format="%d/%m/%Y %I:%M:%S %p")
     createdAt = serializers.DateTimeField(format="%d/%m/%Y")
-    shares_count = serializers.SerializerMethodField()
     purchases_count = serializers.SerializerMethodField()
     
     class Meta:
         model = get_user_model() 
         extra_kwargs = {'password':{'write_only':True}}
-        fields = ['id','email','password','name','userBalance','phoneNumber','direction','wallet_address','createdAt','is_active','group', 'last_login', 'shares_count', 'purchases_count']
+        fields = ['id','email','password','name','userBalance','phoneNumber','direction','wallet_address','createdAt','is_active','group', 'last_login', 'purchases_count']
         ref_name = 'UserSerializer'
 
-    def get_shares_count(self, obj):
-        return obj.shares_count
-
     def get_purchases_count(self, obj):
-        return obj.purchases_count
+        return obj.purchases_count()
 
  
     def get_group(self, obj):
@@ -157,6 +153,8 @@ class UserCreatorSerializer(serializers.ModelSerializer):
     invitation_code = serializers.CharField()
     name = serializers.CharField(required=True)
     confirm_pass = serializers.CharField(write_only=True)
+    createdAt = serializers.DateField(read_only=True)
+    invitation_code = serializers.CharField(write_only=True)
 
     def validate_invitation_code(self, value):
         invitationObj = InvitationCodes.objects.filter(invitationCodes=value).first()
@@ -175,7 +173,7 @@ class UserCreatorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model() 
-        fields = ['id','email','password','confirm_pass','name','is_active','add_group', 'invitation_code', 'delete_group']
+        fields = ['id','email','password','confirm_pass','name','is_active','add_group', 'invitation_code', 'delete_group','createdAt']
         extra_kwargs = {'password': {'write_only': True}}
         ref_name = 'UserCreatorSerializer'
 
@@ -233,12 +231,7 @@ class UserCreatorSerializer(serializers.ModelSerializer):
         evidence= True if "is_active" in validated_data.keys() or "group" in validated_data.keys() or "group_name" in validated_data.keys()  or "password" in validated_data.keys() else False
         roles = True if self.context.get('roles') == 'true' else False
         if not roles and evidence:
-            print(roles)
-            print(validated_data.keys(), 1212)
-            print(evidence,3)
             raise serializers.ValidationError({"message":"Acceso a estas propiedades no tienes"})
-
-
         groups = []
         if group_name: 
             try:
@@ -257,6 +250,9 @@ class UserCreatorSerializer(serializers.ModelSerializer):
                 except:
                     raise serializers.ValidationError(f"Grupo {delete_group} no existe")
                 instance.groups.remove(groupIns)
+        deleteList = ['last_login', 'wallet_address','createdAt']
+        for item in deleteList:
+            del validated_data[item]
         return super().update(instance, validated_data)
             
 
