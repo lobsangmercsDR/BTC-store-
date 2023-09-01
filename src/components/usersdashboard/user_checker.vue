@@ -151,7 +151,7 @@ import SingleDigitalProduct from '../SingleDigitalProduct.vue';
             console.log(type);
             console.log(status);
             if(type == "checker") {
-                this.modalData = {showDigitModal: true,typeProd: type, objID: id.split('.')[1], status:status,order:idOrd }
+                this.modalData = {showDigitModal: true,typeProd: type, objID: id, status:status,order:idOrd }
             }
         },
 

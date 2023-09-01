@@ -29,9 +29,9 @@
               <td class="border px-4 py-2">{{ order.status }}</td>
               <td class="border px-4 py-2 actions-tr">
                 
-                <button @click.stop="openReportModal(order)" class="px-2 py-1 bg-orange-500 text-white rounded mt-0">Reportar problema</button>
+                <button v-if="order.status != 'Rechazado'" git @click.stop="openReportModal(order)" class="px-2 py-1 bg-orange-500 text-white rounded mt-0">Reportar problema</button>
                 <button @click.stop="openDetailsModal(order)" class="px-2 py-1 bg-blue-500 text-white rounded  mt-0">Ver detalles</button>
-                <button class="px-2 py-1 bg-red-500 text-white rounded  mt-0 retire-button" @click="removeOrder(order.id)" v-show="orderType  != 'virtual'">Retirar</button>
+                <button v-if="order.status != 'Rechazado' && order.status != 'Aceptado'" class="px-2 py-1 bg-red-500 text-white rounded  mt-0 retire-button" @click="removeOrder(order.id)" v-show="orderType  != 'virtual'">Retirar</button>
               </td>
             </tr>
           </tbody>
@@ -81,7 +81,7 @@
               <p><b>Precio: </b> {{ selectedOrder.productDigit.price}}</p>
               <p><b>Comision de Checker: </b> {{ selectedOrder.productDigit.comisionCheck}}</p>
               <p><b>Precio Total: </b> {{ parseInt(selectedOrder.productDigit.price) + parseInt(selectedOrder.productDigit.comisionCheck)}}.00</p>
-              <p><b>Verificado: </b> {{(selectedOrder.productDigit.needChecker ===true) ? 'Si' : 'No'}}</p>
+              <p><b>Verificado: </b> {{(selectedOrder.productDigit.needChecker ===true) ? 'No' : 'Si'}}</p>
               <p><b>Tienda: </b> {{ selectedOrder.productDigit.store.nameStore}}</p>
               <p><b>Contacto de vendedor: </b>809-555-2222 </p>
 

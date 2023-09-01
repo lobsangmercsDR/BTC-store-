@@ -559,7 +559,7 @@ class TransactsSerializer(serializers.ModelSerializer):
                 total_price = products.price
             elif type == 'digitals':
                 products = ProductDigit.objects.get(id=product_id)
-                total_price = products.price + products.needChecker
+                total_price = products.price + products.comisionCheck
         except Exception as e:
             print(e)
             raise serializers.ValidationError({"error":"Producto Inexistente"}) 

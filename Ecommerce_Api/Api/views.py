@@ -488,6 +488,7 @@ class ProductsDigitView(viewsets.ModelViewSet):
         if val != None:
             if request.data['status'] == True:
                 product.needChecker = False
+                product.comisionCheck = GenData.objects.first().price_checker
                 solic.status = 'active'
             elif request.data['status'] == False:
                 product.needChecker = True
@@ -671,14 +672,8 @@ class SolicCheckerView(viewsets.ModelViewSet):
             user= User.objects.get(id=request.user.id)
         except:
             return JsonResponse({'error':'El producto no existe'},status=404)
-        if CheckerSolic.objects.filter(product_id=product.id).exists():
-            product.no_solicitud += 1
-            product.save() 
-            return JsonResponse({'no_solicitudes':product.no_solicitud})
-        else:
-            product.comisionCheck = GenData.objects.first().price_checker
-            product.no_solicitud += 1
-            product.save()
+        product.no_solicitud += 1
+        product.save() 
         newObj = CheckerSolic(product=product, status='pending', user=user)
         newObj.save()
         serializer = SolicCheckerSerializer(newObj)
@@ -891,6 +886,9 @@ class TransactsView(viewsets.ModelViewSet):
             print(obj)
             serializer = TransactsSerializer(obj, data=request.data, partial=True)
             if serializer.is_valid(raise_exception=True):
+                if serializer.validated_data['status'] == "Rechazado":
+                    obj.buyers.userBalance += obj.productFisic.price
+                    obj.buyers.save()
                 serializer.save()
             else:
                 return JsonResponse({'error':'Sintaxis incorrecta'}, status=400)
@@ -906,6 +904,7 @@ class TransactsView(viewsets.ModelViewSet):
         if transact.status == 'Procesando':
             transact.buyers.userBalance += transact.total
             transact.buyers.save() 
+            print(transact.buyers.userBalance,904)
             self.perform_destroy(transact)
             return JsonResponse({'message':'Transaccion eliminada exitosamente'},status=204)
         else:

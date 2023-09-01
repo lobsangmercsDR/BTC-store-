@@ -174,7 +174,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 @import './main.css';
 
 .alw-checkboc {

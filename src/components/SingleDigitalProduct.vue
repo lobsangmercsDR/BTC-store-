@@ -31,20 +31,16 @@
               <span class="text-lg">{{ productDigit.store.nameStore }}</span>
             </div>
             <div class="flex items-center mb-2">
-              <span class="text-gray-600 text-lg mr-2 font-semibold"></span>
-              <span class="text-lg">{{ product.brand }}</span>
-            </div>
-            <div class="flex items-center mb-2">
               <span class="text-gray-600 text-lg mr-2 font-semibold">Fecha de Publicacion:</span>
               <span class="text-lg">{{ productDigit.dateCreated }}</span>
             </div>
             <div class="flex items-center mb-2">
               <span class="text-gray-600 text-lg mr-2 font-semibold">Cantidad</span>
-              <span class="text-lg">{{ product.quantity }}</span>
+              <span class="text-lg">{{ product }}</span>
             </div>
             <div class="flex items-center mb-2">
               <p class="text-2xl font-semibold mr-2">{{ productDigit.price}}</p>
-              <p v-if="productDigit.needChecker" class="ml-2 text-gray-600 text-sm">(+{{ product.checkerPrice.toFixed(2) }} del Checker)</p>
+              <p class="ml-2 text-gray-600 text-sm">(+{{ productDigit.comisionCheck }} del Checker)</p>
             </div>
             <div class="mt-8">
             <h3 class="text-xl font-semibold mb-2 text-left">Detalles adicionales:</h3>
@@ -111,7 +107,7 @@
           <h2 class="text-2xl font-semibold mb-4">Confirmar compra</h2>
           <p>Producto: {{ productDigit.name }}</p>
           <p>Cantidad: 1</p>
-          <p>Precio total: {{ productDigit.price}}</p>
+          <p>Precio total: {{ parseFloat(productDigit.price) + parseFloat(productDigit.comisionCheck)}}</p>
           <p v-if="addChecker" class="text-red-500 text-sm">Los productos digitales comprados sin checker no tienen derecho a garantía.</p>
           <hr class="my-4">
           <p>Username: {{ user.username }}</p>
@@ -191,13 +187,12 @@ export default {
   watch : {
     modalInfo(newValue) {
       console.log(newValue)
-      if (newValue.typeProd == 'digits') {
         this.showModal = newValue.showDigitModal
         this.status = newValue.status
         this.orderS = newValue.order
         let id = (this.getId(newValue.objID))
         this.renderDigitProductData(id, newValue.typeProd)
-      }  
+
     }
   },
 
@@ -236,22 +231,6 @@ export default {
     };
   },
 
-  mounted() {
-    this.product = {
-      name: '',
-      description: '',
-      price: 0,
-      likes: 0,
-      dislikes: 0,
-      additionalDetails:'',
-      release_data: "",
-      quantity: 0,
-      category: [],
-      subcategory: [],
-      seller_username: "",
-      checkerPrice: 0, // Precio adicional del checker
-    };
-  },
   methods: {
     getId(string) {
       return string.split('.')[1]
@@ -268,16 +247,18 @@ export default {
     },
 
     async makeActionInChecking(id, type,ordID) {
+      let prodId = id.split('.')[1]
       if(type=='approve') {
-        await axios.put(`http://127.0.0.1:8000/api/productos/digit/${id}/${ordID}`,{status:true})
+        await axios.put(`http://127.0.0.1:8000/api/productos/digit/${prodId}/${ordID}`,{status:true})
         .then(response => {
           this.$emit('updated')
         })
         .catch(error => {
         })
       }else if (type == 'refuse'){
-        await axios.put(`http://127.0.0.1:8000/api/productos/digit/${id}/${ordID}`,{status:false})
+        await axios.put(`http://127.0.0.1:8000/api/productos/digit/${prodId}/${ordID}`,{status:false})
         .then(response => {
+          this.showModal = false
           this.$emit('updated')
         })
         .catch(error => {
