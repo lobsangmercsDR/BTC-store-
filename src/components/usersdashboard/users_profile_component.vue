@@ -110,10 +110,10 @@ import { validateGroup } from '../../../utils/auth';
     created() {
       const urlParams = new URLSearchParams(window.location.search);
       const option = urlParams.get('option');
-      console.log(option)
+
       if (option === 'checker_panel') {
         this.selectedOption = 'checker_panel';
-        console.log(this.selectedOption);
+
       }
     },
 
@@ -121,14 +121,14 @@ import { validateGroup } from '../../../utils/auth';
     created() {
       let Obj = this.$route.query
       if(Obj.option == null) {
-        console.log(1);
+
         this.selectedOption = 'home'
       }
       else {
         this.selectedOption = Obj.option
       }
 
-      console.log(this.selectedOption)
+
 
       this.IsAuthorized()
     }, 
@@ -154,7 +154,7 @@ import { validateGroup } from '../../../utils/auth';
 
   methods: {
     returnRoute(route) {
-      console.log("llego");
+
       if (route === 'checker_panel') {
         const newUrl = window.location.origin + window.location.pathname + '?option=checker_panel';
         window.location.href = newUrl;

@@ -163,8 +163,19 @@ class WithDrawView(viewsets.ModelViewSet):
     
     def get_withdraws(self, request):
         objects = Withdrawals.objects.filter(user=request.user.id)
-        serializer = WithDrawSerializer(objects, many=True)
-        return JsonResponse(serializer.data, status=200, safe=False)
+        paginator = Paginator(objects, per_page=5)
+        page_rq_num = request.GET.get('pg',1) 
+        page = paginator.get_page(page_rq_num)
+        serializer = WithDrawSerializer(page, many=True)
+        further = False if int(page_rq_num) >= paginator.num_pages else True
+        back = False if int(page_rq_num) ==1 else True 
+        result = {
+            'act_page': page_rq_num,
+            'back': back, 
+            'fur':further,
+            'page':serializer.data
+        }
+        return JsonResponse(result, status=200, safe=False)
 
     def post_new_withdraw(self, request):
         data = request.data
@@ -661,14 +672,16 @@ class SolicCheckerView(viewsets.ModelViewSet):
         except:
             return JsonResponse({'error':'El producto no existe'},status=404)
         if CheckerSolic.objects.filter(product_id=product.id).exists():
-            print("122313")
             product.no_solicitud += 1
             product.save() 
             return JsonResponse({'no_solicitudes':product.no_solicitud})
+        else:
+            product.comisionCheck = GenData.objects.first().price_checker
+            product.no_solicitud += 1
+            product.save()
         newObj = CheckerSolic(product=product, status='pending', user=user)
         newObj.save()
         serializer = SolicCheckerSerializer(newObj)
-        print(serializer.data)
         return JsonResponse(serializer.data,status=201)
 
 class UserView(viewsets.ModelViewSet):
@@ -888,9 +901,11 @@ class TransactsView(viewsets.ModelViewSet):
             print(e)
             return JsonResponse({'error':'El producto no existe'}, status=404)
             
-    def delete_transact(self, request, *args, **kwargs):
+    def delete_transact(self, request,pk):
         transact = self.get_object()
         if transact.status == 'Procesando':
+            transact.buyers.userBalance += transact.total
+            transact.buyers.save() 
             self.perform_destroy(transact)
             return JsonResponse({'message':'Transaccion eliminada exitosamente'},status=204)
         else:
@@ -994,7 +1009,14 @@ class GeneralDataView(viewsets.ModelViewSet):
         except Exception as e:
             print(e)
             return JsonResponse({'msg':'La secret key no existe o sus datos son invalidos'}, status=404)
-        
+    
+    def get_comision_checker(self, request):
+        instance = GenData.objects.first()
+        if instance:
+            return JsonResponse({'priceCheker':instance.price_checker})
+        else:
+            return JsonResponse({'msg':'price error'},status=404)
+
     def general_data(self, request):
         all = request.GET.get('all')
         instance = Transacts.objects.first()

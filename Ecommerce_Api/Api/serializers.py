@@ -207,7 +207,6 @@ class UserCreatorSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance,validated_data):
-        print(self.context, 220)
         validated_data = self.context['request'].data   
         group_name = validated_data.pop('add_group', False)
         delete_group = validated_data.pop('delete_group', False)
@@ -226,8 +225,7 @@ class UserCreatorSerializer(serializers.ModelSerializer):
                 message = f"Groups {', '.join(not_found_groups)} not found"
                 raise serializers.ValidationError(message, code=400)
             instance.groups.set([group])
-        
-        print(group_name)
+
         evidence= True if "is_active" in validated_data.keys() or "group" in validated_data.keys() or "group_name" in validated_data.keys()  or "password" in validated_data.keys() else False
         roles = True if self.context.get('roles') == 'true' else False
         if not roles and evidence:
@@ -543,16 +541,13 @@ class TransactsSerializer(serializers.ModelSerializer):
         fields = ['id','dateTransact','quantity_asked','status','total','sendDirection','productDigit','productFisic','buyers', 'productDigit_id', 'sendDirection','noSeguimiento','company']
 
     def create(self, validated_data):
-        print(validated_data)
         type = self.context.get('type') 
         product_id = validated_data.pop('productDigit_id', None)
-        print(type)
         if not type == 'method' and not type == 'digitals':
             quantity_asked = validated_data['quantity_asked'] 
         
         request = self.context.get('request')
         buyer_id= request.user.id
-        print(buyer_id)
         buyers = User.objects.get(id=buyer_id)
         total_price = 0
         try:
@@ -564,7 +559,7 @@ class TransactsSerializer(serializers.ModelSerializer):
                 total_price = products.price
             elif type == 'digitals':
                 products = ProductDigit.objects.get(id=product_id)
-                total_price = products.price
+                total_price = products.price + products.needChecker
         except Exception as e:
             print(e)
             raise serializers.ValidationError({"error":"Producto Inexistente"}) 
@@ -581,14 +576,13 @@ class TransactsSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({"error":"Pide mas de lo que hay"})
         user.userBalance -= total_price
         user.save()
-        products.save() 
-        print(products)
+
         if type == "fisics":
             transact = Transacts.objects.create(productFisic=products,buyers=buyers,total=total_price, **validated_data)
         elif type=="method":
             transact = Transacts.objects.create(methodProduct=products,buyers=buyers,total=total_price, **validated_data)
         elif type == "digitals":
-            transact = Transacts.objects.create(productDigit=products, buyers=buyers,total=total_price, **validated_data)
+            transact = Transacts.objects.create(productDigit=products, buyers=buyers,total=total_price,status="Aceptado", **validated_data)
         return transact
 
 class TransactsViewAdminSerializer(serializers.ModelSerializer):

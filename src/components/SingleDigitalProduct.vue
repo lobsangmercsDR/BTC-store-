@@ -166,7 +166,7 @@
           <h2 class="text-2xl font-semibold mb-4">Solicitud de checking</h2>
           <p class="text-red-500">Este producto requiere el uso de un checker.</p>
           <p style="margin-top: 10px;">
-          Mediante esta solicitud, el usuario tendra verificacion validada de que el producto existe, sin embargo, el precio sumado sera de <b>+{{ priceChecker.toFixed(2) }}</b>
+          Mediante esta solicitud, el usuario tendra verificacion validada de que el producto existe, sin embargo, el precio sumado sera de <b>+{{ priceChecker }}</b>
           </p>
           <div class="flex justify-end mt-4">
             <button @click="closeCheckerModal" class="text-gray-500 hover:text-gray-700 mr-2">Cerrar</button>
@@ -190,6 +190,7 @@ export default {
   
   watch : {
     modalInfo(newValue) {
+      console.log(newValue)
       if (newValue.typeProd == 'digits') {
         this.showModal = newValue.showDigitModal
         this.status = newValue.status
@@ -201,6 +202,7 @@ export default {
   },
 
   created() {
+    this.getPriceChecker();
     this.takeUserInfo();
   },
 
@@ -222,7 +224,7 @@ export default {
         name: "",
         balance: 0,
       },
-      priceChecker: 22.00,
+      priceChecker: 0,
       showPaymentModal: false,
       showSuccessModal: false,
       showDeclinedModal: false,
@@ -255,6 +257,15 @@ export default {
       return string.split('.')[1]
     },
 
+    async getPriceChecker() {
+      await axios.get('http://127.0.0.1:8000/api/general/priceck')
+      .then(response => {
+        this.priceChecker = response.data.priceCheker
+      })
+      .catch(error => {
+        console.log(error.response.data)
+      })
+    },
 
     async makeActionInChecking(id, type,ordID) {
       if(type=='approve') {
@@ -374,12 +385,12 @@ export default {
       this.method = null
     },
     async sendCheckerRequest(id) {
-      console.log(id)
-      await axios.post(`http://127.0.0.1:8000/api/solicChecker/${id}`,null,{
+      let idSplited = id.split('.')[1]
+      await axios.post(`http://127.0.0.1:8000/api/solicChecker/${idSplited}`,null,{
         headers:{
             Authorization:`Token ${Cookies.get('token')}`
         }})
-      .then(response=> {console.log(response.data)})
+      .then(response=> {})
       .catch(error => {console.log(error.response.data)})
       this.showCheckerModal = false;
     },

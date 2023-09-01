@@ -4,7 +4,7 @@
       <h2 class="text-lg font-semibold">Mis órdenes</h2>
     </div>
     <div class="p-4">
-      <div v-if="ordersPhisics.length === 0" class="text-gray-600">
+      <div v-if="ordersPhisics.length === 0 && ordersDigits.length === 0" class="text-gray-600">
         No hay órdenes disponibles.
       </div>
        <div v-for="(orderList, orderType) in ordersByType" :key="orderType" >
@@ -201,7 +201,7 @@ export default {
       
         previousArrowColorF() {
             const page = this.pageInfo.actualPage;
-            console.log(page)
+
             if (page === 1) {
                 return '#c2c2c2'; 
             } else {
@@ -221,7 +221,7 @@ export default {
 
         nextArrowColorF() {
             const pageNext = this.pageInfo.available_page
-          console.log(pageNext)
+  
             if (pageNext == 0) {
                 return '#c2c2c2'
             } else {
@@ -244,11 +244,11 @@ export default {
         }
       }) 
         .then(response => {
-          console.log(response.data)
+
           this.ordersPhisics  = response.data.data
           this.pageInfo.actualPage = response.data.actual_page
           this.pageInfo.available_page = response.data.available_pages
-          console.log(this.pageInfo);
+
 
         })
         .catch(error => {
@@ -274,14 +274,14 @@ export default {
 
     async removeOrder(id) {
       if(!confirm('¿Esta seguro que desea retirar esa orden?')) {
-        console.log('no');
+
         return ''
       }
-      console.log(id);
+
       await axios.delete(`http://127.0.0.1:8000/api/transacts/${id}`)
       .then(response => {
         this.renderOrdersPhisicsData(this.pageInfo.actualPage)
-        console.log(response.data)
+
       })
       .catch(error => {
         console.log(error.response.data)
@@ -289,15 +289,15 @@ export default {
     },
 
     async handleChangePage(type,steps) {
-      console.log(type);
+
       if(type=='virtual') {
         if(this.pageInfoD.actualPage+steps != 0) {
           this.renderOrdersDigitData(this.pageInfoD.actualPage+steps)
         }
       }
       else if (type == 'physical') {
-        console.log(steps)
-        console.log('fisical');
+
+
         if(this.pageInfo.actualPage+steps != 0)  {
           this.renderOrdersPhisicsData(this.pageInfo.actualPage+steps)
         }
@@ -305,8 +305,7 @@ export default {
     },
 
     async SendReport(transactID) {
-      console.log(transactID)
-      console.log(this.rMessage);
+
       await axios.post(`http://127.0.0.1:8000/api/reports/${transactID}`,{rMessage:this.rMessage}, {
         headers: {
           Authorization: `Token ${Cookies.get('token')}`

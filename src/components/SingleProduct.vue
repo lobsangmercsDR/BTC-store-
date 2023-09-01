@@ -14,14 +14,14 @@
         <div class="w-full md:w-1/2">
           <div class="max-w-[200px] mx-auto md:max-w-none">
             <div class="bg-gray-200 rounded-lg h-[250px] md:h-[500px]" style="display: flex;">
-              <img class="container-img" :src="'http://127.0.0.1:8000/api' + productFisic.image_product"  alt="">
+              <img class="container-img" :src="'http://127.0.0.1:8000/api' + productFisic.image"  alt="">
             </div>
           </div>
         </div>
         <div class="w-full md:w-1/2 md:pl-8 modCont" style="overflow: auto;">
           <div class="content">
           <h2 class="text-3xl font-semibold mb-4 text-orange-600 hover:text-purple-800 transition-colors duration-300 ">
-            {{ productFisic.nameProduct }}
+            {{ productFisic.name }}
           </h2>
           <span class="text-gray-600 text-lg mr-2 font-semibold"></span>
 
@@ -34,8 +34,8 @@
             <span class="text-lg">{{ productFisic.brand }}</span>
           </div>
           <div class="flex items-center mb-4">
-            <span class="text-gray-600 text-lg mr-2 font-semibold">Vendedor:</span>
-            <span class="text-lg">{{ productFisic.seller.name }}</span>
+            <span class="text-gray-600 text-lg mr-2 font-semibold">Tienda:</span>
+            <span class="text-lg">{{ productFisic.store.nameStore }}</span>
           </div>
           <div class="flex items-center mb-4">
             <span class="text-gray-600 text-lg mr-2 font-semibold">Cantidad Disponible:</span>
@@ -114,9 +114,9 @@
       <div v-if="showPaymentModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div v-if="productFisic" class="bg-white rounded-lg p-8 max-w-md w-full mx-auto">
           <h2 class="text-2xl font-semibold mb-4">Confirmar compra</h2>
-          <p>Producto: {{ productFisic.nameProduct}}</p>
+          <p>Producto: {{ productFisic.name}}</p>
           <p>Marca: {{ productFisic.brand }}</p>
-          <p>Tienda: {{ productFisic.seller.name }}</p>
+          <p>Tienda: {{ productFisic.store.nameStore }}</p>
           <p>Cantidad: {{quantity }}</p>
           <p>Precio total: {{  (productFisic.price * quantity)}} </p>
           <hr class="my-4">
@@ -182,9 +182,9 @@
           <p>Número de orden: {{ orderNumber }}</p>
           <p>Fecha de compra: {{ formattedDate }}</p>
           <p>Estado: En espera</p>
-          <p>Nombre del producto: {{ productFisic.nameProduct }}</p>
+          <p>Nombre del producto: {{ productFisic.name }}</p>
           <p>Marca: {{ productFisic.brand }}</p>
-          <p>Tienda: {{ productFisic.seller.name }}</p>
+          <p>Tienda: {{ productFisic.store.nameStore }}</p>
           <p>Cantidad comprada: {{ quantity }}</p>
           <p>Total a pagar: {{ (productFisic.price * quantity).toFixed(2) }} </p>
           <button class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded mt-4"
@@ -356,9 +356,6 @@ export default {
         this.product.dislikes++;
         this.disliked = true;
       }
-    },
-    convertToDollars(price) {
-      return price * this.btcPrice;
     },
     addToCart() {
       const item = {

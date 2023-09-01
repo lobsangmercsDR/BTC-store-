@@ -147,7 +147,7 @@ class ProductDigit(models.Model):
     text_preview = models.CharField(max_length=200)
     needChecker = models.BooleanField(default=True)
     no_solicitud = models.IntegerField(default=0)
-    comisionCheck = models.DecimalField(max_digits=10, decimal_places=2, default=10)
+    comisionCheck = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     checkerText = models.CharField(max_length=500,blank=True)
     store = models.ForeignKey(Stores, on_delete=models.CASCADE)
 
@@ -251,3 +251,4 @@ class InvitationCodes(models.Model):
 
 class GenData(models.Model):
     secret_key= models.CharField(max_length=50)
+    price_checker = models.DecimalField(max_digits=10, decimal_places=2)

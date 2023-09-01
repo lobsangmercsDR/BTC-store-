@@ -118,12 +118,12 @@
 
 
     <section  class="nav-arrows" v-show="2==2">
-      <svg xmlns="http://www.w3.org/2000/svg" :style="{color:previousArrowColor}" @click="handleChangePage('fisics',-1)" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg xmlns="http://www.w3.org/2000/svg" :style="{color:previousArrowColor}" @click="handleChangePage(true)" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M15 18l-6-6 6-6"/>
       </svg> 
-      <div  class="pageCounter"> <span> {{ 422 }}</span></div>
+      <div  class="pageCounter"> <span> {{ actPage }}</span></div>
 
-      <svg xmlns="http://www.w3.org/2000/svg" :style="{color:nextArrowColor}" @click="handleChangePage('fisics',1)" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg xmlns="http://www.w3.org/2000/svg" :style="{color:nextArrowColor}" @click="handleChangePage()" class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M9 18l6-6-6-6"/>
       </svg>
     </section>
@@ -143,6 +143,11 @@ export default {
         userBalance: 0,
         wallet_address: ''
       },
+      canGoBack:false,
+      canGoFurth:true,
+      actPage:0,
+      available_pages:0,
+      total_pages:0,
       isWindowSmall: false,
       amount:0,
       destinationWalletAddress:'',
@@ -157,6 +162,21 @@ export default {
     this.getTransactHistory()
   },
   methods: {
+    async handleChangePage(back=false) {
+          console.log(this.actPage)
+          if(back) {
+            if(this.canGoBack) {
+              console.log(this.canGoBack)
+              this.getTransactHistory(this.actPage-1)
+            }
+          } else {
+            if(this.canGoFurth) {
+              console.log(this.canGoFurth)
+              this.getTransactHistory(this.actPage+1)
+            }
+          }
+      },
+
     async getUserData() { 
       await axios.get(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`, {
         headers:{
@@ -166,15 +186,18 @@ export default {
       .catch(error => {console.log(error.response.data)})
     },
 
-    async getTransactHistory() {
-      await axios.get(`http://127.0.0.1:8000/api/withdraws`, {
+    async getTransactHistory(page=1) {
+      await axios.get(`http://127.0.0.1:8000/api/withdraws?pg=${page}`, {
         headers: {
           Authorization: `Token ${Cookies.get('token')}`
         }
       })
       .then(response => {
-        this.transactionHistory = response.data
-        console.log(response.data, this.transactionHistory)
+        this.transactionHistory = response.data.page
+        this.actPage = parseInt(response.data.act_page)
+        this.canGoBack = response.data.back
+        this.canGoFurth = response.data.fur
+        console.log(response.data)
       })
       .catch(error =>  {
         console.log(error)

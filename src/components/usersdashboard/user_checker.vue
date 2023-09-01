@@ -147,16 +147,16 @@ import SingleDigitalProduct from '../SingleDigitalProduct.vue';
       },
 
       openDetailsModal(id, type, status, idOrd) {
-            console.log(id)
+            console.log(id.split('.')[1])
             console.log(type);
             console.log(status);
             if(type == "checker") {
-                this.modalData = {showDigitModal: true,typeProd: type, objID: id, status:status,order:idOrd }
+                this.modalData = {showDigitModal: true,typeProd: type, objID: id.split('.')[1], status:status,order:idOrd }
             }
         },
 
       async getSolicPendingOrders() {
-        console.log(2222)
+    
        await axios.get(`http://127.0.0.1:8000/api/solicChecker?pending=true`)
        .then(response => {
         this.pendingOrders = response.data
