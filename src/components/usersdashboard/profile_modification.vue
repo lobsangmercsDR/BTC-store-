@@ -64,35 +64,36 @@ export default {
     };
   },
   methods: {
-   async saveChanges() {
-    const propiedadesAEliminar = ['group', 'is_active'];
-    propiedadesAEliminar.forEach((prop) => {
-        delete this.user[prop];
-    });
-      await axios.put(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`,this.user,
-      {
-        headers:{
-          Authorization:`Token ${Cookies.get('token')}`
-        }
-      })
-      .then(response => {})
-      .catch(error => {console.log(error.response.data)})
+    async saveChanges() {
+      const propiedadesAEliminar = ['group', 'is_active'];
+      propiedadesAEliminar.forEach((prop) => {
+          delete this.user[prop];
+      });
+        await axios.put(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`,this.user,
+        {
+          headers:{
+            Authorization:`Token ${Cookies.get('token')}`
+          }
+        })
+        .then(response => {})
+        .catch(error => {console.log(error.response.data)})
     },
-    async getUserData() { 
-      await axios.get(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`, {
-        headers:{
-          Authorization: `Token ${Cookies.get('token')}`
-      }})
-      .then(response => {this.user = response.data})
-      .catch(error => {console.log(error.response.data)})
 
-      await axios.get(`http://127.0.0.1:8000/api/userbased/invitation/${Cookies.get('svg')}`, {
-        headers: {
-          Authorization: `Token ${Cookies.get('token')}`
-        }
-      })
-      .then(response => {this.user.invitationCode = response.data[0].invitationCodes})
-      .catch(error=> {console.log(error)})
+    async getUserData() { 
+        await axios.get(`http://127.0.0.1:8000/api/users/${Cookies.get('svg')}`, {
+          headers:{
+            Authorization: `Token ${Cookies.get('token')}`
+        }})
+        .then(response => {this.user = response.data})
+        .catch(error => {console.log(error.response.data)})
+
+        await axios.get(`http://127.0.0.1:8000/api/userbased/invitation/${Cookies.get('svg')}`, {
+          headers: {
+            Authorization: `Token ${Cookies.get('token')}`
+          }
+        })
+        .then(response => {this.user.invitationCode = response.data[0].invitationCodes})
+        .catch(error=> {console.log(error)})
     }
   }
 };

@@ -346,8 +346,6 @@ class TransactCategorySerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         userBuyer = self.context['request'].user  # Obtener el usuario actual
         subcategory = validated_data.get('subcategory_id',None)
-        print(userBuyer)
-        print(subcategory)
         subcategoryObj = SubCategory.objects.get(id=subcategory) 
         userCreator = subcategoryObj.userCreator
 
@@ -356,7 +354,6 @@ class TransactCategorySerializer(serializers.ModelSerializer):
                 userCreator.userBalance += subcategoryObj.priceSubCategory
                 userBuyer.save()
                 userCreator.save()
-                print(dir(TransactCategories()))  
                 # Crear la transacción y guardarla en la base de datos
                 transact = TransactCategories(
                     user=userBuyer,
