@@ -52,7 +52,6 @@ class UserSerializer(serializers.ModelSerializer):
 
  
     def get_group(self, obj):
-        print(obj.groups, "59")
         if obj.is_superuser:
             return "SuperUser"
         elif obj.is_active== False:
@@ -208,14 +207,9 @@ class UserCreatorSerializer(serializers.ModelSerializer):
 
     def update(self, instance,validated_data):
         validated_data = self.context['request'].data   
-        group_name = validated_data.pop('add_group', False)
-        delete_group = validated_data.pop('delete_group', False)
         change_group = validated_data.pop('change_group', False)
         not_found_groups = []
-        if change_group == "SuperUser":
-            print(145)
-            instance.groups.set([])
-            return super().update(instance, validated_data)
+        print(change_group)
         if change_group:
             try:    
                 group = Group.objects.get(name=change_group)
@@ -225,32 +219,7 @@ class UserCreatorSerializer(serializers.ModelSerializer):
                 message = f"Groups {', '.join(not_found_groups)} not found"
                 raise serializers.ValidationError(message, code=400)
             instance.groups.set([group])
-
-        evidence= True if "is_active" in validated_data.keys() or "group" in validated_data.keys() or "group_name" in validated_data.keys()  or "password" in validated_data.keys() else False
-        roles = True if self.context.get('roles') == 'true' else False
-        if not roles and evidence:
-            raise serializers.ValidationError({"message":"Acceso a estas propiedades no tienes"})
-        groups = []
-        if group_name: 
-            try:
-                group = Group.objects.get(name=group_name)
-                groups.append(group)
-            except Group.DoesNotExist:
-                not_found_groups.append(group_name)
-            if not_found_groups:
-                message = f"Groups {', '.join(not_found_groups)} not found"
-                raise serializers.ValidationError(message, code=400)
-            instance.groups.add(group)
-
-        if delete_group:
-                try:
-                    groupIns = Group.objects.get(name=delete_group)
-                except:
-                    raise serializers.ValidationError(f"Grupo {delete_group} no existe")
-                instance.groups.remove(groupIns)
-        deleteList = ['last_login', 'wallet_address','createdAt']
-        for item in deleteList:
-            del validated_data[item]
+            print(instance.groups,222)
         return super().update(instance, validated_data)
             
 

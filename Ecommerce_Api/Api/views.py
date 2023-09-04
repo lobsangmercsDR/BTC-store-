@@ -162,7 +162,7 @@ class WithDrawView(viewsets.ModelViewSet):
         return JsonResponse(serializer.data, status=200,safe=False)
     
     def get_withdraws(self, request):
-        objects = Withdrawals.objects.filter(user=request.user.id)
+        objects = Withdrawals.objects.filter(user=request.user.id).order_by('id')
         paginator = Paginator(objects, per_page=5)
         page_rq_num = request.GET.get('pg',1) 
         page = paginator.get_page(page_rq_num)
@@ -271,10 +271,9 @@ class TransactSubcategoryView(viewsets.ModelViewSet):
        serializer = TransactCategorySerializer(data=request.data, context={'request':request})
        user = User.objects.get(id=request.user.id)
        if UserSerializer(user).data['group'] == "buyers":
-            userSer = UserCreatorSerializer(user, data={'change_group':'seller'}, partial=True,context={'update':True}) 
-            userSer.is_valid(raise_exception =True)
-            self.perform_update(userSer)
-            print("Con exito")
+          group = Group.objects.get(name='sellers')
+          user.groups.set([group])
+          user.save()
        serializer.is_valid(raise_exception=True)
        self.perform_create(serializer=serializer)
        return JsonResponse(serializer.data, status=200)
@@ -920,6 +919,33 @@ class GroupsView(viewsets.ModelViewSet):
         serializer = GroupsSerializer(groups, many=True)
         print(serializer.data)
         return JsonResponse(serializer.data, status=200, safe=False)
+
+    def validate_group(self, request, id):
+        try: 
+            user = User.objects.get(id=id)
+        except Exception as e:
+            print(e)
+            return JsonResponse({'msg':'El usuario especificado no existe'})
+        data = UserSerializer(user).data
+        subCat = SubCategory.objects.get(nameSubCategory='Checker')
+        checkerTrans = TransactCategories.objects.filter(user=id, subCategory=subCat).exists() 
+        print(checkerTrans,22)
+        userTransct = TransactCategories.objects.filter(user=request.user.id)
+        isSeller = userTransct.exclude(subCategory__nameSubCategory='Checker')
+
+        group = data['group']
+        if group == 'SuperUser' or group== 'administrator':
+            result = {'result':[]}
+        if group == 'buyers':
+            result = {'result':['buyers']}
+        if group == 'sellers':
+            result = {'result':['sellers']}
+        if group == 'sellers' and checkerTrans:
+            result = {'result':['sellers', 'checker']}
+        if group=='checker' and isSeller:
+            result = {'result':['checker', 'sellers']}
+
+        return JsonResponse(result)
 
 class InvitationCodeView(viewsets.ModelViewSet):
     queryset = InvitationCodes.objects.all()

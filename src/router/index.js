@@ -23,14 +23,22 @@ import user_control from '../pages/Dashboard/users_control/user_control.vue'
 import invitation_code_manager from '../pages/Dashboard/users_control/invitation_code_manager.vue'
 import Wallet from '../pages/Dashboard/wallet_cripto/Wallet.vue'
 import deposit_coins from '../pages/Dashboard/wallet_cripto/deposit_coins.vue'
-
+import users_profile_component from '@/components/usersdashboard/users_profile_component.vue';
+import profile_modification from '../components/usersdashboard/profile_modification.vue';
 
   const routes = [
 
     {
       name:'test',
       path:'/test',
-      component:users
+      component:profile,
+      children: [
+        {
+          name:'profilemodif',
+          path:'pm',
+          component:deposit_coins
+        }
+      ]
     },
     {
       
@@ -146,7 +154,11 @@ import deposit_coins from '../pages/Dashboard/wallet_cripto/deposit_coins.vue'
       path: '/profile',
       component:profile,
       children: [
-        { name:'asasd', path: '/checkerP', component: user_checker },
+        { 
+          name:'profModif', 
+          path: 'modif', 
+          component: profile_modification
+        }
       ]
     },
 

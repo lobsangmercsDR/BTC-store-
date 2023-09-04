@@ -22,10 +22,10 @@
               </svg>
             </button>
           </div>
-          <a href="#"  class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'home'">
+          <router-link to="/profile/modif" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'home'">
             <span class="text-2xl"><i class="bx bx-home"></i></span>
             <span>Editar Perfil</span>
-          </a>
+          </router-link>
   
           <a href="#" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'wallet'">
             <span class="text-2xl"><i class="bx bx-cart"></i></span>
@@ -62,34 +62,7 @@
   
         <!-- Área principal -->
         <div class="w-full p-4">
-          <template v-if="selectedOption === 'home'">
-           <profile_modification/>
-          </template>
-  
-          <template v-if="selectedOption === 'wallet'">
-            <rechar/>
-          </template>
-          <template v-if="selectedOption === 'orders'">
-            <orders/>
-          </template>
-          <template v-if="selectedOption === 'sells_orders'">
-            <sell_orders/>
-          </template>
-          <template v-if="selectedOption === 'buy_categories'">
-            <buy_categories/>
-          </template>
-          <template v-if="selectedOption === 'checker_panel'">
-            <user_checker @updated ="returnRoute('checker_panel')"/>
-          </template>
-          <template v-if="selectedOption === 'p_product_add'">
-            <AddProduct/>
-          </template>
-          <template v-if="selectedOption === 'd_product_add'">
-            <AddDigitalProduct/>
-          </template>
-  
-          <!-- Agrega más opciones de panel aquí -->
-  
+          <router-view></router-view>
         </div>
       </div>
     </div>
