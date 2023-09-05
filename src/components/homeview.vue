@@ -321,8 +321,10 @@ export default {
 
         openModal(id, type) {
             if(type == "digits") {
+                console.log(id);
                 this.modalData = {showDigitModal: true,typeProd: type, objID: id }
             } else {
+                console.log(id);
                 this.modalData = {showFisicModal: true,typeProd: type, objID: id }
             }
             

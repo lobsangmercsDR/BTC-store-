@@ -267,6 +267,16 @@ class TransactSubcategoryView(viewsets.ModelViewSet):
         serializer = TransactCategorySerializer(transactse, many=True)
         return JsonResponse(serializer.data, status=200, safe=False)
 
+    def delete_user_based(self, request, id):
+        transactsQueryset = TransactCategories.objects.filter(user=id)
+        if len(transactsQueryset) >0:
+            transactsQueryset.delete()
+            return JsonResponse({'msg':'Accion realizada con exito'})
+        else:
+            raise serializers.ValidationError({'msg':'El usuario no tiene transacciones con categorias'})
+
+        
+
     def post(self, request):
        serializer = TransactCategorySerializer(data=request.data, context={'request':request})
        user = User.objects.get(id=request.user.id)
@@ -533,6 +543,7 @@ class CategoryView(viewsets.ModelViewSet):
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True, context={'request':request})
         newSubC=[]
+        
         if formC:
             for item in serializer.data:
                 for subC in item['subCategories']:
@@ -540,6 +551,7 @@ class CategoryView(viewsets.ModelViewSet):
                         newSubC.append(subC)
                 item['subCategories'] = newSubC
                 newSubC = []
+        
         return JsonResponse(serializer.data, status=200, safe=False)   
 
 

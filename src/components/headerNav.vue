@@ -39,7 +39,7 @@
           <div class="flex items-center mr-6">
             <Button label="Home" class="mr-6 p-button-text" style="color: white !important;" @click="redirect(1)"></Button>
             <Button label="¡Unete a nosotros!" v-show="authenticated != true" class="mr-6 p-button-text" style="color: white !important;" @click="redirect(2)"></Button>
-            <Button label="¡Vuelvete Seller!" v-show="authenticated"  @click="redirect(3)" class="mr-6 p-button-text" style="color: white !important;"></Button>
+            <router-link to="/profile/categories_store"> <Button label="¡Vuelvete Seller!" v-show="authenticated" class="mr-6 p-button-text" style="color: white !important;"></Button></router-link>
             <Button label="Contacto" class="mr-6 p-button-text" style="color: white !important;" @click="redirect(4)"></Button>
             
           </div>

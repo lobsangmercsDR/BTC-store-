@@ -232,10 +232,11 @@ export default {
   },
   watch: {
     modalInfo(newValue) {
+      console.log(newValue)
       this.showFisicModal = newValue.showFisicModal
-      let id = newValue.objID.split('.')[1] 
+      let id = newValue.objID
       if (newValue.typeProd == 'fisic') {
-        this.renderProductFisicData(id)
+        this.renderProductFisicData(id.split('.')[1])
         
       }
       else if(newValue.typeProd== 'method') {

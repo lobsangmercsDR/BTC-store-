@@ -1,9 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
  
 import dashboard from '../pages/master/dashboard'
-
+import orders from '../components/usersdashboard/orders.vue';
+import sell_orders from '../components/usersdashboard/sell_orders';
 import home from '../pages/Dashboard/home'
 import profile from '../pages/Dashboard/profile'
+import rechar from '../components/payments/rechar.vue';
 import user_checker from '../components/usersdashboard/user_checker.vue'
 import products_fis from '../pages/Dashboard/products_fis.vue'
 import cases from '../pages/Dashboard/cases.vue'
@@ -25,6 +27,7 @@ import Wallet from '../pages/Dashboard/wallet_cripto/Wallet.vue'
 import deposit_coins from '../pages/Dashboard/wallet_cripto/deposit_coins.vue'
 import users_profile_component from '@/components/usersdashboard/users_profile_component.vue';
 import profile_modification from '../components/usersdashboard/profile_modification.vue';
+import buy_categories from '../components/usersdashboard/buy_categories'
 
   const routes = [
 
@@ -153,11 +156,47 @@ import profile_modification from '../components/usersdashboard/profile_modificat
       name: 'profile',
       path: '/profile',
       component:profile,
+      redirect:{name:'profModif'},
       children: [
         { 
           name:'profModif', 
-          path: 'modif', 
+          path: 'modificate', 
           component: profile_modification
+        },
+        {
+          name: 'walletUser',
+          path:'rechar',
+          component:rechar
+        },
+        {
+          name:'bOrders',
+          path:'buying_orders',
+          component: orders
+        },
+        {
+          name:'sOrders',
+          path:'sell_orders',
+          component: sell_orders
+        },
+        {
+          name:'BuyCategories',
+          path:'categories_store',
+          component: buy_categories
+        },
+        {
+          name:'checkerPanel',
+          path:'Pchecker',
+          component: user_checker
+        },
+        {
+          name:'add_product_f',
+          path:'add_product_f',
+          component: products_fis
+        },
+        {
+          name:'add_product_d',
+          path:'add_product_d',
+          component: product_dig
         }
       ]
     },

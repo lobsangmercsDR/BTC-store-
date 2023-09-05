@@ -233,7 +233,6 @@ class SubCategorySerializer(serializers.ModelSerializer):
 
     def get_purchased(self, obj):
         idUser = self.context['request'].user.id
-        print(idUser)
         hasPurchased = TransactCategories.objects.filter(user_id=idUser, subCategory=obj.id).exists()
         if hasPurchased:
             return True

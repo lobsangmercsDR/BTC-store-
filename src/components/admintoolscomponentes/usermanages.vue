@@ -272,8 +272,6 @@ export default {
     },
 
     async updateUserInApi(Id) {
-      let oldUser= this.users.filter(us => us.id == Id)
-      console.log(oldUser)
       let newUserGroup = this.editUserData.group
       this.editUserData.change_group = newUserGroup
       delete this.editUserData.shares_count
@@ -289,6 +287,20 @@ export default {
       .then(response => {console.log(response.data); this.formatData()})
       .catch(error => {console.log(error.response.data); this.error= error.response.data})
     },
+
+    async deleteCatTransactions(id) {
+      await axios.delete(`http://127.0.0.1:8000/api/transact_categories/user/${id}`, {
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      })
+      .then(response => {
+        console.log(response.data)
+      })
+      .catch(error => {
+        console.log(error.response.data)
+      })
+    },
   
     async editUser(user) {
       this.usersTable = [user]
@@ -300,10 +312,17 @@ export default {
     },
     updateUserInTable() {
       const userIndex = this.users.findIndex(user => user.id === this.editUserData.id);
-      
-      console.log(this.editUserData.id)
+      const oldUser= this.users[userIndex]
+      console.log(this.editUserData)
       if (userIndex !== -1) {
+        console.log(this.editUserData,oldUser)
         if (confirm("¿Estás seguro de que deseas actualizar los datos del usuario?")) {
+          console.log(oldUser.group, this.editUserData.group)
+          if(oldUser.group == "sellers" && this.editUserData.group == "buyers") {
+            if(confirm("¿Desea hacer que el usuario deba comprar las categorias de nuevo para volver al rol?")) {
+              this.deleteCatTransactions(this.editUserData.id)
+            }
+          }
           this.updateUserInApi(this.editUserData.id)
           this.error = null
           console.log("Usuario actualizado correctamente");

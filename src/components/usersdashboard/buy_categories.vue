@@ -149,6 +149,10 @@
         })
       },
 
+      updateUserStatus() {
+        window.location.reload()
+      },
+
       async processTransact(subCaId) {
         await axios.post(`http://127.0.0.1:8000/api/transactscategories`,{subcategory_id:subCaId},
         {
@@ -158,11 +162,13 @@
         })
         .then(response => {
             this.getCategories()
+            this.updateUserStatus()
         })
         .catch(error=> {
           console.log(error.response.data)
         })
       },
+
 
 
       openPurchaseModal(subcategory) {

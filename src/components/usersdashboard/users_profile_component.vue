@@ -22,39 +22,39 @@
               </svg>
             </button>
           </div>
-          <router-link to="/profile/modif" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'home'">
+          <router-link to="/profile/modificate" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'home'">
             <span class="text-2xl"><i class="bx bx-home"></i></span>
             <span>Editar Perfil</span>
           </router-link>
   
-          <a href="#" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'wallet'">
+          <router-link to="/profile/rechar" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
             <span class="text-2xl"><i class="bx bx-cart"></i></span>
             <span>Wallet</span>
-          </a>
-          <a href="#" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'orders'">
+          </router-link>
+          <router-link to="/profile/buying_orders" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'orders'">
             <span class="text-2xl"><i class="bx bx-home"></i></span>
             <span>Ordenes de compra</span>
-          </a>
-          <a href="#" v-show="this.typeUser != 'buyers'" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'sells_orders'">
+          </router-link>
+          <router-link to="/profile/sell_orders" v-show="this.typeUser != 'buyers'" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'sells_orders'">
             <span class="text-2xl"><i class="bx bx-home"></i></span>
             <span>Ordenes de venta</span>
-          </a>
-          <a href="#" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'buy_categories'">
+          </router-link>
+          <router-link to="/profile/categories_store" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'buy_categories'">
             <span class="text-2xl"><i class="bx bx-home"></i></span>
             <span>Comprar Categorias de Venta</span>
-          </a>
-          <a href="#" v-show="this.typeUser != 'buyers' && this.typeUser != 'sellers'" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'checker_panel'">
+          </router-link>
+          <router-link to="/profile/Pchecker" v-show="this.typeUser != 'buyers' && this.typeUser != 'sellers'" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
             <span class="text-2xl"><i class="bx bx-home"></i></span>
             <span>Checker Panel</span>
-          </a>
-          <a href="#" v-show="this.typeUser != 'buyers'" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'p_product_add'">
+          </router-link>
+          <router-link to="/profile/add_product_f" v-show="this.typeUser != 'buyers'" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
             <span class="text-2xl"><i class="bx bx-home"></i></span>
             <span>Subir Producto</span>
-          </a>
-          <a href="#" v-show="this.typeUser != 'buyers'" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'd_product_add'">
+          </router-link>
+          <router-link to="/profile/add_product_d" v-show="this.typeUser != 'buyers'" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600" @click="selectedOption = 'd_product_add'">
             <span class="text-2xl"><i class="bx bx-home"></i></span>
             <span>Subir Producto Digital</span>
-          </a>
+          </router-link>
   
           <!-- Agrega más opciones de sidebar aquí -->
   
@@ -71,7 +71,7 @@
   <script>
 import AddDigitalProduct from '../creators/AddDigitalProduct.vue';
 import AddProduct from '../creators/AddProduct.vue';
-import rechar from '../payments/rechar.vue';
+
 import profile_modification from './profile_modification.vue';
 import orders from './orders.vue';
 import sell_orders from './sell_orders.vue';
@@ -117,7 +117,6 @@ import { validateGroup } from '../../../utils/auth';
     components: {
         AddDigitalProduct,
         AddProduct,
-        rechar,
         profile_modification,
         orders,
         sell_orders,
