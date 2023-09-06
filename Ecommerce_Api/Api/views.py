@@ -268,6 +268,12 @@ class TransactSubcategoryView(viewsets.ModelViewSet):
         return JsonResponse(serializer.data, status=200, safe=False)
 
     def delete_user_based(self, request, id):
+        checker = request.GET.get('checker','f')
+        if checker == 't':
+            transactsQueryset = TransactCategories.objects.filter(subCategory__nameSubCategory='Checker', user=id)
+            if transactsQueryset:
+                transactsQueryset.delete()
+            return JsonResponse({'msg':'Accion realizada con exito'})
         transactsQueryset = TransactCategories.objects.filter(user=id)
         if len(transactsQueryset) >0:
             transactsQueryset.delete()
@@ -278,15 +284,22 @@ class TransactSubcategoryView(viewsets.ModelViewSet):
         
 
     def post(self, request):
-       serializer = TransactCategorySerializer(data=request.data, context={'request':request})
-       user = User.objects.get(id=request.user.id)
-       if UserSerializer(user).data['group'] == "buyers":
-          group = Group.objects.get(name='sellers')
-          user.groups.set([group])
-          user.save()
-       serializer.is_valid(raise_exception=True)
-       self.perform_create(serializer=serializer)
-       return JsonResponse(serializer.data, status=200)
+        serializer = TransactCategorySerializer(data=request.data, context={'request':request})
+        serializer.is_valid(raise_exception=True)
+        transSub = serializer.save()
+        print(transSub.subCategory.nameSubCategory , 2222)
+        user = User.objects.get(id=request.user.id)
+        if UserSerializer(user).data['group'] == "buyers" and transSub.subCategory.nameSubCategory != "Checker":
+            group = Group.objects.get(name='sellers')
+            user.groups.set([group])
+            user.save()
+        if UserSerializer(user).data['group'] == "buyers" and transSub.subCategory.nameSubCategory == "Checker":
+            group = Group.objects.get(name='checkers')
+            user.groups.set([group])
+            user.save()
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer=serializer)
+        return JsonResponse(serializer.data, status=200)
 
 class ProductView(viewsets.ModelViewSet):
     queryset = ProductFisic.objects.all()
@@ -941,10 +954,9 @@ class GroupsView(viewsets.ModelViewSet):
         data = UserSerializer(user).data
         subCat = SubCategory.objects.get(nameSubCategory='Checker')
         checkerTrans = TransactCategories.objects.filter(user=id, subCategory=subCat).exists() 
-        print(checkerTrans,22)
-        userTransct = TransactCategories.objects.filter(user=request.user.id)
+        userTransct = TransactCategories.objects.filter(user=id)
         isSeller = userTransct.exclude(subCategory__nameSubCategory='Checker')
-
+        print(userTransct)
         group = data['group']
         if group == 'SuperUser' or group== 'administrator':
             result = {'result':[]}
@@ -952,9 +964,11 @@ class GroupsView(viewsets.ModelViewSet):
             result = {'result':['buyers']}
         if group == 'sellers':
             result = {'result':['sellers']}
+        if group == 'checkers' and checkerTrans:
+            result = {'result':['checker']}
         if group == 'sellers' and checkerTrans:
             result = {'result':['sellers', 'checker']}
-        if group=='checker' and isSeller:
+        if group=='checkers' and isSeller:
             result = {'result':['checker', 'sellers']}
 
         return JsonResponse(result)
