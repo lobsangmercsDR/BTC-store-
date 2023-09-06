@@ -13,13 +13,13 @@ export function isAuthenticated() {
  export async function validateGroup() {
     const svg = Cookies.get('svg')
     let result = null;
-    await axios.get(`http://127.0.0.1:8000/api/users/${svg}`, {
+    await axios.get(`http://127.0.0.1:8000/api/group/validate/${svg}`, {
       headers: {
         Authorization: `Token ${Cookies.get('token')}`
       }
     })
     .then(response => {
-      result = response.data.group
+      result = response.data.result
     })
     return result
   }

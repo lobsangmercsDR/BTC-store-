@@ -148,6 +148,7 @@
           <option value="administrator">Administrador</option>
           <option value="sellers">Vendedor</option>
           <option value="buyers">Comprador</option>
+          <option value="checkers">Checker</option>
           <option value=false >Baneado</option>
         </select>
         <input v-show="editUserData.group == 'SuperUser'" v-bind:value="editUserData.group" class="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
@@ -243,6 +244,9 @@ export default {
             case "administrator":
             modifiedResponse[i].group = "Admin";
             break;
+            case "checkers":
+            modifiedResponse[i].group = "Checker";
+            break;
             case "buyers":
             modifiedResponse[i].group = "Comprador";
             break;
@@ -288,8 +292,16 @@ export default {
       .catch(error => {console.log(error.response.data); this.error= error.response.data})
     },
 
-    async deleteCatTransactions(id) {
-      await axios.delete(`http://127.0.0.1:8000/api/transact_categories/user/${id}`, {
+    async deleteCatTransactions(id,checker=false) {
+      let url = ""
+      if (checker) {
+        url = `http://127.0.0.1:8000/api/transact_categories/user/${id}?checker=t`
+      } 
+      else {
+        url = `http://127.0.0.1:8000/api/transact_categories/user/${id}`
+      }
+
+      await axios.delete(url, {
         headers: {
           Authorization: `Token ${Cookies.get('token')}`
         }
@@ -317,12 +329,17 @@ export default {
       if (userIndex !== -1) {
         console.log(this.editUserData,oldUser)
         if (confirm("¿Estás seguro de que deseas actualizar los datos del usuario?")) {
-          console.log(oldUser.group, this.editUserData.group)
           if(oldUser.group == "sellers" && this.editUserData.group == "buyers") {
             if(confirm("¿Desea hacer que el usuario deba comprar las categorias de nuevo para volver al rol?")) {
               this.deleteCatTransactions(this.editUserData.id)
             }
           }
+        if(oldUser.group =="checkers" && this.editUserData.group == "buyers") {
+          console.log(2)
+          if(confirm('¿Desea hacer que el usuario debar comprar la categoria checker para volver al rol?')) {
+            this.deleteCatTransactions(this.editUserData.id, true)
+          }
+        }
           this.updateUserInApi(this.editUserData.id)
           this.error = null
           console.log("Usuario actualizado correctamente");
