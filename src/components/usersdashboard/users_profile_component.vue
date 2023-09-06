@@ -77,6 +77,7 @@ import orders from './orders.vue';
 import sell_orders from './sell_orders.vue';
 import buy_categories from './buy_categories.vue';
 import user_checker from './user_checker.vue';
+import user_shop from './user_shop.vue'
 import { validateGroup } from '../../../utils/auth';
   
   export default {

@@ -28,6 +28,7 @@ import deposit_coins from '../pages/Dashboard/wallet_cripto/deposit_coins.vue'
 import users_profile_component from '@/components/usersdashboard/users_profile_component.vue';
 import profile_modification from '../components/usersdashboard/profile_modification.vue';
 import buy_categories from '../components/usersdashboard/buy_categories'
+import user_shop from '../components/usersdashboard/user_shop.vue'
 
   const routes = [
 
@@ -192,6 +193,11 @@ import buy_categories from '../components/usersdashboard/buy_categories'
           name:'add_product_f',
           path:'add_product_f',
           component: products_fis
+        },
+        {
+          name:'tienda',
+          path:'store',
+          component: user_shop
         },
         {
           name:'add_product_d',
