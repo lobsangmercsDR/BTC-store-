@@ -2,25 +2,25 @@
     <div class="container mx-auto px-4 py-8 bg-white rounded-lg border-4 border-gray-300">
       <!-- Store Registration -->
       <div v-if="!storeRegistered" class="mb-8">
-        <h2 class="text-2xl font-bold text-gray-800">Welcome Vendor, please register your store</h2>
-        <form @submit.prevent="registerStore" class="flex flex-col bg-gray-100 p-4 rounded-lg">
+        <h2 class="text-2xl font-bold text-gray-800">Registrar tienda</h2>
+        <form class="flex flex-col bg-gray-100 p-4 rounded-lg">
           <label class="mb-2">
-            Upload Avatar:
+            Imagen de Avatar
             <input type="file" @change="previewImage" accept="image/*">
           </label>
           <label class="mb-2">
-            Upload Banner:
+            Imagen de Banner:
             <input type="file" @change="previewBanner" accept="image/*">
           </label>
           <label class="mb-2">
-            Store Name:
-            <input v-model="storeName" type="text" required class="border-2 border-gray-200 rounded p-1" />
+            Nombre de tienda:
+            <input v-model="storeName" type="text"  class="border-2 border-gray-200 rounded p-1" />
           </label>
           <label class="mb-2">
-            Store Description:
-            <textarea v-model="storeDescription" required class="border-2 border-gray-200 rounded p-1"></textarea>
+            Descripcion de tienda:
+            <textarea v-model="storeDescription"  class="border-2 border-gray-200 rounded p-1"></textarea>
           </label>
-          <button type="submit" class="bg-blue-500 text-white rounded p-2 mt-2">Register</button>
+          <button class="bg-blue-500 text-white rounded p-2 mt-2">Registrar</button>
         </form>
       </div>
       <!-- Store Details -->
@@ -92,8 +92,7 @@
       return {
         avatar: '',
         banner: '',
-        storeName: 'Nombre de la tienda',
-        storeDescription: 'Breve descripción de la tienda',
+        storeDescription: '',
         subCategories: [
           { id: 1, name: 'Subcategoría 1' },
           { id: 2, name: 'Subcategoría 2' },

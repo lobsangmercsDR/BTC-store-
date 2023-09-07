@@ -47,6 +47,10 @@
             <span class="text-2xl"><i class="bx bx-home"></i></span>
             <span>Checker Panel</span>
           </router-link>
+          <router-link to="/profile/store" v-if="this.isSeller" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
+            <span class="text-2xl"><i class="bx bx-home"></i></span>
+            <span>Tienda</span>
+          </router-link>
           <router-link to="/profile/add_product_f" v-if="this.isSeller" class="flex items-center space-x-1 rounded-md px-2 py-3 hover:bg-gray-100 hover:text-blue-600">
             <span class="text-2xl"><i class="bx bx-home"></i></span>
             <span>Subir Producto</span>
