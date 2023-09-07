@@ -34,6 +34,7 @@ urlpatterns = [
     path('transacts/<int:pk>',TransactsView.as_view({'delete':'delete_transact','put':'put_transact'}), name='individual_transact'),
     path('users/invitations', InvitationCodeView.as_view({'get':'get_invitation_codes','post':'post_invitation_code'}), name='invitation'),
     path('store/<int:pk>',StoreView.as_view({'get':'get_store_user_based'}), name='store'),
+    path('store',StoreView.as_view({'post':'create_store'}), name='store'),
     path('userbased/invitation/<int:pk>', InvitationCodeView.as_view({'get':'get_invitation_code_user_based'}, name="Ayuda")),
     path('users/invitations/<int:pk>', InvitationCodeView.as_view({'delete':'delete_invitation_code'}), name='invitationssss'),
     path('users/restpass', RestPassView.as_view({'put':'put_password'}), name='putpass'),

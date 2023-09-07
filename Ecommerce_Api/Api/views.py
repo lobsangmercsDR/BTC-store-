@@ -256,6 +256,10 @@ class StoreView(viewsets.ModelViewSet):
             print(e)
             return JsonResponse({'msg':'Store no encontrada'}, status=404)
 
+    def create_store(self, request):
+        print(request.data)
+        return JsonResponse({})
+
 class TransactSubcategoryView(viewsets.ModelViewSet):
     queryset = TransactCategories.objects.all()
     serializer_class = TransactCategorySerializer

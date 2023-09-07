@@ -14,14 +14,15 @@
           </label>
           <label class="mb-2">
             Nombre de tienda:
-            <input v-model="storeName" type="text"  class="border-2 border-gray-200 rounded p-1" />
+            <input v-model="storeCreateInformation.name" type="text"  class="border-2 border-gray-200 rounded p-1" />
           </label>
           <label class="mb-2">
             Descripcion de tienda:
-            <textarea v-model="storeDescription"  class="border-2 border-gray-200 rounded p-1"></textarea>
+            <textarea v-model="storeCreateInformation.description"  class="border-2 border-gray-200 rounded p-1"></textarea>
           </label>
-          <button class="bg-blue-500 text-white rounded p-2 mt-2">Registrar</button>
+          <button type="button" @click="registerStore()" class="bg-blue-500 text-white rounded p-2 mt-2">Registrar</button>
         </form>
+        
       </div>
       <!-- Store Details -->
       <div v-else>
@@ -87,93 +88,67 @@
   </template>
   
   <script>
+ import axios from 'axios';
+ import Cookies from 'js-cookie';
+
   export default {
     data() {
       return {
         avatar: '',
         banner: '',
-        storeDescription: '',
+        storeCreateInformation: {
+          name: '',
+          description: '',
+          banner_img: null,
+          avatar_img: null
+        },
         subCategories: [
           { id: 1, name: 'Subcategoría 1' },
           { id: 2, name: 'Subcategoría 2' },
-          { id: 3, name: 'Subcategoría 3' },
-          { id: 4, name: 'Subcategoría 4' },
-          { id: 5, name: 'Subcategoría 5' },
-          { id: 6, name: 'Subcategoría 6' }
         ],
-        likes: 0,
-        dislikes: 0,
-        liked: false,
-        disliked: false,
         soldProducts: [
           { subCategory: 'Subcategoría 1', count: 50 },
           { subCategory: 'Subcategoría 2', count: 30 },
-          { subCategory: 'Subcategoría 3', count: 20 },
-          { subCategory: 'Subcategoría 4', count: 40 },
-          { subCategory: 'Subcategoría 5', count: 10 },
-          { subCategory: 'Subcategoría 6', count: 15 }
         ],
         storeRegistered: false,
-        loggedIn: true, // Asume que este estado se actualizará en función de si el usuario ha iniciado sesión o no.
+        loggedIn: true, 
       };
     },
     mounted() {
-      this.getRandomAvatar();
-      this.getRandomBanner();
+
     },
     methods: {
-      getRandomAvatar() {
-        fetch('https://source.unsplash.com/random/200x200')
-          .then(response => {
-            this.avatar = response.url;
-          })
-          .catch(error => {
-            console.error(error);
-          });
-      },
-      getRandomBanner() {
-        fetch('https://source.unsplash.com/random/1024x576')
-          .then(response => {
-            this.banner = response.url;
-          })
-          .catch(error => {
-            console.error(error);
-          });
-      },
       previewImage(event) {
         const file = event.target.files[0];
-        if (file) {
-          this.avatar = URL.createObjectURL(file);
-        }
+        this.storeCreateInformation.avatar_img = file
       },
       previewBanner(event) {
         const file = event.target.files[0];
-        if (file) {
-          this.banner = URL.createObjectURL(file);
-        }
+        this.storeCreateInformation.banner_img = file;
       },
-      registerStore() {
-        if (this.hasPurchasedSubCategory()) {
-          this.storeRegistered = true;
+      async registerStore() {
+        const newStore = this.storeCreateInformation
+        let formData = new FormData()
+        for(let item in this.storeCreateInformation) {
+          console.log(item, newStore[item])
+          formData.append(item, newStore[item])
         }
+        await axios.post('http://127.0.0.1:8000/api/store',formData, {
+          headers: {
+            Authorization: `Token ${Cookies.get('token')}`
+          }
+        })
+        .then( response => {
+          console.log(response)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+      
       },
       hasPurchasedSubCategory() {
-        // Logic to check if the user has purchased any subcategory goes here
-        // Returning true for the purpose of this demo
         return true;
       },
-      likeStore() {
-        if (!this.liked && this.loggedIn) {
-          this.likes++;
-          this.liked = true;
-        }
-      },
-      dislikeStore() {
-        if (!this.disliked && this.loggedIn) {
-          this.dislikes++;
-          this.disliked = true;
-        }
-      }
     }
   };
   </script>
