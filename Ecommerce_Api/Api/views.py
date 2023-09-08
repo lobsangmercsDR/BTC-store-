@@ -231,7 +231,6 @@ class Img_view(viewsets.ModelViewSet):
             return JsonResponse({'error':'No se encuentra la imagen'}, status=404)
         
     def put_file_img(self, request, image_name):
-        print(request.data)
         localD = os.getenv('USERPROFILE')
         TP_route=  f'{localD}\Desktop\Proyectos\AlanStore\Ecommerce_Api\images'
         file_img = os.path.join(TP_route, image_name)
@@ -245,17 +244,39 @@ class Img_view(viewsets.ModelViewSet):
         
         return JsonResponse({'message':'imagen guardada'})
 
+    def get_img_banner(self, request, img_name):
+        pathFile = os.path.abspath(__file__)
+        path = pathFile.replace(r"Api\views.py", "") + r"images" + '\\store\\bann\\' + img_name   
+        if os.path.exists(path=path):
+            return FileResponse(open(path,'rb'),content_type='image/jpeg')
+        else:
+            print('ruta')
+            return JsonResponse({'error':'No se encuentra la imagen'}, status=404)
+    
+    def get_img_avatar(self, request, img_name):
+        pathFile = os.path.abspath(__file__)
+        buildPath = pathFile.replace("Api\\views.py", "") + "\\images\\store\\avt\\" + img_name
+        print(buildPath)
+        if os.path.exists(path=buildPath):
+            return FileResponse(open(buildPath, 'rb'), content_type='image/jpeg')
+        else:
+            return JsonResponse({'error':'No se encuentra la imagen'}, status=404)
+
+
 class StoreView(viewsets.ModelViewSet):
     queryset = Stores.objects.all()
     authentication_classes = [authentication.TokenAuthentication]
+    permission_classes= [IsAuthenticated]
 
     def get_store_user_based(self, request, pk):
         try:
             store = Stores.objects.get(seller_id=pk)
-            return JsonResponse({'store_id':store.id})
+            print(request.user.id,22)
+            serializer = StoreSerializer(store, context={'request':request})
+            return JsonResponse({'success':True,'store':serializer.data})
         except Exception as  e:
-            print(e)
-            return JsonResponse({'msg':'Store no encontrada'}, status=404)
+            print(e,'error')
+            return JsonResponse({'success':False,'msg':'Store no encontrada'}, status=404)
 
     def create_store(self, request):
         serializer = StoreSerializer(data=request.data, context={'request':request})
@@ -393,10 +414,11 @@ class ProductView(viewsets.ModelViewSet):
             querysetDigit = ProductDigit.objects.filter(store=store) 
             querysetMethod = MethodProducts.objects.filter(store=store) 
         else:
+            print(2,2)
             querysetFisic  = ProductFisic.objects.all()
             querysetDigit = ProductDigit.objects.all()
             querysetMethod = MethodProducts.objects.all()
-
+        print(querysetDigit, querysetFisic, querysetMethod, 123132)
         serialized_Fisic = ProductSerializer(querysetFisic, many=True).data
         serialized_Digit = ProductDigitSerializer(querysetDigit, many=True).data
         serialized_Method = MethodSerializer(querysetMethod, many=True).data
@@ -425,7 +447,6 @@ class ProductView(viewsets.ModelViewSet):
         userPerm = uti.hasOrNotPermission(self, request,self.__class__, authClass=[IsSeller,IsChecker,IsBuyer,IsAdmin])
         if not userPerm["IsSeller"] and not userPerm["IsAdmin"]:
             return JsonResponse({"message":"No tiene permiso para realizar esta accion"}, status=403)
-        print(request.data)
         serializer = ProductSerializer(data=request.data, context={'request':request, 'userPermision':userPerm})
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -474,7 +495,6 @@ class ProductsDigitView(viewsets.ModelViewSet):
         if int(page_number) > paginator.num_pages:
             return JsonResponse({"error":"No hay mas paginas"}, status=404)
         paginated_data = paginator.get_page(page_number)
-        print(paginated_data[0],222222)
         serializer = ProductDigitSerializer(paginated_data,context={'request':request}, many=True)
         return JsonResponse({'available_pages':paginator.num_pages-int(page_number),'page':int(page_number),'data':serializer.data}, status=200, safe=False)
     
@@ -746,7 +766,6 @@ class UserView(viewsets.ModelViewSet):
         if not userPermision['IsAdmin'] and roles=='true':
             return JsonResponse({'message':'No tiene permiso para esta funcion'}, status=403)
         # print(roles)
-        print(request.data)
         serializer = UserCreatorSerializer(userObj,data=request.data, partial=True, context={"roles":roles, 'update':True, 'request':request})        
         serializer.is_valid(raise_exception=True)
         serializer.save()

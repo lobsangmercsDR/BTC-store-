@@ -1,7 +1,7 @@
 <template>
-    <div class="container mx-auto px-4 py-8 bg-white rounded-lg border-4 border-gray-300">
+    <div class="container mx-auto px-4 py-8 bg-white rounded-lg border-4 border-gray-300 " style="height: 750px; overflow: auto;">
       <!-- Store Registration -->
-      <div v-if="!storeRegistered" class="mb-8">
+      <div v-if="!storeRegistered && loaded" class="mb-8">
         <h2 class="text-2xl font-bold text-gray-800">Registrar tienda</h2>
         <form class="flex flex-col bg-gray-100 p-4 rounded-lg">
           <label class="mb-2">
@@ -25,71 +25,63 @@
         
       </div>
       <!-- Store Details -->
-      <div v-else>
+      <div v-if="storeRegistered && loaded" style="width: 100%" >
         <div class="relative mb-8">
-          <img :src="banner" class="w-full h-64 object-cover rounded-t-lg" alt="Banner">
+          <img :src="'http://127.0.0.1:8000/api/'+ storeInformation.banner_img" class="w-full h-64 object-cover rounded-t-lg" alt="Banner">
           <div class="avatar-container">
             <img
-              :src="avatar"
-              class="w-32 h-32 rounded-full border-4 border-white animate-pulse absolute bottom-0 transform -translate-y-1/2"
+              :src="'http://127.0.0.1:8000/api/'+ storeInformation.avatar_img"
+              class="w-32 h-32 rounded-full border-4 border-white  absolute bottom-0 transform -translate-y-1/2"
               alt="Avatar"
             >
           </div>
         </div>
         <div class="flex flex-col items-center">
-          <h2 class="text-2xl font-bold text-gray-800">{{ storeName }}</h2>
-          <p class="text-gray-600">{{ storeDescription }}</p>
-          <!-- Likes and Dislikes -->
-          <div class="flex flex-col sm:flex-row sm:justify-between mt-4">
-            <div class="flex items-center">
-              <h3 class="font-bold mr-2 text-gray-800">Likes:</h3>
-              <p class="text-green-500 text-xl">{{ likes }}</p>
-              <button @click="likeStore" class="ml-2 bg-green-500 text-white rounded p-2">
-                <i class="material-icons">Like</i>
-              </button>
-            </div>
-            <div class="flex items-center mt-2 sm:mt-0">
-              <h3 class="font-bold mr-2 text-gray-800">Dislikes:</h3>
-              <p class="text-red-500 text-xl">{{ dislikes }}</p>
-              <button @click="dislikeStore" class="ml-2 bg-red-500 text-white rounded p-2">
-                <i class="material-icons">Dislike</i>
-              </button>
-            </div>
-          </div>
+          <h2 class="text-2xl font-bold text-gray-800">{{ storeInformation.name }}</h2>
+          <p class="text-gray-600">{{ storeInformation.description }}</p>
+
           <!-- Subcategories -->
           <div class="mb-8">
-            <h3 class="font-bold mb-2 text-gray-800">Subcategories:</h3>
+            <h3 class="font-bold mb-2 text-gray-800">Subcategorias:</h3>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               <div
-                v-for="subCategory in subCategories"
+                v-for="subCategory in storeInformation.buyed_categories"
                 :key="subCategory.id"
                 class="sub-category bg-f66305 text-white font-bold rounded-full px-2 py-1 transition-all duration-300 hover:bg-ab16be hover:scale-105 hover:shadow-lg"
               >
-                {{ subCategory.name }}
+                {{ subCategory.nameSubCategory }}
               </div>
             </div>
           </div>
           <!-- Total Sold Products -->
           <div class="mb-8">
-            <h3 class="font-bold mb-2 text-gray-800">Total Sold Products:</h3>
+            <h3 class="font-bold mb-2 text-gray-800">Productos vendidos por categoría:</h3>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               <div
-                v-for="(sold, index) in soldProducts"
+                v-for="subCat in storeInformation.buyed_categories"
                 :key="index"
                 class="sold-product bg-ab16be text-white font-bold rounded-full px-2 py-1 transition-all duration-300 hover:bg-f66305 hover:scale-105 hover:shadow-lg"
               >
-                {{ sold.subCategory }}: {{ sold.count }}
+                {{ subCat.nameSubCategory }}: {{ subCat.selled_products_user_based }}
               </div>
             </div>
           </div>
+
+          <div>
+            <inventory></inventory>
+          </div>
+          
         </div>
+        
       </div>
+
     </div>
   </template>
   
   <script>
  import axios from 'axios';
  import Cookies from 'js-cookie';
+ import inventory from '../payments/inventory.vue';
 
   export default {
     data() {
@@ -102,6 +94,7 @@
           banner_img: null,
           avatar_img: null
         },
+        storeInformation: {},
         subCategories: [
           { id: 1, name: 'Subcategoría 1' },
           { id: 2, name: 'Subcategoría 2' },
@@ -110,12 +103,16 @@
           { subCategory: 'Subcategoría 1', count: 50 },
           { subCategory: 'Subcategoría 2', count: 30 },
         ],
+        loaded:false,
         storeRegistered: false,
         loggedIn: true, 
       };
     },
-    mounted() {
-
+    created() {
+      this.getStoreData()
+    },
+    components: {
+      inventory
     },
     methods: {
       previewImage(event) {
@@ -140,6 +137,7 @@
         })
         .then( response => {
           console.log(response.data)
+          this.getStoreData()
         })
         .catch(error => {
           console.log(error.response.data)
@@ -149,11 +147,28 @@
       hasPurchasedSubCategory() {
         return true;
       },
+
+      async getStoreData() {
+        await axios.get(`http://127.0.0.1:8000/api/store/${Cookies.get('svg')}`, {
+          headers: {
+            Authorization: `Token ${Cookies.get('token')}`
+          }
+        })
+        .then(response => {
+          console.log(response.data)
+          this.storeRegistered = response.data.success
+          this.storeInformation = response.data.store
+          this.loaded = true
+        })
+        .catch(error => {
+          console.log(error.response.data)
+        })
+      }
     }
   };
   </script>
   
-  <style>
+  <style scoped>
   /* ... estilos anteriores ... */
   
   .animate-pulse {
@@ -204,8 +219,12 @@
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    height: 64px; /* Ajusta la altura según tus necesidades */
+    top: 50px;
   }
   
+.container {
+  align-items: flex-start !important;
+}
+
   </style>
   

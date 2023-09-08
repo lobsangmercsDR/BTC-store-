@@ -4,6 +4,7 @@ from rest_framework import serializers,exceptions
 from .models import Category, ProductFisic, ProductDigit,ReportTransacts,Deposits, Withdrawals, TransactCategories, CheckerSolic, Transacts,MethodProducts,User,InvitationCodes, SubCategory, Stores
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.hashers import make_password
+from django.db.models import Q
 from django.contrib.auth.models import Group
 from .utils import services as uti
 import random
@@ -60,12 +61,35 @@ class UserSerializer(serializers.ModelSerializer):
             return list(obj.groups.values_list('name',flat=True))[0]
 
 class StoreSerializer(serializers.ModelSerializer):
-    product_count = serializers.SerializerMethodField()
+    # product_count = serializers.SerializerMethodField()
     seller = UserNestedSerializer(required=False)
+    buyed_categories = serializers.SerializerMethodField()
+    selled_products_per_categorie = serializers.SerializerMethodField()
 
     class Meta:
         model = Stores
-        fields = ['id', 'name','description','banner_img','avatar_img','seller','product_count']
+        fields = ['id', 'name','description','banner_img','avatar_img','seller','buyed_categories','selled_products_per_categorie']
+
+
+    def get_buyed_categories(self, obj):
+        request = self.context.get('request', None)
+        if not request:
+            return 0
+
+        subcats= SubCategory.objects.filter(transactcategories__user=request.user)
+        serializer = NestedSubcategorySerializer(subcats, many=True, context={'request':request})
+        print(subcats)
+        return serializer.data
+    
+    def to_representation(self, instance):
+        result=  super().to_representation(instance)
+        result['banner_img'] = instance.banner_img.name
+        result['avatar_img'] = instance.avatar_img.name
+        return result
+
+    def get_selled_products_per_categorie(self, obj):
+        return True
+
 
     def create(self, validated_data):
         request = self.context.get('request')
@@ -75,10 +99,7 @@ class StoreSerializer(serializers.ModelSerializer):
         return newStore
         
     
-    
-    def get_product_count(self, obj):
-        count = obj.product_count 
-        return count
+
 
 class DepositsSerializer(serializers.ModelSerializer):
     user = UserNestedSerializer(required=False)
@@ -249,12 +270,23 @@ class SubCategorySerializer(serializers.ModelSerializer):
         else:
             return False
         
-class ExtSubCategorySerializer(serializers.ModelSerializer):
+class NestedSubcategorySerializer(serializers.ModelSerializer):
+    selled_products_user_based = serializers.SerializerMethodField()
 
-    
     class Meta:
         model = SubCategory
-        fields = ['id', 'nameSubCategory','priceSubCategory','minPriceBTC','maxPriceBTC']
+        fields = ['id', 'nameSubCategory', 'selled_products_user_based']
+
+    def get_selled_products_user_based(self, obj):
+        request = self.context['request']
+        print("222asa")
+        store = Stores.objects.get(seller=request.user)
+        transactUserBased = Transacts.objects.filter(
+            Q(productFisic__store=store) | Q(productDigit__store=store) | Q(methodProduct__store=store),
+            Q(productFisic__subCategory=obj) | Q(productDigit__subCategory=obj) 
+        )
+        return transactUserBased.count()
+    
 
 class ProductDigitSerializer(serializers.ModelSerializer):
     dateCreated = serializers.DateTimeField(format="%d/%m/%Y %I:%M %p", required=False)
@@ -573,7 +605,7 @@ class TransactsViewAdminSerializer(serializers.ModelSerializer):
     def get_product(self, obj):
         if obj.productDigit:
             return ProductDigitNestedSerializer(obj.productDigit).data
-        if obj.productFisic:
+        if obj.productFisic:    
             return ProductNestedSerializer(obj.productFisic).data
         else:
             return None

@@ -131,8 +131,6 @@ class IsChecker(BaseAuthentication):
         if view.__class__.__name__ == "ProductView":
             user =request.user
             if user.groups.filter(name="checkers").exists():
-                print("hola")
-                print(request.data)
                 if not any( key != 'active' for key in request.data.keys()):
                     return True 
         else:

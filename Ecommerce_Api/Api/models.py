@@ -10,12 +10,18 @@ from .utils import services as uti
 from django.utils.timezone import now, timedelta 
 
 
-def generate_file_path(store=False):
+def generate_file_path(instance,   filename, avatar=False):
     filename = uti.generate_invitation_code(6)
-    if store:
-        return f'images/store/{filename}.jpeg'
-    return f'images'
 
+    if type(instance).__name__ == 'ProductFisic':
+        return f'images/{filename}.jpg'
+    elif type(instance).__name__ == 'Stores':
+        if avatar:
+            return f'images/store/avt/{filename}.jpg'
+        else:
+            print(filename)
+            return f'images/store/bann/{filename}.jpg'
+        
 
 class UserManager(BaseUserManager):
     def create_user(self,email, password, **args):
@@ -102,8 +108,8 @@ class Deposits(models.Model):
 class Stores(models.Model):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=200)
-    avatar_img = models.ImageField(upload_to=generate_file_path(store=True), null=True)
-    banner_img = models.ImageField(upload_to=generate_file_path(store=True), null=True)
+    avatar_img = models.ImageField(upload_to=lambda instance, filename: generate_file_path(instance, filename, avatar=True), null=True)
+    banner_img = models.ImageField(upload_to=generate_file_path, null=True)
     seller = models.OneToOneField(User, on_delete= models.CASCADE)
     
 
@@ -140,6 +146,8 @@ class ProductFisic(models.Model):
     quantity = models.IntegerField(default=0)
     subCategory = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True)
     store = models.ForeignKey(Stores, on_delete=models.CASCADE)
+
+
 
 
 

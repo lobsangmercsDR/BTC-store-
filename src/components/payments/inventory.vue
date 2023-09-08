@@ -251,6 +251,7 @@ export default {
     },  
     async fetchProducts(id=1, query=[], own=false) {
       let url =""
+      console.log("2")
       if(own) {
         url = `http://127.0.0.1:8000/api/inventory?page=${id}&paginated=t&own=t`
       } else {
@@ -262,10 +263,11 @@ export default {
             Authorization: `Token ${Cookies.get('token')}`
           }
         });
-
+        console.log(response)
         this.products = response.data.items;
         this.pageInfo.act_page = response.data.act_page
         this.pageInfo.rest_pages = response.data.rest_pages
+        console.log(this.products)
 
       } catch (error) {
         console.error('Error al obtener los productos:', error);
