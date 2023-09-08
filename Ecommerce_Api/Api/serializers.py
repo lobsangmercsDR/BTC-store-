@@ -61,14 +61,24 @@ class UserSerializer(serializers.ModelSerializer):
 
 class StoreSerializer(serializers.ModelSerializer):
     product_count = serializers.SerializerMethodField()
-    seller = UserNestedSerializer()
+    seller = UserNestedSerializer(required=False)
 
     class Meta:
         model = Stores
-        fields = ['id', 'nameStore','seller','product_count']
+        fields = ['id', 'name','description','banner_img','avatar_img','seller','product_count']
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        seller_id = request.user.id
+        user = User.objects.get(id=seller_id)
+        newStore = Stores.objects.create(seller=user, **validated_data)
+        return newStore
+        
+    
     
     def get_product_count(self, obj):
         count = obj.product_count 
+        return count
 
 class DepositsSerializer(serializers.ModelSerializer):
     user = UserNestedSerializer(required=False)

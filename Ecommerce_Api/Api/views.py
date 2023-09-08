@@ -247,6 +247,7 @@ class Img_view(viewsets.ModelViewSet):
 
 class StoreView(viewsets.ModelViewSet):
     queryset = Stores.objects.all()
+    authentication_classes = [authentication.TokenAuthentication]
 
     def get_store_user_based(self, request, pk):
         try:
@@ -257,8 +258,10 @@ class StoreView(viewsets.ModelViewSet):
             return JsonResponse({'msg':'Store no encontrada'}, status=404)
 
     def create_store(self, request):
-        print(request.data)
-        return JsonResponse({})
+        serializer = StoreSerializer(data=request.data, context={'request':request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return JsonResponse(serializer.data)
 
 class TransactSubcategoryView(viewsets.ModelViewSet):
     queryset = TransactCategories.objects.all()

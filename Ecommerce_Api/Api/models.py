@@ -10,9 +10,11 @@ from .utils import services as uti
 from django.utils.timezone import now, timedelta 
 
 
-def generate_file_path(instance, filename):
+def generate_file_path(store=False):
     filename = uti.generate_invitation_code(6)
-    return f'images/{filename}.jpg'
+    if store:
+        return f'images/store/{filename}.jpeg'
+    return f'images'
 
 
 class UserManager(BaseUserManager):
@@ -98,8 +100,12 @@ class Deposits(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
 class Stores(models.Model):
-    nameStore = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=200)
+    avatar_img = models.ImageField(upload_to=generate_file_path(store=True), null=True)
+    banner_img = models.ImageField(upload_to=generate_file_path(store=True), null=True)
     seller = models.OneToOneField(User, on_delete= models.CASCADE)
+    
 
     @property
     def product_count(self):
