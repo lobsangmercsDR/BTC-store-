@@ -119,7 +119,11 @@ export default {
   methods: {
     async getStoreId() {
       let userID = Cookies.get('svg');
-      await axios.get(`http://127.0.0.1:8000/api/store/${userID}`)
+      await axios.get(`http://127.0.0.1:8000/api/store/${userID}`, {
+        headers:{
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      })
       .then(response => {
         this.newProduct.store_id = response.data.store_id
       })
