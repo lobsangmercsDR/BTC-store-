@@ -21,6 +21,9 @@ from datetime import datetime, timedelta
 import os
 from .utils import services as uti
 from django.core import serializers
+from rest_framework.decorators import authentication_classes, permission_classes
+
+
 from django.http import HttpResponse
 from .models import ProductFisic,MethodProducts,Withdrawals,Deposits,ReportTransacts,GenData,Stores,CheckerSolic,TransactCategories,ProductDigit,Category,Transacts,User,InvitationCodes, SubCategory
 from .serializers import (TransactsSerializer,
@@ -231,16 +234,19 @@ class Img_view(viewsets.ModelViewSet):
             return JsonResponse({'error':'No se encuentra la imagen'}, status=404)
         
     def put_file_img(self, request, image_name):
-        localD = os.getenv('USERPROFILE')
-        TP_route=  f'{localD}\Desktop\Proyectos\AlanStore\Ecommerce_Api\images'
+        localD = os.path.abspath(__file__)
+        print(image_name,4)
+        TP_route = localD.replace(r"Api\views.py", "") +"\images" 
         file_img = os.path.join(TP_route, image_name)
         img_product = request.data['image_product']
+
+        if not os.path.exists(file_img):
+            return JsonResponse({"error":"La imagen no existe"}, status=400)
         with open(file_img, 'wb') as f:
             for chunk in img_product.chunks():
                 f.write(chunk)
 
-        if not os.path.exists(file_img):
-            return JsonResponse({"error":"La imagen no existe"}, status=400)
+
         
         return JsonResponse({'message':'imagen guardada'})
 
@@ -332,7 +338,7 @@ class TransactSubcategoryView(viewsets.ModelViewSet):
 class ProductView(viewsets.ModelViewSet):
     queryset = ProductFisic.objects.all()
     serializer_class = ProductSerializer
-    pagination_class = Paginator
+    # pagination_class = Paginator
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = []
 
@@ -404,17 +410,20 @@ class ProductView(viewsets.ModelViewSet):
         return JsonResponse(serializer.data,status=200)
         
 
-    
+
     def get_inventory(self, request):
+        uti.checkAuth(request, raise_exception=True)
+        groups = uti.checkAdminSeller(request)
         isPaginated = request.GET.get('paginated',"f")
         own = request.GET.get('own',"f")
+        if 'sellers' in groups:
+            own = "t"
         if own =="t":
             store = Stores.objects.get(seller=request.user.id)
-            querysetFisic = ProductFisic.objects.filter(store=store) 
+            querysetFisic = ProductFisic.objects.filter(store=store, ) 
             querysetDigit = ProductDigit.objects.filter(store=store) 
             querysetMethod = MethodProducts.objects.filter(store=store) 
         else:
-            print(2,2)
             querysetFisic  = ProductFisic.objects.all()
             querysetDigit = ProductDigit.objects.all()
             querysetMethod = MethodProducts.objects.all()
@@ -444,10 +453,7 @@ class ProductView(viewsets.ModelViewSet):
 
     # POST a new product (Taking Seller id)
     def post_product(self,request):
-        userPerm = uti.hasOrNotPermission(self, request,self.__class__, authClass=[IsSeller,IsChecker,IsBuyer,IsAdmin])
-        if not userPerm["IsSeller"] and not userPerm["IsAdmin"]:
-            return JsonResponse({"message":"No tiene permiso para realizar esta accion"}, status=403)
-        serializer = ProductSerializer(data=request.data, context={'request':request, 'userPermision':userPerm})
+        serializer = ProductSerializer(data=request.data, context={'request':request})
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         self.get_success_headers(serializer.data)
@@ -456,11 +462,7 @@ class ProductView(viewsets.ModelViewSet):
     # PUT a product created by a seller
     def update_product(self, request,*args, **kwargs):
         instance = self.get_object()
-        userPerm = uti.hasOrNotPermission(self, request,self, authClass=[IsSeller,IsAdmin,IsChecker,IsBuyer],oneObj=True, obj=instance)
-        print(userPerm)
-        if not any(val is True for val in userPerm.values() if val != "IsSeller" or "IsBuyer"):  
-            return JsonResponse({'success':False, 'message':'No ha vendido este producto'}, status=404)
-        serializer = self.get_serializer(instance,data=request.data, partial=True, context={'userPermision':userPerm})
+        serializer = self.get_serializer(instance,data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return JsonResponse({'message':'El campo ha sido actualizado','result':serializer.data, 'status':200}, status=200)

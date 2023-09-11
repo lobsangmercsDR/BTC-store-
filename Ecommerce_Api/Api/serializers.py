@@ -493,10 +493,6 @@ class ProductSerializer(serializers.ModelSerializer):
         return newProduct
 
     def update(self, instance, validated_data):
-        userValidation= self.context.get('userPermision')
-        if userValidation['IsChecker'] and not userValidation['IsAdmin'] and any( key != 'active' for key in validated_data.keys()):
-            raise serializers.ValidationError({"message":"No puede editar esto"})
-        print(validated_data) 
         return super().update(instance, validated_data)
 
 class ProductNestedSerializer(serializers.ModelSerializer):

@@ -68,7 +68,7 @@
           </div>
 
           <div>
-            <inventory></inventory>
+            <inventory :sell-view="true"></inventory>
           </div>
           
         </div>

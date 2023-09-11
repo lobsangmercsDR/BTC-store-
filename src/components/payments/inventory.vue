@@ -3,8 +3,10 @@
     <h2 class="text-3xl font-semibold mb-4">Inventario</h2>
 
     <!-- Filtros -->
-    <input type="checkbox" name="own" id="own" style="width: 20px; height: 20px;"  @change="this.own = !this.own;this.makeOwnProductsRequest()">
-    <label for="own" style="font-size: 20px; margin: 0 10px;">Propios</label>   
+    <div v-if="!this.sellView">
+      <input type="checkbox" name="own" id="own" style="width: 20px; height: 20px;"  @change="this.own = !this.own;this.makeOwnProductsRequest()">
+      <label for="own" style="font-size: 20px; margin: 0 10px;">Propios</label> 
+    </div>
     <div class="flex items-center mb-2 filters">
       <div class="filter">
         <label for="categoryFilter " class="text-lg font-semibold">Categoría:</label>
@@ -51,7 +53,7 @@
             <td class="border px-4 py-2">{{ product.subCategory.nameSub }}</td>     
             <td class="border px-4 py-2">{{ product.quantity }}</td>
             <td class="border px-4 py-2">{{ product.price }}</td>
-            <td class="border px-4 py-2">{{ product.store.nameStore }}</td>
+            <td class="border px-4 py-2">{{ product.store.name }}</td>
             <td class="border px-4 py-2">{{ product.store.seller.name }}</td>
             <td class="border px-4 py-2 ">
               <button @click="openEditModal(product)" class="mx-1 bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -182,7 +184,9 @@
               
             </div>
           </div>
-          <div class="flex justify-end mt-4">
+
+        </form>
+        <div class="flex justify-end mt-4">
             <button @click="closeEditModal" class="bg-gray-500 hover:bg-gray-600 text-white py-1 px-2 rounded font-semibold uppercase tracking-wide transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
               Cancelar
             </button>
@@ -190,7 +194,6 @@
               Guardar Cambios
             </button>
           </div>
-        </form>
       </div>
     </div>
   </div>
@@ -199,13 +202,11 @@
 <script>
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { filter } from 'lodash';
 
 export default {
   data() {
     return {
       isWindowSmall: false,
-      own: false,
       products: [],
       categories: [],
       subcategories: [],
@@ -238,6 +239,10 @@ export default {
     };
   },
 
+  props: {
+    sellView: {type: Boolean, default:false}
+  },
+
   created() {
     this.fetchProducts();
     this.fetchCategories();
@@ -263,12 +268,9 @@ export default {
             Authorization: `Token ${Cookies.get('token')}`
           }
         });
-        console.log(response)
         this.products = response.data.items;
         this.pageInfo.act_page = response.data.act_page
         this.pageInfo.rest_pages = response.data.rest_pages
-        console.log(this.products)
-
       } catch (error) {
         console.error('Error al obtener los productos:', error);
       }
@@ -311,21 +313,23 @@ export default {
 
       if (this.editedProduct.localImage) {
         formData.append('image_product',this.editedProduct.image_product)
-        const image = this.editedProduct.image_product
-        axios.put(`http://127.0.0.1:8000/api/images/${image}`, formData)
+        const image = this.editedProduct.image
+        console.log(image)
+        axios.put(`http://127.0.0.1:8000/api${image}`, formData)
         .then(response => {
           console.log(response)
         })
       }
 
       let requestData = {...updatedProduct}
-      let deleteList= ['image_product', 'dateCreated', 'subCategory', 'seller','store']
+      let deleteList= ['image_product','image', 'dateCreated', 'subCategory', 'seller','store']
       for(let i = 0; i <= deleteList.length-1; i++ ) {
         delete requestData[deleteList[i]]
       }
       const tipo = this.editedProduct.id.split(".")[0]
       let url = ""
       if (tipo== 1) {
+        console.log(url)
         url = `http://127.0.0.1:8000/api/productos/${this.editedProduct.id.split('.')[1]}` 
       }
       else if(tipo==2) {
@@ -391,7 +395,8 @@ axios.post('http://127.0.0.1:8000/api/productos', newProduct, {
           return this.editedProduct.image_view
       }
       else {
-        return `http://127.0.0.1:8000/api${this.editedProduct.image_product}`
+        console.log(this.editedProduct.image)
+        return `http://127.0.0.1:8000/api${this.editedProduct.image}`
       }
     },
 
