@@ -21,6 +21,7 @@
           <thead>
             <tr>
               <th>Nombre</th>
+              <th>Precio de SubCategoria</th>
               <th>Precio Mínimo</th>
               <th>Precio Máximo</th>
               <th></th>
@@ -30,6 +31,7 @@
           <tbody>
             <tr v-for="subcategory in category.subCategories" :key="subcategory.id" class="subcategory">
               <td>{{ subcategory.nameSubCategory }}</td>
+              <td>{{ subcategory.priceSubCategory }}</td>
               <td>{{ subcategory.minPriceBTC }}</td>
               <td>{{ subcategory.maxPriceBTC }}</td>
               <td>
@@ -53,38 +55,23 @@
       </div>
     </div>
 
-    <div v-if="showModal" class="modal">
-      <div class="modal-content">
-        <h2 class="modal-title">{{ modalCategoryId ? 'Editar Categoría' : 'Agregar Categoría' }}</h2>
-        <div class="modal-form">
-          <label for="categoryName" class="modal-label">Nombre:</label>
-          <input type="text" id="categoryName" v-model="modalCategoryName" class="modal-input">
-        </div>
-        <div class="modal-actions">
-          <button @click="saveCategory" class="save-button">
-            {{ modalCategoryId ? 'Guardar' : 'Agregar' }}
-          </button>
-          <button @click="cancelModal" class="cancel-button">
-            Cancelar
-          </button>
-        </div>
-      </div>
-    </div>
 
     <div v-if="showSubcategoryModal" class="modal">
       <div class="modal-content">
-        <h2 class="modal-title">{{ modalSubcategoryId ? 'Editar Subcategoría' : 'Agregar Subcategoría' }}</h2>
+        <h2 class="modal-title">{{ this.selectedSubcategory.id !== 0 ? 'Editar Subcategoría' : 'Agregar Subcategoría' }}</h2>
         <div class="modal-form">
           <label for="subcategoryName" class="modal-label">Nombre:</label>
-          <input type="text" id="subcategoryName" step="0.01" min="0" v-model="modalSubcategoryName" class="modal-input">
+          <input type="text" id="subcategoryName" step="0.01" min="0" v-model="selectedSubcategory.nameSubCategory" class="modal-input">
+          <label for="subcategoryMinPrice" class="modal-label">Precio de la subcategoria:</label>
+          <input type="number" step="0.01" min="0" id="subcategoryMinPrice" v-model="selectedSubcategory.priceSubCategory" class="modal-input">
           <label for="subcategoryMinPrice" class="modal-label">Precio Mínimo:</label>
-          <input type="number" step="0.01" min="0" id="subcategoryMinPrice" v-model="modalSubcategoryMinPrice" class="modal-input">
+          <input type="number" step="0.01" min="0" id="subcategoryMinPrice" v-model="selectedSubcategory.minPriceBTC" class="modal-input">
           <label for="subcategoryMaxPrice" class="modal-label">Precio Máximo:</label>
-          <input type="number" id="subcategoryMaxPrice" v-model="modalSubcategoryMaxPrice" class="modal-input">
+          <input type="number" id="subcategoryMaxPrice" v-model="selectedSubcategory.maxPriceBTC" class="modal-input">
         </div>
         <div class="modal-actions">
-          <button @click="saveSubcategory " class="save-button">
-            {{ modalSubcategoryId ? 'Guardar' : 'Agregar' }}
+          <button @click="saveSubcategory(this.selectedCategory, this.selectedSubcategory)" class="save-button">
+            {{ this.selectedSubcategory.id !== 0 ? 'Guardar' : 'Agregar' }}
           </button>
           <button @click="cancelSubcategoryModal" class="cancel-button">
             Cancelar
@@ -106,12 +93,14 @@ export default {
       category: null,
       showModal: false,
       showSubcategoryModal: false,
-      modalCategoryId: -1,
-      modalCategoryName: '',
-      modalSubcategoryId: null,
-      modalSubcategoryName: '',
-      modalSubcategoryMinPrice: null,
-      modalSubcategoryMaxPrice: null,
+      selectedCategory:{},
+      selectedSubcategory: {
+        id: 0,
+        nameSubCategory: '',
+        minPriceBTC: 0,
+        maxPriceBTC: 0,
+        priceSubCategory:0
+      },
     };
   },
 
@@ -146,23 +135,12 @@ export default {
             .catch(error => { console.log(error.response) })
     },
 
-    async CreateCategoriesInAPI() {
-      await axios.post("http://127.0.0.1:8000/api/categorias", {nameCategory: this.modalCategoryName},{
-        headers: {
-          Authorization: `Token ${Cookies.get('token')}`
-        }
-      })
-    },
 
 
     toggleSubcategories(category) {
       category.showSubcategories = !category.showSubcategories;
     },
-     editCategory(category) {
-      this.modalCategoryId = category.id;
-      this.modalCategoryName = category.nameCategory;
-      this.showModal = true;
-    },
+
     async deleteCategory(category) {
       const index = this.categories.findIndex((c) => c.id === category.id);
 
@@ -182,15 +160,10 @@ export default {
     }
   },
     editSubcategory(category, subcategory) {
-      this.modalCategoryId = category.id;
-      this.modalCategoryName = category.nameCategory;
-      this.modalSubcategoryId = subcategory.id;
-      this.modalSubcategoryName = subcategory.nameSubCategory;
-      this.modalSubcategoryMinPrice = subcategory.minPriceBTC;
-      this.modalSubcategoryMaxPrice = subcategory.maxPriceBTC;
-      this.showSubcategoryModal = true;
-
-      console.log(category, subcategory)
+      this.selectedSubcategory = {...subcategory}
+      this.showSubcategoryModal = true
+      this.selectedCategory = {...category}
+      // this.saveSubcategory(category, subcategory)
     },
     async deleteSubcategory(category, subcategory) {
       const index = category.subCategories.findIndex((s) => s.id === subcategory.id);
@@ -212,41 +185,11 @@ export default {
       this.showModal = true;
     },
     showCreateSubcategoryModal(category) {
-      this.modalCategoryId = category.id;
-      this.modalCategoryName = category.name;
-      this.modalSubcategoryId = null;
-      this.modalSubcategoryName = '';
-      this.modalSubcategoryMinPrice = null;
-      this.modalSubcategoryMaxPrice = null;
-      this.showSubcategoryModal = true;
+      this.selectedCategory = category
+      this.showSubcategoryModal = true
     },
-    async saveCategory() {
-      if (this.modalCategoryName.trim() === '') {
-        alert('Ingrese un nombre de categoría válido.');
-      }
-      console.log(this.modalCategoryId)
-      console.log(this.modalCategoryId)
-      if (this.modalCategoryId != null) {
-        console.log("ss")
-        if (confirm("¿Esta seguro que desea cambiar el nombre de esta categoria?")) {
-          this.updateCategoriesinAPI()
-          this.cancelModal();
-        }
-      } else{
-        const newCategory = {
-            nameCategory: this.modalCategoryName,
-          }
-          console.log(newCategory)
-          await axios.post("http://127.0.0.1:8000/api/categorias", newCategory, {
-            headers: {
-              Authorization: `Token ${Cookies.get('token')}`
-            }
-          })
-            .then(response => { console.log(response.data); this.getCategories()})
-            .catch(error => { console.log(error.response.data) })
-        }
-      },
-      cancelModal() {
+
+    cancelModal() {
       this.showModal = false;
       this.modalCategoryId = null;
       this.modalCategoryName = '';
@@ -262,28 +205,9 @@ export default {
       this.modalSubcategoryMaxPrice = null;
     },
 
-     async saveSubcategory() {
-      if (
-        this.modalSubcategoryName.trim() === '' ||
-        this.modalSubcategoryMinPrice === null ||
-        this.modalSubcategoryMaxPrice === null
-      ) {
-        alert('Ingrese todos los campos requeridos.');
-        return;
-      }
-      const category = this.categories.find((c) => c.id === this.modalCategoryId);
-
-      if (category) {
-        if (this.modalSubcategoryId !== null) {
-          let subcategory = category.subCategories.find((s) => s.id === this.modalSubcategoryId);
-          console.log(subcategory)
-          let subcategoryObj = {
-            nameSubCategory:this.modalSubcategoryName,
-            minPriceBTC: this.modalSubcategoryMinPrice,
-            maxPriceBTC: this.modalSubcategoryMaxPrice
-          }
-          console.log(subcategoryObj)
-          await axios.put(`http://127.0.0.1:8000/api/categorias/${category.id}/${subcategory.id}`,subcategoryObj,{
+     async saveSubcategory(category, subcategory) {
+        if (this.selectedSubcategory.id!= 0) {
+          await axios.put(`http://127.0.0.1:8000/api/categorias/${category.id}/${subcategory.id}`,this.selectedSubcategory,{
             headers: {
               Authorization: `Token ${Cookies.get('token')}`
             }
@@ -291,31 +215,29 @@ export default {
           .then(response=> {
              let finalSubC = category.subCategories.findIndex((elem) => elem.id == response.data.id)
               category.subCategories[finalSubC] = response.data
+              this.selectedSubcategory =   
+              {
+                id: 0,
+                nameSubCategory: '',
+                minPriceBTC: 0,
+                maxPriceBTC: 0,
+                priceSubCategory:0
+              }
             })
           .catch(error=> {error})
         } 
         else {
-          const subcategory = {
-            nameSubCategory: this.modalSubcategoryName,
-            minPriceBTC: this.modalSubcategoryMinPrice,
-            maxPriceBTC: this.modalSubcategoryMaxPrice,
-          }
-          console.log(subcategory)
-          await axios.post(`http://127.0.0.1:8000/api/categorias/${category.id}`, subcategory, {
+          await axios.post(`http://127.0.0.1:8000/api/categorias/${category.id}`, this.selectedSubcategory, {
             headers: {
               Authorization: `Token ${Cookies.get('token')}`
             }
           })
           .then(response => {
-            this.getCategories();
-            categoryObj = this.categories.find((sub) => sub.id === response.data.id);
-            this.toggleSubcategories(categoryObj)
-            console.log(response.data)
+            this.getCategories()
           })
           .catch(error => console.log(error))
         }
         this.cancelSubcategoryModal();
-      }
     },
   },
 

@@ -358,7 +358,8 @@ class ProductView(viewsets.ModelViewSet):
         return JsonResponse(dicc, status=200, safe=False)
     
     def postMethod(self, request):
-        serializer = MethodSerializer(data=request.data)
+        print(request.data)
+        serializer = MethodSerializer(data=request.data, context={'request':request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return JsonResponse(serializer.data, status=201)
@@ -632,7 +633,7 @@ class CategoryView(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
         
-        newSub = SubCategory(category=value, **validated_data)
+        newSub = SubCategory(category=value, userCreator= request.user, **validated_data)
         newSub.save()
         categoryObj = Category.objects.get(id=value.id)
         serializer = self.get_serializer(categoryObj)
@@ -648,7 +649,7 @@ class CategoryView(viewsets.ModelViewSet):
         except SubCategory.DoesNotExist:
             return JsonResponse({'detail':'No existe'}) 
 
-        serializer = SubCategorySerializer(subObj, request.data, partial=True)
+        serializer = SubCategorySerializer(subObj, request.data, partial=True, context={'request':request})
         serializer.is_valid(raise_exception=True)
         serializer.save()   
         return  JsonResponse(serializer.data)
@@ -1049,6 +1050,26 @@ class GeneralDataView(viewsets.ModelViewSet):
         else:
             return JsonResponse({'err':'El sistema carece de secretKey'}, status=400)
         
+    def update_balance(self, request):
+        api_key = GenData.objects.first().secret_key
+        user = User.objects.get(id=request.user.id)
+        wallet = user.wallet_address
+        get_response = Rq.get(f'https://block.io/api/v2/get_address_balance/?api_key={api_key}&addresses={wallet}')
+        if get_response.status_code == 200:
+            data = get_response.json()
+            try:
+                result = data['data']['balances'][0]['available_balance']
+                act_balance = float(result)
+                user.userBalance = act_balance
+                user.save()
+            except Exception as e:
+                print(e)
+                return JsonResponse({'msg':'formato Json no valido'})
+            return JsonResponse({'result':user.userBalance})
+        else:
+            print(get_response.json(), get_response.status_code)
+            return JsonResponse({'msg':'error en api block.io'},status=500)
+
     def get_graphics_data(self, request):
         dateSt = request.GET.get('stDate')
         dateEd = request.GET.get('edDate')

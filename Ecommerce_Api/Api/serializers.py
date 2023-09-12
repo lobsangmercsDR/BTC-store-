@@ -156,11 +156,10 @@ class MethodSerializer(serializers.ModelSerializer):
     transacts_count = serializers.SerializerMethodField()
     subCategory = serializers.SerializerMethodField()
     dateCreated = serializers.DateTimeField(required=False,format=dateFormat)
-    store_id = serializers.IntegerField()
 
     class Meta:
         model = MethodProducts
-        fields = ['id','name', 'dateCreated','actQuantity','quantity','subCategory','sendDirection','description','price','store','image','transacts_count', 'store_id']
+        fields = ['id','name', 'dateCreated','actQuantity','quantity','subCategory','sendDirection','description','price','store','image','transacts_count']
 
 
     def get_transacts_count(self, obj):
@@ -173,8 +172,10 @@ class MethodSerializer(serializers.ModelSerializer):
         }
     
     def create(self, validated_data):
-        store_id = validated_data.pop('store_id')
-        method = MethodProducts.objects.create(store_id=store_id, **validated_data)
+        request = self.context.get('request',None)
+        print(validated_data.get('image',None),222)
+        store= Stores.objects.get(seller=request.user)
+        method = MethodProducts.objects.create(store= store, **validated_data)
         return method
 
 class UserCreatorSerializer(serializers.ModelSerializer):
@@ -183,8 +184,9 @@ class UserCreatorSerializer(serializers.ModelSerializer):
     invitation_code = serializers.CharField()
     name = serializers.CharField(required=True)
     confirm_pass = serializers.CharField(write_only=True)
-    createdAt = serializers.DateField(read_only=True)
+    createdAt = serializers.DateTimeField(read_only=True)
     invitation_code = serializers.CharField(write_only=True)
+    last_login = serializers.DateTimeField(read_only=True)
 
     def validate_invitation_code(self, value):
         invitationObj = InvitationCodes.objects.filter(invitationCodes=value).first()
@@ -203,7 +205,7 @@ class UserCreatorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model() 
-        fields = ['id','email','password','confirm_pass','name','is_active','add_group', 'invitation_code', 'delete_group','createdAt']
+        fields = ['id','email','password','confirm_pass','name','is_active','add_group', 'invitation_code', 'delete_group','createdAt','last_login']
         extra_kwargs = {'password': {'write_only': True}}
         ref_name = 'UserCreatorSerializer'
 
@@ -238,6 +240,8 @@ class UserCreatorSerializer(serializers.ModelSerializer):
 
     def update(self, instance,validated_data):
         validated_data = self.context['request'].data   
+        validated_data.pop('last_login')
+        validated_data.pop('createdAt')
         change_group = validated_data.pop('change_group', False)
         not_found_groups = []
         print(change_group)
@@ -263,9 +267,10 @@ class SubCategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'nameSubCategory','priceSubCategory', 'purchased','minPriceBTC','maxPriceBTC']
 
     def get_purchased(self, obj):
-        idUser = self.context['request'].user.id
+        request = self.context.get('request', None)
+        idUser = request.user.id
         hasPurchased = TransactCategories.objects.filter(user_id=idUser, subCategory=obj.id).exists()
-        if hasPurchased:
+        if hasPurchased or request.user.is_superuser:
             return True
         else:
             return False
@@ -415,7 +420,6 @@ class ProductSerializer(serializers.ModelSerializer):
     aditional_details = serializers.CharField(required=True)
     id = serializers.SerializerMethodField()
     store = StoreSerializer(read_only=True)
-    store_id = serializers.IntegerField()
 
 
     def get_id(self, obj):
@@ -479,16 +483,17 @@ class ProductSerializer(serializers.ModelSerializer):
                     'subCategory',
                     'aditional_details',
                     'price',
-                    'store_id'
                 ]
 
     
 
     def create(self, validated_data):
+
+        request = self.context.get('request',None)
+        store = Stores.objects.get(seller = request.user.id)
         subcId = validated_data.pop('subCat_id')
-        storeId = validated_data.pop('store_id')
         subC = SubCategory.objects.get(id = subcId)
-        store = Stores.objects.get(id = storeId)
+        print(store, subC, validated_data, 222)
         newProduct = ProductFisic.objects.create(subCategory=subC,store=store, **validated_data)
         return newProduct
 

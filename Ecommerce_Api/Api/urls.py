@@ -48,4 +48,5 @@ urlpatterns = [
     path('general/priceck', GeneralDataView.as_view({'get':'get_comision_checker'}), name='comCheck'),
     path('group/validate/<int:id>', GroupsView.as_view({'get':'validate_group'}), name='group_valid'),
     path('transact_categories/user/<int:id>', TransactSubcategoryView.as_view({'delete':'delete_user_based'}), name='group_valid'),
+    path('gendata/upd_b', GeneralDataView.as_view({'put':'update_balance'}), name='group_valid'),
 ]

@@ -101,7 +101,6 @@ export default {
       newProduct: {
         name:"martinis",
         price:99.8,
-        store_id:0,
         actQuantity:1,
       },
       error: {}, 
@@ -113,24 +112,9 @@ export default {
 
   created() {
     this.fetchCategoriesForCreate();
-    this.getStoreId();
   },
 
   methods: {
-    async getStoreId() {
-      let userID = Cookies.get('svg');
-      await axios.get(`http://127.0.0.1:8000/api/store/${userID}`, {
-        headers:{
-          Authorization: `Token ${Cookies.get('token')}`
-        }
-      })
-      .then(response => {
-        this.newProduct.store_id = response.data.store_id
-      })
-      .catch(error => {
-        console.log(error)
-      })
-    },
 
     selectProductType() {
       console.log(typeof(this.isMethod))
@@ -155,6 +139,10 @@ export default {
         delete ObjCopy.subCat_id
       }
       
+      if (ObjCopy.image_product) {
+        delete ObjCopy.image_product
+        console.log(2)
+      }
       console.log(ObjCopy)
 
       let properties = Object.keys(ObjCopy)
@@ -163,6 +151,7 @@ export default {
         let Obj = ObjCopy[clave]
         formData.append(clave, Obj)
       }
+      console.log(formData.get('image_product'))
 
       let url = ""
       if(this.isMethod =="t") {
@@ -172,13 +161,20 @@ export default {
 
       }
       console.log(url, this.isMethod)
-      
+      console.log(formData.get('image'));
       await axios.post(url,formData,{
         headers: {
           Authorization: `Token ${Cookies.get('token')}`
         }
       })
-      .then(response=> {console.log(response)})
+      .then(response=> {
+        console.log(response);
+        this.newProduct =  {
+          name:"",
+          price:0,
+          actQuantity:1,
+        }
+      })
       .catch(error => {
         this.error = error.response.data; 
         console.log(this.error)})
@@ -188,7 +184,6 @@ export default {
       const file = event.target.files[0];
 
       this.newProduct.image = file;
-      console.log(this.image_product)
       const reader = new FileReader();
       reader.onload = () => {
         this.newProduct.image_product = reader.result;

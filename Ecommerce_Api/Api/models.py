@@ -15,6 +15,8 @@ def generate_file_path(instance,   filename, avatar=False):
 
     if type(instance).__name__ == 'ProductFisic':
         return f'images/{filename}.jpg'
+    elif type(instance).__name__ == 'MethodProducts':
+        return f'images/methods/{filename}.jpg'
     elif type(instance).__name__ == 'Stores':
         if avatar:
             return f'images/store/avt/{filename}.jpg'
