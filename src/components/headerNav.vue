@@ -167,6 +167,10 @@ export default {
   created() {
     this.takeUserInfo()
     this.authenticated = isAuthenticated()
+    setInterval(() => {
+      this.updateBalance()
+    }, 20000);
+    this.updateBalance()
   },
   
   data() {
@@ -204,6 +208,19 @@ export default {
     };
   },
   methods: {
+    async updateBalance() {
+      await axios.put('http://127.0.0.1:8000/api/gendata/upd_b',null, {
+        headers: {
+          Authorization: `Token ${Cookies.get('token')}`
+        }
+      })
+      .then( response => {
+        console.log(response.data)
+        this.takeUserInfo()
+      })
+    },
+
+
     openModal(id, type,obj) {
       this.isOpenAcc = false
       this.menuOpen = false

@@ -1052,6 +1052,7 @@ class GeneralDataView(viewsets.ModelViewSet):
         
     def update_balance(self, request):
         api_key = GenData.objects.first().secret_key
+
         user = User.objects.get(id=request.user.id)
         wallet = user.wallet_address
         get_response = Rq.get(f'https://block.io/api/v2/get_address_balance/?api_key={api_key}&addresses={wallet}')
